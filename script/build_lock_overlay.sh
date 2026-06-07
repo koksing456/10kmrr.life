@@ -9,6 +9,41 @@ BUILD_DIR="$ROOT_DIR/build/LockScreenOverlay"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
 EXECUTABLE="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 OBJECT_DIR="$BUILD_DIR/Objects"
+LOCK_DIR="$BUILD_DIR/.build.lock"
+LOCK_HELD=false
+
+release_build_lock() {
+  if [[ "$LOCK_HELD" == "true" ]]; then
+    /bin/rm -rf "$LOCK_DIR"
+    LOCK_HELD=false
+  fi
+}
+
+acquire_build_lock() {
+  local waited=0 lock_pid
+  /bin/mkdir -p "$BUILD_DIR"
+
+  until /bin/mkdir "$LOCK_DIR" 2>/dev/null; do
+    if [[ -f "$LOCK_DIR/pid" ]]; then
+      lock_pid="$(/bin/cat "$LOCK_DIR/pid" 2>/dev/null || true)"
+      if [[ "$lock_pid" =~ ^[0-9]+$ ]] && ! /bin/kill -0 "$lock_pid" 2>/dev/null; then
+        /bin/rm -rf "$LOCK_DIR"
+        continue
+      fi
+    fi
+
+    if [[ "$waited" -ge 120 ]]; then
+      printf 'Timed out waiting for build lock: %s\n' "$LOCK_DIR" >&2
+      exit 75
+    fi
+    /bin/sleep 1
+    waited=$((waited + 1))
+  done
+
+  LOCK_HELD=true
+  printf '%s\n' "$$" >"$LOCK_DIR/pid"
+  trap release_build_lock EXIT
+}
 
 collect_sources() {
   local sources=()
@@ -40,6 +75,7 @@ compile_arch() {
 }
 
 build_app() {
+  acquire_build_lock
   rm -rf "$APP_BUNDLE"
   rm -rf "$OBJECT_DIR"
   mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources" "$ROOT_DIR/build/logs" "$OBJECT_DIR"
@@ -58,6 +94,7 @@ build_app() {
     -output "$EXECUTABLE"
   /usr/bin/codesign --force --sign - --timestamp=none "$APP_BUNDLE" >/dev/null
   printf 'Built %s\n' "$APP_BUNDLE"
+  release_build_lock
 }
 
 verify_app() {
