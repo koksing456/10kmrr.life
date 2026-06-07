@@ -52,6 +52,9 @@ section "Installer plist generation"
 section "Signing preflight parser"
 ./script/signing_preflight.sh --self-test
 
+section "Markdown local links"
+./script/verify_markdown_links.sh
+
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify
 /usr/bin/lipo build/LockScreenOverlay/MRRLockScreenOverlay.app/Contents/MacOS/MRRLockScreenOverlay -verify_arch arm64 x86_64
