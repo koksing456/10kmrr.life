@@ -4,7 +4,7 @@ What changed?
 
 ## Verification
 
-- [ ] I ran `./script/verify_public_repo.sh`.
+- [ ] I ran `./script/alpha.sh check`.
 - [ ] If this touches install behavior, I reviewed `docs/alpha/install-smoke-checklist.md`.
 - [ ] If this touches packaging or release docs, I reviewed `docs/release/private-beta-packaging-checklist.md`.
 

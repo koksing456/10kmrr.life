@@ -311,6 +311,16 @@ reject_phrase() {
   fi
 }
 
+section "Public operator command wording"
+require_phrase README.md './script/alpha\.sh check'
+require_phrase README.md './script/alpha\.sh support-report'
+require_phrase README.md './script/alpha\.sh beta-ready'
+require_phrase .github/PULL_REQUEST_TEMPLATE.md './script/alpha\.sh check'
+require_phrase .github/ISSUE_TEMPLATE/alpha_feedback.md './script/alpha\.sh support-report'
+require_phrase .github/ISSUE_TEMPLATE/alpha_feedback.md './script/alpha\.sh check'
+require_phrase .github/ISSUE_TEMPLATE/bug_report.md './script/alpha\.sh support-report'
+require_phrase .github/ISSUE_TEMPLATE/bug_report.md './script/alpha\.sh check'
+
 require_phrase README.md 'gated alpha'
 require_phrase README.md 'not a public installer'
 require_phrase README.md 'private macOS behavior'

@@ -23,7 +23,7 @@ What did you expect to happen?
 Prefer:
 
 ```sh
-./script/support_report.sh
+./script/alpha.sh support-report
 ```
 
 Paste only the sanitized report sections relevant to the issue. Do not use `--include-logs` unless you have reviewed the redacted excerpts for sensitive output.
@@ -39,7 +39,7 @@ Paste only the pass/warn/fail lines. Do not paste secrets or raw logs.
 If this is a source/build issue, also run:
 
 ```sh
-./script/check.sh
+./script/alpha.sh check
 ```
 
 Paste only the failing section name and non-sensitive summary. The signing preflight may warn that Developer ID signing is not ready; that is expected for source alpha unless the issue is about private beta packaging.
