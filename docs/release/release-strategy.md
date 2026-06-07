@@ -31,9 +31,22 @@ The alpha should first prove:
 
 ## Release Checklist
 
+- `./script/verify_public_repo.sh` passes.
 - `./script/build_lock_overlay.sh --verify` passes.
 - `./script/install_lock_overlay_agent.sh` works from a clean checkout.
 - `./script/diagnose.sh` gives safe, actionable output.
 - No Stripe keys, real MRR screenshots, local-only paths, or generated artifacts are committed.
 - README and SECURITY docs clearly mention private macOS API risk.
 - GitHub issue templates warn against posting sensitive data.
+
+## Public Repo Gate
+
+Run this before pushing release-readiness changes:
+
+```sh
+./script/verify_public_repo.sh
+```
+
+The gate checks shell syntax, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, and required public docs.
+
+It does not install the LaunchAgent. Install/reinstall remains a separate local manual test because it mutates the user's machine state.

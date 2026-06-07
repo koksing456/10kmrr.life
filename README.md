@@ -74,6 +74,12 @@ There is no 10kmrr.life server in the current alpha path. The app reads Stripe d
 ./script/build_lock_overlay.sh --verify
 ```
 
+Before pushing public-alpha repo changes:
+
+```sh
+./script/verify_public_repo.sh
+```
+
 ## Static Alpha Page
 
 Preview the public-alpha landing page locally:

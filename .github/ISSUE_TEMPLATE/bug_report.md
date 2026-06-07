@@ -28,6 +28,14 @@ Run:
 
 Paste only the pass/warn/fail lines. Do not paste secrets or raw logs.
 
+If this is a source/build issue, also run:
+
+```sh
+./script/verify_public_repo.sh
+```
+
+Paste only the failing section name and non-sensitive summary.
+
 ## Environment
 
 - macOS version:
