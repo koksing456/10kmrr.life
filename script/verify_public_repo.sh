@@ -173,6 +173,15 @@ for ignored_path in build .codex opc-doc Atoll; do
   fi
 done
 
+tracked_private_artifacts="$(
+  git ls-files |
+    rg '^(build|\.codex|opc-doc|Atoll|DerivedData)/|(^|/)\.DS_Store$|(^|/)xcuserdata/|\.xcuserstate$|\.log$|^\.env($|\.)' || true
+)"
+if [[ -n "$tracked_private_artifacts" ]]; then
+  printf 'Private, local, or generated artifacts are tracked by git:\n%s\n' "$tracked_private_artifacts" >&2
+  exit 1
+fi
+
 section "Public docs"
 test -s README.md
 test -s SECURITY.md
