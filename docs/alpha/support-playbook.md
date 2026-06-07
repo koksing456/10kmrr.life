@@ -32,6 +32,14 @@ Ask the tester to run:
 ./script/diagnose.sh
 ```
 
+For a shareable local summary, ask them to run:
+
+```sh
+./script/support_report.sh
+```
+
+The support report redacts local paths, Stripe-key-like strings, webhook secrets, and obvious money amounts. It does not include raw log contents unless `--include-logs` is used.
+
 If the issue is source/build related, ask for:
 
 ```sh

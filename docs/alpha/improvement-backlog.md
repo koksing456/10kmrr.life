@@ -48,6 +48,7 @@ These reduce maintenance risk.
 - Add CI checks for shell syntax, app build, public repo scan, and MRR calculator tests. Done: `.github/workflows/public-repo-check.yml` runs `./script/verify_public_repo.sh` on macOS.
 - Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
 - Add a debug mode that explains which private API path failed without dumping sensitive runtime data. Done: `--debug` / `--preview-debug` exposes safe private API failure labels.
+- Add a sanitized support report for alpha testers. Done: `./script/support_report.sh` writes a redacted local report and keeps raw logs out by default.
 
 ## P2: Alpha Ops
 

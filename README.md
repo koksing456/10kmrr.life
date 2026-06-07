@@ -187,6 +187,14 @@ The diagnostic checks build status, install status, LaunchAgent state, Keychain 
 
 The app logs structured local events such as refresh start/success/failure, overlay show/hide, and private API fallback. Logs do not include Stripe keys, exact MRR values, raw Stripe responses, or customer/payment data by default.
 
+For alpha support, generate a sanitized local report:
+
+```sh
+./script/support_report.sh
+```
+
+Only use `./script/support_report.sh --include-logs` after confirming the local logs do not contain sensitive output.
+
 ## Uninstall
 
 ```sh
