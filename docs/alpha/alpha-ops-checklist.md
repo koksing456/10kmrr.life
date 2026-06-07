@@ -20,6 +20,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Ask whether Apple Silicon or Intel.
 - Ask them to run `./script/start_alpha.sh`.
 - Use [install-smoke-checklist.md](./install-smoke-checklist.md) only when you need to isolate a specific failed stage.
+- Record compatibility with `./script/record_alpha_compatibility.sh` after preview/install/Lock Screen visibility are checked.
 - If anything fails, ask for `./script/support_report.sh`, not raw logs.
 
 ## Never Collect

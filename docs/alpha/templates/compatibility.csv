@@ -1,0 +1,2 @@
+tester_id,check_date,macos_version,cpu,display_setup,build_verify,preview_glass,lock_screen_visible,unlock_hides_overlay,launchagent_stable,result,blocker,next_action
+example,2026-06-08,15.5,apple_silicon,built_in,pass,private,yes,yes,yes,pass,none,day 7 follow-up

@@ -38,6 +38,7 @@ Track only non-sensitive fields:
 - display setup
 - restricted key setup status
 - first MRR seen yes/no
+- Lock Screen compatibility pass/warn/fail
 - retained day 7 yes/no/unknown
 - Pro interest level
 - blocker summary
@@ -60,9 +61,10 @@ Suggested workflow:
 3. Ask them to run ./script/start_alpha.sh.
 4. Ask for ./script/support_report.sh only if something fails.
 5. Record install attempts with ./script/record_alpha_install.sh.
-6. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
-7. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
-8. Record only pass/warn/fail summaries and non-sensitive blockers.
+6. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
+7. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
+8. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
+9. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example install evidence row:
 
@@ -85,6 +87,19 @@ Example install evidence row:
   --installed yes \\
   --saw-mrr yes \\
   --diagnose-summary "PASS summary only" \\
+  --next-action "day 7 follow-up"
+
+./script/record_alpha_compatibility.sh \\
+  --tester-id tester_001 \\
+  --macos-version 15.5 \\
+  --cpu apple_silicon \\
+  --display-setup built_in \\
+  --build-verify pass \\
+  --preview-glass private \\
+  --lock-screen-visible yes \\
+  --unlock-hides-overlay yes \\
+  --launchagent-stable yes \\
+  --result pass \\
   --next-action "day 7 follow-up"
 
 ./script/record_alpha_pro_followup.sh \\
@@ -128,11 +143,13 @@ validate_generated_tracker() {
   test -s "$output_dir/README.md"
   test -s "$output_dir/alpha-users.csv"
   test -s "$output_dir/install-funnel.csv"
+  test -s "$output_dir/compatibility.csv"
   test -s "$output_dir/pro-interest.csv"
   test -s "$output_dir/weekly-review.csv"
 
   /usr/bin/head -1 "$output_dir/alpha-users.csv" | /usr/bin/grep -q 'tester_id,uses_stripe_subscriptions,macos_version'
   /usr/bin/head -1 "$output_dir/install-funnel.csv" | /usr/bin/grep -q 'tester_id,attempt_date,stage'
+  /usr/bin/head -1 "$output_dir/compatibility.csv" | /usr/bin/grep -q 'tester_id,check_date,macos_version'
   /usr/bin/head -1 "$output_dir/pro-interest.csv" | /usr/bin/grep -q 'tester_id,follow_up_date,retained_day_7'
   /usr/bin/head -1 "$output_dir/weekly-review.csv" | /usr/bin/grep -q 'week_start,support_load,setup_failure_rate'
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
@@ -150,6 +167,7 @@ generate_tracker() {
   write_readme "$output_dir"
   copy_template "alpha-users.csv" "$output_dir"
   copy_template "install-funnel.csv" "$output_dir"
+  copy_template "compatibility.csv" "$output_dir"
   copy_template "pro-interest.csv" "$output_dir"
   copy_template "weekly-review.csv" "$output_dir"
   validate_generated_tracker "$output_dir"

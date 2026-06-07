@@ -95,6 +95,9 @@ section "Alpha tracker generation"
 section "Alpha install evidence recorder"
 ./script/record_alpha_install.sh --self-test
 
+section "Alpha compatibility recorder"
+./script/record_alpha_compatibility.sh --self-test
+
 section "Alpha user recorder"
 ./script/record_alpha_user.sh --self-test
 
@@ -181,6 +184,7 @@ test -s docs/alpha/testimonial-approval-template.md
 test -s docs/alpha/improvement-backlog.md
 test -s docs/alpha/templates/alpha-users.csv
 test -s docs/alpha/templates/install-funnel.csv
+test -s docs/alpha/templates/compatibility.csv
 test -s docs/alpha/templates/pro-interest.csv
 test -s docs/alpha/templates/weekly-review.csv
 test -s docs/release/release-strategy.md

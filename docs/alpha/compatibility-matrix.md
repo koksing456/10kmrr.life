@@ -4,6 +4,31 @@ Use this matrix to track private macOS API behavior across alpha machines. Do no
 
 Current source alpha builds a universal `arm64` and `x86_64` binary. Apple Silicon is the locally verified path; Intel Lock Screen/private API behavior still needs alpha compatibility evidence.
 
+Generate the private ignored tracker with:
+
+```sh
+./script/prepare_alpha_tracker.sh
+```
+
+Then append compatibility rows with:
+
+```sh
+./script/record_alpha_compatibility.sh \
+  --tester-id tester_001 \
+  --macos-version 15.5 \
+  --cpu apple_silicon \
+  --display-setup built_in \
+  --build-verify pass \
+  --preview-glass private \
+  --lock-screen-visible yes \
+  --unlock-hides-overlay yes \
+  --launchagent-stable yes \
+  --result pass \
+  --next-action "day 7 follow-up"
+```
+
+The private CSV template is [templates/compatibility.csv](./templates/compatibility.csv). Keep identity/contact mapping outside the repo.
+
 ## Matrix
 
 | Tester | macOS version | CPU | Display setup | Build verify | Preview glass | Lock Screen visible | Unlock hides overlay | LaunchAgent stable | Result | Notes |

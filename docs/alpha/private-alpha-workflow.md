@@ -18,6 +18,7 @@ Use these sheets:
 
 - `alpha-users`: one row per approved tester.
 - `install-funnel`: one row per setup attempt.
+- `compatibility`: one row per Lock Screen compatibility check.
 - `pro-interest`: one row per 7-day follow-up.
 - `weekly-review`: one row per weekly alpha review.
 
@@ -27,6 +28,7 @@ Starter CSV templates live in [templates](./templates):
 
 - [alpha-users.csv](./templates/alpha-users.csv)
 - [install-funnel.csv](./templates/install-funnel.csv)
+- [compatibility.csv](./templates/compatibility.csv)
 - [pro-interest.csv](./templates/pro-interest.csv)
 - [weekly-review.csv](./templates/weekly-review.csv)
 
@@ -76,6 +78,29 @@ Record install attempts with the safe append script:
 ```
 
 The recorder rejects Stripe-key-like strings and obvious money amounts. Do not paste raw logs, exact MRR, raw Stripe responses, customer/payment data, or unsanitized screenshots into tracker fields.
+
+## Compatibility Evidence
+
+Use [compatibility-matrix.md](./compatibility-matrix.md) for the field definitions and threshold rules.
+
+Record Lock Screen compatibility with:
+
+```sh
+./script/record_alpha_compatibility.sh \
+  --tester-id tester_001 \
+  --macos-version 15.5 \
+  --cpu apple_silicon \
+  --display-setup built_in \
+  --build-verify pass \
+  --preview-glass private \
+  --lock-screen-visible yes \
+  --unlock-hides-overlay yes \
+  --launchagent-stable yes \
+  --result pass \
+  --next-action "day 7 follow-up"
+```
+
+Record only the pass/warn/fail outcome and non-sensitive blocker summaries. Keep screenshots mock, blurred, or explicitly sanitized.
 
 ## 7-Day Cadence
 

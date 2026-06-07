@@ -74,14 +74,15 @@ print_git_status() {
 }
 
 print_tracker_status() {
-  local users_count install_count pro_count weekly_count
+  local users_count install_count compatibility_count pro_count weekly_count
 
   section "Private alpha evidence"
   if [[ -d "$TRACKER_DIR" ]]; then
-    if [[ -s "$TRACKER_DIR/alpha-users.csv" && -s "$TRACKER_DIR/install-funnel.csv" && -s "$TRACKER_DIR/pro-interest.csv" && -s "$TRACKER_DIR/weekly-review.csv" ]]; then
+    if [[ -s "$TRACKER_DIR/alpha-users.csv" && -s "$TRACKER_DIR/install-funnel.csv" && -s "$TRACKER_DIR/compatibility.csv" && -s "$TRACKER_DIR/pro-interest.csv" && -s "$TRACKER_DIR/weekly-review.csv" ]]; then
       status_line "PASS" "private tracker exists: $TRACKER_DIR"
       if template_header_matches "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv" &&
          template_header_matches "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" &&
+         template_header_matches "$TRACKER_DIR/compatibility.csv" "$ROOT_DIR/docs/alpha/templates/compatibility.csv" &&
          template_header_matches "$TRACKER_DIR/pro-interest.csv" "$ROOT_DIR/docs/alpha/templates/pro-interest.csv" &&
          template_header_matches "$TRACKER_DIR/weekly-review.csv" "$ROOT_DIR/docs/alpha/templates/weekly-review.csv"; then
         status_line "PASS" "tracker headers match current templates"
@@ -91,10 +92,12 @@ print_tracker_status() {
       fi
       users_count="$(tracked_row_count "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv")"
       install_count="$(tracked_row_count "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv")"
+      compatibility_count="$(tracked_row_count "$TRACKER_DIR/compatibility.csv" "$ROOT_DIR/docs/alpha/templates/compatibility.csv")"
       pro_count="$(tracked_row_count "$TRACKER_DIR/pro-interest.csv" "$ROOT_DIR/docs/alpha/templates/pro-interest.csv")"
       weekly_count="$(tracked_row_count "$TRACKER_DIR/weekly-review.csv" "$ROOT_DIR/docs/alpha/templates/weekly-review.csv")"
       status_line "INFO" "non-example alpha users tracked: $users_count"
       status_line "INFO" "non-example install attempts tracked: $install_count"
+      status_line "INFO" "non-example compatibility checks tracked: $compatibility_count"
       status_line "INFO" "non-example Pro follow-ups tracked: $pro_count"
       status_line "INFO" "non-example weekly reviews tracked: $weekly_count"
     else

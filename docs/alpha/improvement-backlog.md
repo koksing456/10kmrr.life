@@ -67,6 +67,7 @@ These make learning from testers less manual.
 - Turn the alpha user tracker into a small private spreadsheet or lightweight CRM workflow. Done: see [private-alpha-workflow.md](./private-alpha-workflow.md) and CSV templates under [templates](./templates).
 - Add a 7-day follow-up cadence with retained/not-retained tags. Done: private alpha workflow defines Day 0/1/3/7 cadence and retention tagging.
 - Track install funnel stages: requested, approved, built, configured key, previewed, installed, saw MRR, retained day 7. Done: workflow defines exact stage values and `install-funnel.csv`.
+- Track Lock Screen compatibility evidence separately from install friction. Done: `compatibility.csv` and `./script/record_alpha_compatibility.sh` record macOS, CPU, display setup, private glass, Lock Screen visibility, unlock behavior, LaunchAgent stability, and pass/warn/fail result.
 - Track Pro pull separately from general feedback. Done: `pro-interest.csv` and scorecard keep Pro signal separate.
 - Add a rule that screenshots must use mock, blurred, or intentionally disclosed MRR. Done: screenshot rule is in private alpha workflow and demo checklist.
 - Add a weekly alpha review checklist: support load, retention, setup failure rate, Pro signal, compatibility failures. Done: `weekly-review.csv` and workflow define the weekly review.
