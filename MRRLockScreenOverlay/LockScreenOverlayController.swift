@@ -48,6 +48,12 @@ final class LockScreenOverlayController {
         }
     }
 
+    func refreshNow() {
+        Task {
+            await model.refresh()
+        }
+    }
+
     @objc private func screenLocked() {
         guard !isLocked else { return }
         isLocked = true

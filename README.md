@@ -122,6 +122,8 @@ The setup window also lets you refresh MRR now, confirm when the last-good cache
 
 The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.
 
+When the overlay app is running, the 10kmrr.life menu bar item can open setup, refresh MRR now, launch a preview overlay, copy diagnose/uninstall commands for the source checkout, open the local logs folder, and restart the overlay process.
+
 ## Install
 
 Alpha installs are gated. If you are approved for alpha testing, run:

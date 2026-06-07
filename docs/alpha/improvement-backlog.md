@@ -17,7 +17,7 @@ These should happen before inviting more than a handful of testers.
 
 These make the app feel more like something founders will keep installed.
 
-- Add a menu bar control for setup, preview, refresh now, diagnose, restart overlay, and uninstall guidance.
+- Add a menu bar control for setup, preview, refresh now, diagnose, restart overlay, and uninstall guidance. Done: the running app exposes these actions from a menu bar item.
 - Add manual refresh and visible "last refreshed" confidence inside setup. Done: setup can refresh MRR, update the local last-good cache, and show cache freshness without printing private values.
 - Add size and horizontal position controls, not only vertical position.
 - Add multi-display preference: main display, cursor display, or all displays.
