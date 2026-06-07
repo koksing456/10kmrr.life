@@ -69,6 +69,12 @@ This first runs `./script/private_beta_readiness.sh --require-ready`, then write
 
 ## Smoke Test
 
+Preview the local source smoke plan first:
+
+```sh
+./script/run_local_smoke.sh
+```
+
 For each private beta package:
 
 - Download package on a clean supported Mac.
@@ -82,19 +88,13 @@ For each private beta package:
 - Run `./script/support_report.sh`.
 - Uninstall with `./script/uninstall_lock_overlay_agent.sh --all`.
 
-Then record only the pass/warn/fail result:
+For the source-based local smoke gate, run and record only on a clean smoke machine:
 
 ```sh
-./script/record_alpha_local_smoke.sh \
-  --build-verify pass \
-  --install-agent pass \
-  --diagnose-after-install pass \
-  --repair-preserves-data pass \
-  --support-report-safe pass \
-  --uninstall-all pass \
-  --result pass \
-  --next-action "ready for beta gate"
+./script/run_local_smoke.sh --apply --full-reset --record
 ```
+
+`--full-reset` removes local cache, display settings, and the stored Stripe key at the end of the smoke.
 
 ## Release Notes Must Say
 

@@ -104,6 +104,9 @@ section "Alpha compatibility recorder"
 section "Alpha local smoke recorder"
 ./script/record_alpha_local_smoke.sh --self-test
 
+section "Local smoke runner"
+./script/run_local_smoke.sh --self-test
+
 section "Alpha user recorder"
 ./script/record_alpha_user.sh --self-test
 

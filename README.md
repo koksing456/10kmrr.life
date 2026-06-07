@@ -116,6 +116,12 @@ Run diagnostic and uninstall safety self-tests without changing your local insta
 ./script/uninstall_lock_overlay_agent.sh --self-test
 ```
 
+Preview the local private-beta smoke sequence without changing local state:
+
+```sh
+./script/run_local_smoke.sh
+```
+
 Before pushing public-alpha repo changes:
 
 ```sh
@@ -344,6 +350,7 @@ The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alph
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
 Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_pro_followup.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, and obvious money amounts where relevant.
+Run `./script/run_local_smoke.sh --apply --full-reset --record` only on a clean private-beta smoke machine when you are ready to record local install/repair/uninstall evidence. The default run is a dry run and does not change local state.
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).

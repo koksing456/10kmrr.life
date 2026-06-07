@@ -328,7 +328,7 @@ print_readiness() {
       status_line "PASS" "local install/repair/uninstall smoke pass recorded"
     else
       status_line "WARN" "local install/repair/uninstall smoke pass not recorded"
-      status_line "NEXT" "run local smoke checklist, then record with ./script/record_alpha_local_smoke.sh"
+      status_line "NEXT" "run: ./script/run_local_smoke.sh --apply --full-reset --record"
       ready=1
     fi
 
@@ -348,7 +348,7 @@ print_readiness() {
 
   section "Required local smoke"
   status_line "NEXT" "before packaging, run: ./script/check.sh"
-  status_line "NEXT" "smoke local install/repair/uninstall per docs/release/private-beta-packaging-checklist.md"
+  status_line "NEXT" "smoke local install/repair/uninstall: ./script/run_local_smoke.sh --apply --full-reset --record"
   status_line "NEXT" "generate sanitized support report: ./script/support_report.sh"
 
   if [[ "$ready" -eq 0 ]]; then
