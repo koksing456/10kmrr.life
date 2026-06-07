@@ -13,6 +13,7 @@ Create a private local tracker workspace first:
 ```
 
 This writes starter files under `build/alpha-tracker`, which is ignored by git. Move those files into a private spreadsheet or lightweight CRM if you prefer.
+If only the generated tracker README is stale, refresh it with `./script/prepare_alpha_tracker.sh --readme-only` so existing CSV rows are preserved.
 
 Use these sheets:
 

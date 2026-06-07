@@ -123,7 +123,7 @@ print_tracker_status() {
         status_line "PASS" "tracker README matches current safety workflow"
       else
         status_line "WARN" "tracker README is missing current safety workflow"
-        status_line "NEXT" "refresh tracker README with: ./script/prepare_alpha_tracker.sh --force"
+        status_line "NEXT" "refresh tracker README without replacing CSV rows: ./script/prepare_alpha_tracker.sh --readme-only"
       fi
       users_count="$(tracked_row_count "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv")"
       install_count="$(tracked_row_count "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv")"
@@ -139,7 +139,7 @@ print_tracker_status() {
       status_line "INFO" "non-example weekly reviews tracked: $weekly_count"
     else
       status_line "WARN" "tracker folder exists but expected CSV files are missing"
-      status_line "NEXT" "repair with: ./script/prepare_alpha_tracker.sh --force"
+      status_line "NEXT" "repair missing tracker files without replacing existing rows: ./script/prepare_alpha_tracker.sh"
     fi
   else
     status_line "WARN" "private tracker not generated yet"

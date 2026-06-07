@@ -6,19 +6,21 @@ TEMPLATE_DIR="$ROOT_DIR/docs/alpha/templates"
 OUTPUT_DIR="$ROOT_DIR/build/alpha-tracker"
 SELF_TEST=false
 FORCE=false
+README_ONLY=false
 
 usage() {
   cat <<EOF
-Usage: $0 [--output DIR] [--force] [--self-test] [--help]
+Usage: $0 [--output DIR] [--force] [--readme-only] [--self-test] [--help]
 
 Creates a private local alpha tracker workspace from the sanitized CSV
 templates. The default output is build/alpha-tracker, which is ignored by git.
 
 Options:
-  --output DIR  Write tracker files to DIR instead of build/alpha-tracker.
-  --force       Replace existing generated tracker files in the output dir.
-  --self-test   Verify tracker generation in a temporary directory.
-  --help        Show this help.
+  --output DIR   Write tracker files to DIR instead of build/alpha-tracker.
+  --force        Replace existing generated tracker files in the output dir.
+  --readme-only  Refresh only README.md without replacing tracker CSV files.
+  --self-test    Verify tracker generation in a temporary directory.
+  --help         Show this help.
 EOF
 }
 
@@ -145,11 +147,20 @@ copy_template() {
   printf 'Wrote tracker file: %s\n' "$target"
 }
 
-validate_generated_tracker() {
+validate_tracker_readme() {
   local output_dir="$1"
   local forbidden='(Stripe API keys|exact private MRR|raw Stripe API responses|customer, subscription, invoice, payment, email, or card data|unsanitized screenshots)'
 
   test -s "$output_dir/README.md"
+  /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
+  /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
+  /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$output_dir/README.md"
+}
+
+validate_generated_tracker() {
+  local output_dir="$1"
+
+  validate_tracker_readme "$output_dir"
   test -s "$output_dir/alpha-users.csv"
   test -s "$output_dir/install-funnel.csv"
   test -s "$output_dir/compatibility.csv"
@@ -163,9 +174,6 @@ validate_generated_tracker() {
   /usr/bin/head -1 "$output_dir/local-smoke.csv" | /usr/bin/grep -q 'smoke_date,build_verify,install_agent'
   /usr/bin/head -1 "$output_dir/pro-interest.csv" | /usr/bin/grep -q 'tester_id,follow_up_date,retained_day_7'
   /usr/bin/head -1 "$output_dir/weekly-review.csv" | /usr/bin/grep -q 'week_start,support_load,setup_failure_rate'
-  /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
-  /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
-  /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$output_dir/README.md"
 
   if /usr/bin/grep -R -E '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)' "$output_dir" >/dev/null; then
     printf 'Generated alpha tracker contained a secret-like token.\n' >&2
@@ -190,6 +198,17 @@ generate_tracker() {
   printf 'Keep this folder private. Do not commit tester tracker rows.\n'
 }
 
+refresh_readme_only() {
+  local output_dir="$1"
+
+  /bin/mkdir -p "$output_dir"
+  write_readme "$output_dir"
+  validate_tracker_readme "$output_dir"
+
+  printf '\nPrivate alpha tracker README refreshed: %s\n' "$output_dir/README.md"
+  printf 'Tracker CSV files were not replaced.\n'
+}
+
 self_test() {
   local temp_dir
   temp_dir="$(/usr/bin/mktemp -d -t 10kmrr-alpha-tracker.XXXXXX)"
@@ -198,6 +217,10 @@ self_test() {
   OUTPUT_DIR="$temp_dir/tracker"
   FORCE=true
   generate_tracker "$OUTPUT_DIR" >/dev/null
+  printf 'tester_selftest,2026-06-08,installed,pass,yes,yes,yes,yes,"sentinel row","none","keep"\n' >>"$OUTPUT_DIR/install-funnel.csv"
+  README_ONLY=true
+  refresh_readme_only "$OUTPUT_DIR" >/dev/null
+  /usr/bin/grep -q 'tester_selftest' "$OUTPUT_DIR/install-funnel.csv"
   printf 'Alpha tracker generation self-test passed.\n'
 }
 
@@ -213,6 +236,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --force)
       FORCE=true
+      shift
+      ;;
+    --readme-only)
+      README_ONLY=true
       shift
       ;;
     --self-test)
@@ -232,6 +259,11 @@ done
 
 if [[ "$SELF_TEST" == "true" ]]; then
   self_test
+  exit 0
+fi
+
+if [[ "$README_ONLY" == "true" ]]; then
+  refresh_readme_only "$OUTPUT_DIR"
   exit 0
 fi
 
