@@ -8,15 +8,15 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 - Run `./script/prepare_alpha_tracker.sh` and keep the generated tracker private.
 - Use `./script/prepare_alpha_tracker.sh --readme-only` for tracker instruction refreshes after rows exist.
-- Run `./script/alpha_next_action.sh` first when deciding what to do next.
-- Run `./script/alpha_readiness_report.sh` when you need a private readiness report under `build/`.
+- Run `./script/alpha.sh next` first when deciding what to do next.
+- Run `./script/alpha.sh report` when you need a private readiness report under `build/`.
 - Run `./script/audit_alpha_tracker.sh` if tracker rows were edited manually.
 - Confirm they use Stripe subscriptions.
 - Confirm they use a Mac daily.
 - Confirm they understand this is source alpha, not a notarized public installer.
 - Confirm they are comfortable creating a restricted read-only Stripe key.
 - Send SECURITY.md before any setup conversation.
-- Prepare the tester invite packet with `./script/prepare_alpha_invite_packet.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in`.
+- Prepare the tester invite packet with `./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in`.
 - Send the generated invite body from ignored `build/alpha-invites/tester_XXX.md`.
 - Send [alpha-invite-template.md](./alpha-invite-template.md) after approval only if you need to edit the template manually.
 

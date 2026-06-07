@@ -92,6 +92,9 @@ section "GitHub label sync parser"
 section "Alpha start flow"
 ./script/start_alpha.sh --self-test
 
+section "Alpha CLI wrapper"
+./script/alpha.sh --self-test
+
 section "Alpha tracker generation"
 ./script/prepare_alpha_tracker.sh --self-test
 

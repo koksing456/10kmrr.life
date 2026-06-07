@@ -15,8 +15,8 @@ Create a private local tracker workspace first:
 This writes starter files under `build/alpha-tracker`, which is ignored by git. Move those files into a private spreadsheet or lightweight CRM if you prefer.
 If only the generated tracker README is stale, refresh it with `./script/prepare_alpha_tracker.sh --readme-only` so existing CSV rows are preserved. `--force` refuses to overwrite tracker CSVs that already contain private rows.
 Audit manually edited tracker rows with `./script/audit_alpha_tracker.sh` before widening alpha. The audit prints only file, line, and issue type, not private row contents.
-Use `./script/alpha_next_action.sh` as the daily operator entrypoint. It reads aggregate tracker state and prints one safe recommended next command.
-Use `./script/alpha_readiness_report.sh` when you need a local private status packet. It writes `build/alpha-readiness-report.md`, which is ignored by git.
+Use `./script/alpha.sh next` as the daily operator entrypoint. It reads aggregate tracker state and prints one safe recommended next command.
+Use `./script/alpha.sh report` when you need a local private status packet. It writes `build/alpha-readiness-report.md`, which is ignored by git.
 
 Use these sheets:
 
@@ -57,7 +57,7 @@ Only advance a tester when the previous stage is confirmed by their non-sensitiv
 Prepare the approved tester invite packet with:
 
 ```sh
-./script/prepare_alpha_invite_packet.sh \
+./script/alpha.sh invite \
   --tester-id tester_001 \
   --uses-stripe-subscriptions yes \
   --macos-version 15.5 \

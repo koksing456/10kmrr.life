@@ -70,9 +70,9 @@ Do not collect:
 
 Suggested workflow:
 
-1. Start with ./script/alpha_next_action.sh for the single recommended safe action.
-2. Write a local readiness report with ./script/alpha_readiness_report.sh when you need a shareable private status packet.
-3. Prepare the approved tester invite packet with ./script/prepare_alpha_invite_packet.sh.
+1. Start with ./script/alpha.sh next for the single recommended safe action.
+2. Write a local readiness report with ./script/alpha.sh report when you need a shareable private status packet.
+3. Prepare the approved tester invite packet with ./script/alpha.sh invite.
 4. Send the generated invite body from build/alpha-invites/tester_001.md.
 5. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
 6. Ask for ./script/support_report.sh only if something fails.
@@ -90,11 +90,11 @@ Suggested workflow:
 
 Example approved tester and install evidence rows:
 
-./script/alpha_next_action.sh
+./script/alpha.sh next
 
-./script/alpha_readiness_report.sh
+./script/alpha.sh report
 
-./script/prepare_alpha_invite_packet.sh \\
+./script/alpha.sh invite \\
   --tester-id tester_001 \\
   --uses-stripe-subscriptions yes \\
   --macos-version 15.5 \\
@@ -229,9 +229,9 @@ validate_tracker_readme() {
   test -s "$output_dir/README.md"
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
-  /usr/bin/grep -q './script/prepare_alpha_invite_packet.sh' "$output_dir/README.md"
-  /usr/bin/grep -q './script/alpha_next_action.sh' "$output_dir/README.md"
-  /usr/bin/grep -q './script/alpha_readiness_report.sh' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh next' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh report' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh invite' "$output_dir/README.md"
   /usr/bin/grep -q './script/record_alpha_support_issue.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/audit_alpha_tracker.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"
