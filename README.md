@@ -137,6 +137,7 @@ For a lightweight status summary that does not run the full build gate:
 ```
 
 This summarizes the current git state, private alpha tracker presence, signing readiness, latest GitHub Actions status when available, and the next safe command to run. It does not print Stripe keys or cached MRR values.
+If your private tracker lives outside the default ignored `build/alpha-tracker` path, pass it explicitly with `./script/alpha.sh status --tracker-dir /path/to/private-tracker`.
 
 For private beta package readiness after alpha evidence is collected:
 

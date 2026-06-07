@@ -75,6 +75,7 @@ For a quick non-build status summary during alpha operations:
 ```
 
 This summarizes source state, private tracker presence, signing readiness, latest GitHub Actions status when available, and safe next actions. It is not a replacement for `./script/alpha.sh check` before release or repo changes.
+If your private tracker lives outside the default ignored `build/alpha-tracker` path, pass it explicitly with `./script/alpha.sh status --tracker-dir /path/to/private-tracker`.
 
 It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
 

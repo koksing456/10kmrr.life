@@ -8,16 +8,25 @@ SELF_TEST=false
 
 usage() {
   cat <<EOF
-Usage: $0 [--no-network] [--self-test] [--help]
+Usage: $0 [--tracker-dir DIR] [--no-network] [--self-test] [--help]
 
 Prints a lightweight public-alpha readiness summary without running the full
 build/check gate and without printing Stripe keys or cached MRR values.
 
 Options:
+  --tracker-dir DIR  Private tracker directory. Default: build/alpha-tracker.
   --no-network  Skip GitHub Actions status lookup.
   --self-test   Verify output shape using local checks only.
   --help        Show this help.
 EOF
+}
+
+require_arg() {
+  local option="$1"
+  if [[ $# -lt 2 || "${2:-}" == --* ]]; then
+    printf 'Missing value for %s.\n' "$option" >&2
+    exit 64
+  fi
 }
 
 status_line() {
@@ -144,7 +153,7 @@ print_tracker_status() {
       status_line "INFO" "non-example local smoke checks tracked: $smoke_count"
       status_line "INFO" "non-example Pro follow-ups tracked: $pro_count"
       status_line "INFO" "non-example weekly reviews tracked: $weekly_count"
-      audit_output="$("$ROOT_DIR/script/audit_alpha_tracker.sh" 2>&1 || true)"
+      audit_output="$("$ROOT_DIR/script/audit_alpha_tracker.sh" --tracker-dir "$TRACKER_DIR" 2>&1 || true)"
       if printf '%s\n' "$audit_output" | /usr/bin/grep -q '^PASS'; then
         status_line "PASS" "tracker audit found no unsafe manual entries"
       else
@@ -233,10 +242,18 @@ print_next_actions() {
 }
 
 self_test() {
-  local output repo
-  output="$("$0" --no-network)"
+  local output repo temp_dir
+  temp_dir="$(/usr/bin/mktemp -d -t 10kmrr-alpha-status.XXXXXX)"
+  trap 'rm -rf "$temp_dir"' RETURN
+  /bin/mkdir -p "$temp_dir/tracker"
+  /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
+  "$ROOT_DIR/script/prepare_alpha_tracker.sh" --output "$temp_dir/tracker" --readme-only >/dev/null
+
+  output="$("$0" --no-network --tracker-dir "$temp_dir/tracker")"
   printf '%s\n' "$output" | /usr/bin/grep -q '10kmrr.life alpha status'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private alpha evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q "private tracker exists: $temp_dir/tracker"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'tracker audit found no unsafe manual entries'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Signing and notarization'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Default next actions'
   printf '%s\n' "$output" | /usr/bin/grep -q 'replace tester_XXX and 15.x, then remove --dry-run'
@@ -255,6 +272,11 @@ self_test() {
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --tracker-dir)
+      require_arg "$1" "${2:-}"
+      TRACKER_DIR="$2"
+      shift 2
+      ;;
     --no-network)
       NO_NETWORK=true
       shift
