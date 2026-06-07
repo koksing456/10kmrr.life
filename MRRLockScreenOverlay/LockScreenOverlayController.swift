@@ -4,9 +4,17 @@ import SwiftUI
 
 @MainActor
 final class LockScreenOverlayController {
+    private final class OverlayWindowState {
+        let window: NSWindow
+        var hasDelegatedWindow = false
+
+        init(window: NSWindow) {
+            self.window = window
+        }
+    }
+
     private let model = MRRDisplayModel()
-    private var window: NSWindow?
-    private var hasDelegatedWindow = false
+    private var windowsByScreenID: [String: OverlayWindowState] = [:]
     private var isLocked = false
     private var lockStateTask: Task<Void, Never>?
     private var refreshTimer: Timer?
@@ -65,83 +73,113 @@ final class LockScreenOverlayController {
     }
 
     @objc private func screenUnlocked() {
-        guard isLocked || window?.isVisible == true else { return }
+        guard isLocked || windowsByScreenID.values.contains(where: { $0.window.isVisible }) else { return }
         isLocked = false
         stopLockStatePolling()
         hideOverlay()
     }
 
     private func showOverlay(reason: String) {
-        guard let screen = targetScreen(for: reason) else { return }
-        let targetFrame = frame(for: screen)
-        let overlayWindow: NSWindow
+        let screens = targetScreens()
+        guard !screens.isEmpty else { return }
 
-        if let window {
-            overlayWindow = window
-            overlayWindow.setFrame(targetFrame, display: true)
-        } else {
-            let newWindow = NSPanel(
-                contentRect: targetFrame,
-                styleMask: [.borderless, .nonactivatingPanel],
-                backing: .buffered,
-                defer: false
-            )
-            newWindow.isReleasedWhenClosed = false
-            newWindow.isOpaque = false
-            newWindow.backgroundColor = .clear
-            newWindow.level = reason == "preview"
-                ? .screenSaver
-                : NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
-            newWindow.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
-            newWindow.isMovable = false
-            newWindow.hasShadow = false
-            newWindow.ignoresMouseEvents = true
-            newWindow.canHide = false
-            newWindow.hidesOnDeactivate = false
-            newWindow.contentView = NSHostingView(rootView: MRRLockOverlayView(model: model))
-            window = newWindow
-            overlayWindow = newWindow
-            hasDelegatedWindow = false
+        let activeScreenIDs = Set(screens.map { screenID(for: $0) })
+        for (screenID, state) in windowsByScreenID where !activeScreenIDs.contains(screenID) {
+            state.window.orderOut(nil)
         }
 
-        overlayWindow.level = reason == "preview"
-            ? .screenSaver
-            : NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
+        for screen in screens {
+            let screenID = screenID(for: screen)
+            let targetFrame = frame(for: screen)
+            let state: OverlayWindowState
 
-        let shouldDelegateToSkyLight = reason != "preview"
-        if shouldDelegateToSkyLight, !hasDelegatedWindow {
-            do {
-                guard let skyLight = SkyLightOperator.shared else {
-                    throw OverlayError.skylightUnavailable
+            if let existingState = windowsByScreenID[screenID] {
+                state = existingState
+                state.window.setFrame(targetFrame, display: true)
+            } else {
+                let newWindow = makeOverlayWindow(frame: targetFrame, reason: reason)
+                state = OverlayWindowState(window: newWindow)
+                windowsByScreenID[screenID] = state
+            }
+
+            state.window.level = reason == "preview"
+                ? .screenSaver
+                : NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
+
+            let shouldDelegateToSkyLight = reason != "preview"
+            if shouldDelegateToSkyLight, !state.hasDelegatedWindow {
+                do {
+                    guard let skyLight = SkyLightOperator.shared else {
+                        throw OverlayError.skylightUnavailable
+                    }
+                    try skyLight.delegateWindow(state.window)
+                    state.hasDelegatedWindow = true
+                } catch {
+                    model.statusText = "Overlay fallback"
+                    model.errorText = error.localizedDescription
                 }
-                try skyLight.delegateWindow(overlayWindow)
-                hasDelegatedWindow = true
-            } catch {
-                model.statusText = "Overlay fallback"
-                model.errorText = error.localizedDescription
+            }
+
+            state.window.orderFrontRegardless()
+            DispatchQueue.main.async {
+                state.window.orderFrontRegardless()
             }
         }
 
-        overlayWindow.orderFrontRegardless()
-        DispatchQueue.main.async {
-            overlayWindow.orderFrontRegardless()
-        }
         NSLog("%@: overlay shown: %@", appSubsystem, reason)
     }
 
-    private func targetScreen(for reason: String) -> NSScreen? {
-        if reason == "preview" {
+    private func makeOverlayWindow(frame: NSRect, reason: String) -> NSWindow {
+        let newWindow = NSPanel(
+            contentRect: frame,
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        newWindow.isReleasedWhenClosed = false
+        newWindow.isOpaque = false
+        newWindow.backgroundColor = .clear
+        newWindow.level = reason == "preview"
+            ? .screenSaver
+            : NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
+        newWindow.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
+        newWindow.isMovable = false
+        newWindow.hasShadow = false
+        newWindow.ignoresMouseEvents = true
+        newWindow.canHide = false
+        newWindow.hidesOnDeactivate = false
+        newWindow.contentView = NSHostingView(rootView: MRRLockOverlayView(model: model))
+        return newWindow
+    }
+
+    private func targetScreens() -> [NSScreen] {
+        switch OverlaySettingsStore.displayMode {
+        case .all:
+            return NSScreen.screens
+        case .cursor:
             let mouseLocation = NSEvent.mouseLocation
             if let screen = NSScreen.screens.first(where: { $0.frame.contains(mouseLocation) }) {
-                return screen
+                return [screen]
             }
+            return NSScreen.main.map { [$0] } ?? []
+        case .main:
+            return NSScreen.main.map { [$0] } ?? []
         }
-        return NSScreen.main
     }
 
     private func hideOverlay() {
-        window?.orderOut(nil)
+        for state in windowsByScreenID.values {
+            state.window.orderOut(nil)
+        }
         NSLog("%@: overlay hidden", appSubsystem)
+    }
+
+    private func screenID(for screen: NSScreen) -> String {
+        let key = NSDeviceDescriptionKey("NSScreenNumber")
+        if let number = screen.deviceDescription[key] as? NSNumber {
+            return "display-\(number.uint32Value)"
+        }
+        return "frame-\(Int(screen.frame.minX))-\(Int(screen.frame.minY))-\(Int(screen.frame.width))-\(Int(screen.frame.height))"
     }
 
     private func frame(for screen: NSScreen) -> NSRect {

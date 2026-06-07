@@ -69,12 +69,32 @@ enum OverlaySizePreset: String, CaseIterable, Identifiable {
     }
 }
 
+enum OverlayDisplayMode: String, CaseIterable, Identifiable {
+    case main
+    case cursor
+    case all
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .main:
+            return "Main"
+        case .cursor:
+            return "Cursor"
+        case .all:
+            return "All"
+        }
+    }
+}
+
 enum OverlaySettingsStore {
     private static let defaults = UserDefaults(suiteName: "life.10kmrr.MRRLockScreenOverlay.Settings") ?? .standard
     private static let refreshIntervalKey = "refreshIntervalSeconds"
     private static let placementKey = "placement"
     private static let horizontalPlacementKey = "horizontalPlacement"
     private static let sizePresetKey = "sizePreset"
+    private static let displayModeKey = "displayMode"
 
     static var refreshIntervalSeconds: TimeInterval {
         let stored = defaults.integer(forKey: refreshIntervalKey)
@@ -132,6 +152,20 @@ enum OverlaySettingsStore {
         }
     }
 
+    static var displayMode: OverlayDisplayMode {
+        get {
+            guard let rawValue = defaults.string(forKey: displayModeKey),
+                  let displayMode = OverlayDisplayMode(rawValue: rawValue)
+            else {
+                return .main
+            }
+            return displayMode
+        }
+        set {
+            defaults.set(newValue.rawValue, forKey: displayModeKey)
+        }
+    }
+
     static var panelSize: NSSize {
         sizePreset.size
     }
@@ -141,5 +175,6 @@ enum OverlaySettingsStore {
         defaults.removeObject(forKey: placementKey)
         defaults.removeObject(forKey: horizontalPlacementKey)
         defaults.removeObject(forKey: sizePresetKey)
+        defaults.removeObject(forKey: displayModeKey)
     }
 }

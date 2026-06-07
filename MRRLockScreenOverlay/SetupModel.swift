@@ -14,6 +14,7 @@ final class SetupModel: ObservableObject {
     @Published var placement = OverlayPlacement.center
     @Published var horizontalPlacement = OverlayHorizontalPlacement.center
     @Published var sizePreset = OverlaySizePreset.medium
+    @Published var displayMode = OverlayDisplayMode.main
     @Published var lastRefreshText = "No cached MRR refresh yet"
     @Published var cacheDetailText = "No last-good MRR cache found"
 
@@ -50,6 +51,7 @@ final class SetupModel: ObservableObject {
         placement = OverlaySettingsStore.placement
         horizontalPlacement = OverlaySettingsStore.horizontalPlacement
         sizePreset = OverlaySettingsStore.sizePreset
+        displayMode = OverlaySettingsStore.displayMode
     }
 
     func saveSettings() {
@@ -57,6 +59,7 @@ final class SetupModel: ObservableObject {
         OverlaySettingsStore.placement = placement
         OverlaySettingsStore.horizontalPlacement = horizontalPlacement
         OverlaySettingsStore.sizePreset = sizePreset
+        OverlaySettingsStore.displayMode = displayMode
         testText = "Saved display settings. Restart installed overlay to apply them."
     }
 

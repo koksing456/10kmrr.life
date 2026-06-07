@@ -104,6 +104,13 @@ struct SetupWindowView: View {
                     .pickerStyle(.segmented)
                     .frame(width: 222)
                 }
+                Picker("Display", selection: $model.displayMode) {
+                    ForEach(OverlayDisplayMode.allCases) { displayMode in
+                        Text(displayMode.label).tag(displayMode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 236)
                 HStack(spacing: 10) {
                     Button("Save Settings") {
                         model.saveSettings()

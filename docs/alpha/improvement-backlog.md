@@ -20,7 +20,7 @@ These make the app feel more like something founders will keep installed.
 - Add a menu bar control for setup, preview, refresh now, diagnose, restart overlay, and uninstall guidance. Done: the running app exposes these actions from a menu bar item.
 - Add manual refresh and visible "last refreshed" confidence inside setup. Done: setup can refresh MRR, update the local last-good cache, and show cache freshness without printing private values.
 - Add size and horizontal position controls, not only vertical position. Done: setup exposes small/default/large panel sizes and left/center/right horizontal placement.
-- Add multi-display preference: main display, cursor display, or all displays.
+- Add multi-display preference: main display, cursor display, or all displays. Done: setup can target main display, cursor display, or every connected display.
 - Add visual style presets: compact pill, full MRR panel, goal panel, and ultra-minimal number-only style.
 - Add MRR goal or milestone display as a Pro-signal experiment.
 - Add stale/error state copy that is useful on the lock screen without becoming noisy.
