@@ -51,7 +51,7 @@ Safe to share:
 - App build date or commit.
 - Whether `./script/build_lock_overlay.sh --verify` passes.
 - Whether `./script/diagnose.sh` reports pass, warn, or fail for each check.
-- Non-sensitive error messages.
+- Non-sensitive app error summaries.
 - Whether the generated LaunchAgent exists.
 
 Do not share:
@@ -60,6 +60,7 @@ Do not share:
 - Full Stripe dashboard screenshots.
 - Customer names, emails, payments, or subscriptions.
 - Raw logs that may contain secrets or private revenue data.
+- Raw Stripe API responses.
 - Unsanitized screenshots with real MRR unless you explicitly intend to disclose it.
 
 ## Compatibility Caveat

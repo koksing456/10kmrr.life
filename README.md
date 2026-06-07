@@ -110,6 +110,8 @@ Alpha installs are gated. If you are approved for alpha testing, run:
 ./script/install_lock_overlay_agent.sh
 ```
 
+If no Stripe key is configured yet, the installer opens the setup window automatically.
+
 The script builds the app, installs it into:
 
 ```text

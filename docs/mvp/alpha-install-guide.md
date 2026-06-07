@@ -53,6 +53,8 @@ From the project folder:
 ./script/install_lock_overlay_agent.sh
 ```
 
+If no Stripe key is configured yet, the installer opens the setup window automatically.
+
 This builds the app, installs it into:
 
 ```text

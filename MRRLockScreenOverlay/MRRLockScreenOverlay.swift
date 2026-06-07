@@ -16,16 +16,19 @@ private enum OverlayError: LocalizedError {
     case missingAPIKey
     case invalidResponse
     case stripeHTTP(Int, String)
+    case stripePermissionHint
     case skylightUnavailable
 
     var errorDescription: String? {
         switch self {
         case .missingAPIKey:
-            return "Stripe API key is not configured in Keychain."
+            return "Stripe key is not configured. Run setup to add a restricted read-only key."
         case .invalidResponse:
             return "Stripe returned an invalid response."
-        case let .stripeHTTP(status, body):
-            return "Stripe returned HTTP \(status). \(body)"
+        case let .stripeHTTP(status, message):
+            return "Stripe returned HTTP \(status). \(message)"
+        case .stripePermissionHint:
+            return "Stripe key cannot read the required Billing resources. Check restricted key permissions."
         case .skylightUnavailable:
             return "Private SkyLight APIs are unavailable on this macOS build."
         }
@@ -914,8 +917,10 @@ private final class StripeMRRClient {
             throw OverlayError.invalidResponse
         }
         guard (200..<300).contains(http.statusCode) else {
-            let body = String(data: data, encoding: .utf8) ?? ""
-            throw OverlayError.stripeHTTP(http.statusCode, body)
+            if http.statusCode == 401 || http.statusCode == 403 {
+                throw OverlayError.stripePermissionHint
+            }
+            throw OverlayError.stripeHTTP(http.statusCode, Self.safeStripeErrorMessage(from: data))
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -928,6 +933,30 @@ private final class StripeMRRClient {
         if hasMore, let lastID = page.last?["id"] as? String {
             try await fetch(status: status, startingAfter: lastID, into: &subscriptions)
         }
+    }
+
+    private static func safeStripeErrorMessage(from data: Data) -> String {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let error = json["error"] as? [String: Any]
+        else {
+            return "No public error message was available."
+        }
+
+        let type = error["type"] as? String
+        let code = error["code"] as? String
+        let message = (error["message"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let publicParts = [type, code, message]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+        guard !publicParts.isEmpty else {
+            return "No public error message was available."
+        }
+
+        let joined = publicParts.joined(separator: ": ")
+        if joined.count > 220 {
+            return String(joined.prefix(217)) + "..."
+        }
+        return joined
     }
 }
 

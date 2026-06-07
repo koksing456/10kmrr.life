@@ -44,13 +44,30 @@ launchctl bootout "gui/$(id -u)" "$TARGET_PLIST" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$TARGET_PLIST"
 launchctl kickstart -k "gui/$(id -u)/life.10kmrr.mrr-lock-overlay"
 sleep 2
-launchctl print "gui/$(id -u)/life.10kmrr.mrr-lock-overlay" | /usr/bin/sed -n '1,80p'
+launchctl_output="$(/usr/bin/mktemp -t 10kmrr-install-launchctl.XXXXXX)"
+if launchctl print "gui/$(id -u)/life.10kmrr.mrr-lock-overlay" >"$launchctl_output" 2>/dev/null; then
+  state="$(/usr/bin/awk -F'= ' '/state =/ { print $2; exit }' "$launchctl_output")"
+  pid="$(/usr/bin/awk -F'= ' '/pid =/ { print $2; exit }' "$launchctl_output")"
+  printf 'LaunchAgent loaded'
+  if [[ -n "${state:-}" ]]; then
+    printf ' (state: %s' "$state"
+    if [[ -n "${pid:-}" ]]; then
+      printf ', pid: %s' "$pid"
+    fi
+    printf ')'
+  fi
+  printf '.\n'
+else
+  printf 'Warning: LaunchAgent did not report as loaded. Run ./script/diagnose.sh.\n' >&2
+fi
+rm -f "$launchctl_output"
 
 if ! /usr/bin/security find-generic-password \
   -s "life.10kmrr.StripeMRRScreenSaver" \
   -a "stripe_api_key" \
   >/dev/null 2>&1; then
-  printf 'Warning: Stripe key is not configured. Run ./script/configure_stripe_key.sh before expecting live MRR.\n' >&2
+  printf 'Warning: Stripe key is not configured. Opening setup window.\n' >&2
+  /usr/bin/open -n "$TARGET_APP" --args --setup
 fi
 
 printf 'Installed overlay app: %s\n' "$TARGET_APP"

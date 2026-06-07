@@ -110,7 +110,7 @@ if /usr/bin/security find-generic-password \
   >/dev/null 2>&1; then
   pass "Stripe key exists in Keychain. Key value was not printed."
 else
-  warn "Stripe key missing. Run ./script/configure_stripe_key.sh"
+  warn "Stripe key missing. Run ./script/build_lock_overlay.sh --setup"
 fi
 
 if /usr/bin/defaults read "$CACHE_DOMAIN" lastGoodMRR >/dev/null 2>&1; then
@@ -126,7 +126,7 @@ else
 fi
 
 printf '\nSafe next steps:\n'
-printf '  Configure key: ./script/configure_stripe_key.sh\n'
+printf '  Configure key: ./script/build_lock_overlay.sh --setup\n'
 printf '  Build verify:  ./script/build_lock_overlay.sh --verify\n'
 printf '  Preview:       ./script/build_lock_overlay.sh --preview-private-glass\n'
 printf '  Install:       ./script/install_lock_overlay_agent.sh\n'
