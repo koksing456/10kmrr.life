@@ -70,7 +70,7 @@ validate_safe_text() {
   fi
 
   if printf '%s\n' "$value" | /usr/bin/grep -Eq '[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+'; then
-    printf 'Unsafe %s: contains email-like contact data.\n' "$label" >&2
+    printf 'Unsafe %s: contains email-like contact data. Keep contact mapping outside this repo.\n' "$label" >&2
     exit 1
   fi
 }
@@ -191,6 +191,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_004 --notes "key rk_${live_env}_1234567890abcdef" >/dev/null 2>&1; then
     printf 'record_alpha_pro_followup self-test failed: secret-like token was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --tester-id 'founder@example.com' >/dev/null 2>&1; then
+    printf 'record_alpha_pro_followup self-test failed: email-like tester id was accepted.\n' >&2
     exit 1
   fi
 
