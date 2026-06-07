@@ -122,7 +122,7 @@ struct SetupWindowView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    .frame(width: 332)
+                    .frame(width: 430)
                 }
                 HStack(spacing: 10) {
                     TextField("Goal currency", text: $model.goalCurrencyInput)

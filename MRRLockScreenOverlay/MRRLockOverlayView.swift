@@ -22,6 +22,8 @@ struct MRRLockOverlayView: View {
             return 12
         case .number:
             return 6
+        case .focus:
+            return 10
         }
     }
 
@@ -49,24 +51,59 @@ struct MRRLockOverlayView: View {
         }
     }
 
+    @ViewBuilder
     private var panelContent: some View {
-        VStack(alignment: .leading, spacing: contentSpacing) {
-            if visualStyle != .number {
-                headerRow
+        if visualStyle == .focus {
+            focusContent
+        } else {
+            VStack(alignment: .leading, spacing: contentSpacing) {
+                if visualStyle != .number {
+                    headerRow
+                }
+
+                valueText
+
+                switch visualStyle {
+                case .goal:
+                    goalContent
+                case .full:
+                    footerRow
+                case .compact:
+                    compactFooter
+                case .number, .focus:
+                    EmptyView()
+                }
+            }
+            .padding(.horizontal, contentHorizontalPadding)
+            .padding(.vertical, contentVerticalPadding)
+            .frame(width: panelSize.width, height: panelSize.height)
+            .background(Color.white.opacity(usePrivateGlassComponent ? 0.00 : 0.035))
+        }
+    }
+
+    private var focusContent: some View {
+        VStack(alignment: .center, spacing: 11) {
+            HStack(spacing: 8) {
+                statusDot
+                Text(headerText)
+                    .font(.system(size: labelFontSize, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.74))
+                    .lineLimit(1)
             }
 
-            valueText
+            Text(model.primaryValue)
+                .font(.system(size: valueFontSize, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white.opacity(0.98))
+                .lineLimit(1)
+                .minimumScaleFactor(0.46)
+                .monospacedDigit()
+                .shadow(color: .black.opacity(0.32), radius: 20, x: 0, y: 12)
 
-            switch visualStyle {
-            case .goal:
-                goalContent
-            case .full:
-                footerRow
-            case .compact:
-                compactFooter
-            case .number:
-                EmptyView()
-            }
+            Text(focusCaptionText)
+                .font(.system(size: footerFontSize, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white.opacity(0.64))
+                .lineLimit(1)
+                .monospacedDigit()
         }
         .padding(.horizontal, contentHorizontalPadding)
         .padding(.vertical, contentVerticalPadding)
@@ -231,6 +268,7 @@ struct MRRLockOverlayView: View {
 
     private var labelFontSize: CGFloat {
         if visualStyle == .number { return 0 }
+        if visualStyle == .focus { return 14 }
         switch sizePreset {
         case .small:
             return 13
@@ -242,6 +280,16 @@ struct MRRLockOverlayView: View {
     }
 
     private var valueFontSize: CGFloat {
+        if visualStyle == .focus {
+            switch sizePreset {
+            case .small:
+                return 46
+            case .medium:
+                return 55
+            case .large:
+                return 64
+            }
+        }
         if visualStyle == .number {
             switch sizePreset {
             case .small:
@@ -273,7 +321,7 @@ struct MRRLockOverlayView: View {
     }
 
     private var footerFontSize: CGFloat {
-        if visualStyle == .compact || visualStyle == .number {
+        if visualStyle == .compact || visualStyle == .number || visualStyle == .focus {
             return 11
         }
         switch sizePreset {
@@ -300,6 +348,8 @@ struct MRRLockOverlayView: View {
             return 22
         case .number:
             return 20
+        case .focus:
+            return 24
         }
     }
 
@@ -311,6 +361,8 @@ struct MRRLockOverlayView: View {
             return 18
         case .number:
             return 16
+        case .focus:
+            return 20
         }
     }
 
@@ -364,5 +416,9 @@ struct MRRLockOverlayView: View {
         if model.errorText != nil { return model.statusText }
         if model.isRefreshing { return "Refreshing" }
         return nil
+    }
+
+    private var focusCaptionText: String {
+        footerStatusText ?? model.timestampText
     }
 }

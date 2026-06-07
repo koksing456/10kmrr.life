@@ -93,6 +93,7 @@ enum OverlayVisualStyle: String, CaseIterable, Identifiable {
     case compact
     case number
     case goal
+    case focus
 
     var id: String { rawValue }
 
@@ -106,6 +107,8 @@ enum OverlayVisualStyle: String, CaseIterable, Identifiable {
             return "Number"
         case .goal:
             return "Goal"
+        case .focus:
+            return "Focus"
         }
     }
 }
@@ -235,7 +238,7 @@ enum OverlaySettingsStore {
     static var panelSize: NSSize {
         let baseSize = sizePreset.size
         switch visualStyle {
-        case .full, .goal:
+        case .full, .goal, .focus:
             return baseSize
         case .compact:
             return NSSize(width: max(330, baseSize.width - 58), height: max(118, baseSize.height - 44))
