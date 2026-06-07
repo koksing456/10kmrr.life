@@ -17,6 +17,12 @@ struct SetupWindowView: View {
                     .foregroundStyle(.tertiary)
             }
 
+            SetupProgressView(
+                isConfigured: model.isConfigured,
+                hasCache: !model.lastRefreshText.hasPrefix("No cached"),
+                openMockPreview: openMockPreview
+            )
+
             VStack(alignment: .leading, spacing: 9) {
                 HStack(spacing: 8) {
                     Circle()
@@ -32,7 +38,7 @@ struct SetupWindowView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Stripe restricted key")
+                Text("Restricted Stripe key")
                     .font(.system(size: 13, weight: .semibold))
                 SecureField("rk_live_...", text: $model.keyInput)
                     .textFieldStyle(.roundedBorder)
@@ -61,7 +67,7 @@ struct SetupWindowView: View {
             }
 
             VStack(alignment: .leading, spacing: 7) {
-                Text("Refresh status")
+                Text("MRR refresh")
                     .font(.system(size: 13, weight: .semibold))
                 Text(model.lastRefreshText)
                     .font(.system(size: 13, weight: .medium))

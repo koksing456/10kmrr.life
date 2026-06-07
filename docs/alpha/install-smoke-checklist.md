@@ -49,12 +49,14 @@ Run:
 
 In the setup window:
 
+- [ ] Use Preview Mock before adding a real Stripe key.
 - [ ] Save restricted Stripe key.
 - [ ] Test Stripe access.
 - [ ] Save refresh and position settings.
 
 Record:
 
+- Mock preview from setup: pass / warn / fail
 - Key setup result: pass / warn / fail
 - Stripe test result: pass / warn / fail
 - Do not record the key or exact MRR.
