@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+SUPPORT_REPORT_PATH="$ROOT_DIR/build/support/10kmrr-support-report.txt"
 APPLY=false
 FULL_RESET=false
 RECORD=false
@@ -123,6 +124,46 @@ run_checked_output_step() {
   return 0
 }
 
+support_report_is_safe() {
+  local unsafe_pattern
+
+  [[ -s "$SUPPORT_REPORT_PATH" ]] || {
+    printf 'Support report was not written: %s\n' "$SUPPORT_REPORT_PATH" >&2
+    return 1
+  }
+
+  unsafe_pattern='([rs]k_(live|test)_[A-Za-z0-9_]+|whsec_[A-Za-z0-9_]+|\b(cus|sub|si|seti|price|prod|in|pi|pm|cs|ch)_[A-Za-z0-9_]+\b|\b(client_secret|hosted_invoice_url|invoice_pdf|payment_method|customer_email)\b|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}|[A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|\$[0-9][0-9,]*(\.[0-9]{2})?|\b(MRR|ARR|revenue|amount)\s*[:=]?\s*[0-9][0-9,]*(\.[0-9]{2})?)'
+  if /usr/bin/grep -Eiq "$unsafe_pattern" "$SUPPORT_REPORT_PATH"; then
+    printf 'Support report still contains sensitive-looking output: %s\n' "$SUPPORT_REPORT_PATH" >&2
+    return 1
+  fi
+
+  if /usr/bin/grep -F "$HOME" "$SUPPORT_REPORT_PATH" >/dev/null ||
+     /usr/bin/grep -F "$ROOT_DIR" "$SUPPORT_REPORT_PATH" >/dev/null; then
+    printf 'Support report still contains local HOME or repo path: %s\n' "$SUPPORT_REPORT_PATH" >&2
+    return 1
+  fi
+}
+
+run_support_report_safety_step() {
+  if ! "$ROOT_DIR/script/support_report.sh"; then
+    SUPPORT_REPORT_SAFE="fail"
+    RESULT="fail"
+    BLOCKER="${BLOCKER:-support report generation failed}"
+    return 1
+  fi
+
+  if support_report_is_safe; then
+    SUPPORT_REPORT_SAFE="pass"
+    return 0
+  fi
+
+  SUPPORT_REPORT_SAFE="fail"
+  RESULT="fail"
+  BLOCKER="${BLOCKER:-support report safety scan failed}"
+  return 1
+}
+
 print_plan() {
   section "Local smoke plan"
   run_or_preview "$ROOT_DIR/script/build_lock_overlay.sh" --verify
@@ -163,7 +204,7 @@ run_smoke() {
   run_checked_output_step REPAIR_PRESERVES_DATA "$ROOT_DIR/script/repair_lock_overlay_agent.sh" || true
 
   section "Support report safety"
-  run_checked_output_step SUPPORT_REPORT_SAFE "$ROOT_DIR/script/support_report.sh" || true
+  run_support_report_safety_step || true
 
   section "Uninstall"
   if [[ "$FULL_RESET" == "true" ]]; then
@@ -262,6 +303,24 @@ self_test() {
   [[ "$RESULT" == "fail" ]]
   [[ "$BLOCKER" == 'FAIL synthetic command failure' ]]
   /bin/rm -f /tmp/10kmrr-run-smoke-fail.$$
+
+  local temp_report_path original_report_path
+  original_report_path="$SUPPORT_REPORT_PATH"
+  temp_report_path="$(/usr/bin/mktemp -t 10kmrr-run-smoke-report.XXXXXX)"
+  SUPPORT_REPORT_PATH="$temp_report_path"
+
+  printf 'safe report\n' >"$SUPPORT_REPORT_PATH"
+  support_report_is_safe
+
+  printf 'customer cus_1234567890abcdef\n' >"$SUPPORT_REPORT_PATH"
+  if support_report_is_safe >/tmp/10kmrr-run-smoke-report-scan.$$ 2>&1; then
+    printf 'run_local_smoke self-test failed: unsafe support report was accepted.\n' >&2
+    /bin/rm -f "$temp_report_path" /tmp/10kmrr-run-smoke-report-scan.$$
+    exit 1
+  fi
+  /usr/bin/grep -q 'sensitive-looking output' /tmp/10kmrr-run-smoke-report-scan.$$
+  /bin/rm -f "$temp_report_path" /tmp/10kmrr-run-smoke-report-scan.$$
+  SUPPORT_REPORT_PATH="$original_report_path"
 
   printf 'Local smoke runner self-test passed.\n'
 }

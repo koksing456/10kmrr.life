@@ -14,7 +14,7 @@ Do not publish a public installer until signing, notarization, support, rollback
 - `./script/check.sh` passes on a clean checkout.
 - `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
 - The local smoke result is recorded with `./script/run_local_smoke.sh --apply --full-reset --record`.
-- `./script/support_report.sh` produces a safe report without raw secrets or exact MRR.
+- `./script/support_report.sh` produces a safe report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
 
 Summarize evidence readiness:
 
@@ -110,7 +110,7 @@ For each private beta package:
 - Lock screen and confirm overlay visibility.
 - Run `./script/diagnose.sh`.
 - Run `./script/repair_lock_overlay_agent.sh` and confirm Keychain, cache, and display settings are preserved.
-- Run `./script/support_report.sh`.
+- Run `./script/support_report.sh` and confirm the generated report passes the local smoke safety scan.
 - Uninstall with `./script/uninstall_lock_overlay_agent.sh --all`.
 
 For the source-based local smoke gate, run and record only on a clean smoke machine:

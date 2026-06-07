@@ -124,6 +124,21 @@ Record only pass/warn/fail lines and non-sensitive summaries:
 - Cache presence:
 - Settings:
 
+## Support Report Safety
+
+Run:
+
+```sh
+./script/support_report.sh
+```
+
+Record:
+
+- Report generated: yes / no
+- Report safety scan: pass / warn / fail
+
+The local smoke runner treats this as a safety gate: the generated report must not contain unredacted Stripe keys, Stripe object IDs, raw Stripe field names, email-like contact data, obvious money amounts, or local HOME/repo paths.
+
 ## Lock Screen Check
 
 Lock the Mac and verify:

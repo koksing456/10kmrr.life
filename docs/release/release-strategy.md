@@ -51,7 +51,7 @@ Use strict mode before any private package dry run:
 - `./script/test_mrr_calculator.sh` passes.
 - `./script/install_lock_overlay_agent.sh` works from a clean checkout.
 - `./script/diagnose.sh` gives safe, actionable output.
-- `./script/support_report.sh` gives a sanitized report without raw secrets or exact MRR.
+- `./script/support_report.sh` gives a sanitized report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
 - No Stripe keys, real MRR screenshots, local-only paths, or generated artifacts are committed.
 - README and SECURITY docs clearly mention private macOS API risk.
 - Release notes state whether the build is Apple Silicon-only or universal.
