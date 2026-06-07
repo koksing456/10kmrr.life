@@ -44,6 +44,23 @@ Use one of these exact stage values:
 
 Only advance a tester when the previous stage is confirmed by their non-sensitive report or a safe diagnostic summary.
 
+Record install attempts with the safe append script:
+
+```sh
+./script/record_alpha_install.sh \
+  --tester-id tester_001 \
+  --stage installed \
+  --build-verify pass \
+  --configured-key yes \
+  --previewed yes \
+  --installed yes \
+  --saw-mrr yes \
+  --diagnose-summary "PASS summary only" \
+  --next-action "day 7 follow-up"
+```
+
+The recorder rejects Stripe-key-like strings and obvious money amounts. Do not paste raw logs, exact MRR, raw Stripe responses, customer/payment data, or unsanitized screenshots into tracker fields.
+
 ## 7-Day Cadence
 
 Run this cadence for every approved tester:

@@ -57,8 +57,22 @@ Suggested workflow:
 1. Send docs/alpha/alpha-invite-template.md to approved testers.
 2. Ask them to run ./script/start_alpha.sh.
 3. Ask for ./script/support_report.sh only if something fails.
-4. Record only pass/warn/fail summaries and non-sensitive blockers.
-5. Run the Day 7 follow-up from docs/alpha/seven-day-follow-up-template.md.
+4. Record install attempts with ./script/record_alpha_install.sh.
+5. Record only pass/warn/fail summaries and non-sensitive blockers.
+6. Run the Day 7 follow-up from docs/alpha/seven-day-follow-up-template.md.
+
+Example install evidence row:
+
+./script/record_alpha_install.sh \\
+  --tester-id tester_001 \\
+  --stage installed \\
+  --build-verify pass \\
+  --configured-key yes \\
+  --previewed yes \\
+  --installed yes \\
+  --saw-mrr yes \\
+  --diagnose-summary "PASS summary only" \\
+  --next-action "day 7 follow-up"
 EOF
 }
 
