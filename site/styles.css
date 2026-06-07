@@ -324,6 +324,37 @@ h3 {
   background: #101820;
 }
 
+.story-section {
+  background: #0d151c;
+}
+
+.story-copy p {
+  max-width: 700px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.story-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.story-points span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(143, 227, 193, 0.26);
+  border-radius: 999px;
+  background: rgba(143, 227, 193, 0.08);
+  color: rgba(200, 246, 218, 0.88);
+  font-size: 13px;
+  font-weight: 720;
+}
+
 .security-band {
   background: #edf2eb;
   color: #0b1713;
