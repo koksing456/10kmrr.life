@@ -26,6 +26,12 @@ Never ask for:
 
 ## First Triage
 
+If the setup window opens, ask the tester to use the Install & support card:
+
+- Click `Run Diagnose`.
+- Share only the PASS/WARN summary, not screenshots with real MRR.
+- Use `Copy Support Report` if a sanitized support report is needed.
+
 Ask the tester to run:
 
 ```sh

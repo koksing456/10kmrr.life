@@ -56,6 +56,9 @@ section "Stripe client tests"
 section "Overlay settings tests"
 ./script/test_overlay_settings.sh
 
+section "Setup local support tests"
+./script/test_setup_local_support.sh
+
 section "Support report redaction"
 ./script/support_report.sh --self-test
 

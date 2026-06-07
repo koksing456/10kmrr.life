@@ -202,6 +202,8 @@ The preview uses the selected display mode from setup. It does not unload the in
 
 The setup window is organized as a first-run flow: preview mock MRR, save a restricted Stripe key in Keychain, refresh MRR, then use advanced settings only if you want to tune placement, size, display mode, visual style, refresh interval, or an optional MRR goal.
 
+Setup also includes an Install & support card. When the source checkout is detected, it can run `./script/diagnose.sh` from the setup window and show a safe PASS/WARN summary. It can also copy install and sanitized support-report commands and open the local logs folder.
+
 Visual styles include hero panel, full panel, compact panel, number-only, goal panel, and focus panel. Hero is the default first-run style. Goal settings are local-only and are used only to render progress on the Lock Screen.
 
 The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.

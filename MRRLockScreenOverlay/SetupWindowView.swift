@@ -13,6 +13,7 @@ struct SetupWindowView: View {
                 firstRunCard
                 keyCard
                 cacheCard
+                installSupportCard
                 advancedSettings
                 statusMessage
                 footer
@@ -104,6 +105,52 @@ struct SetupWindowView: View {
         }
     }
 
+    private var installSupportCard: some View {
+        SetupCard {
+            VStack(alignment: .leading, spacing: 13) {
+                HStack(alignment: .firstTextBaseline) {
+                    SetupSectionTitle("Install & support")
+                    Spacer()
+                    Text(model.localSupport.sourceRootURL == nil ? "Manual" : "Source ready")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(model.localSupport.sourceRootURL == nil ? .secondary : Color.green)
+                }
+
+                Text(model.localSupport.sourceStatusText)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack(spacing: 10) {
+                    Button(model.isRunningDiagnostic ? "Running..." : "Run Diagnose") {
+                        Task {
+                            await model.runDiagnostic()
+                        }
+                    }
+                    .disabled(!model.canRunDiagnostic)
+
+                    Button("Copy Install") {
+                        model.copyInstallCommand()
+                    }
+
+                    Button("Copy Support Report") {
+                        model.copySupportReportCommand()
+                    }
+
+                    Button("Open Logs") {
+                        model.openLogsFolder()
+                    }
+                }
+
+                Text(model.supportText)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
     @ViewBuilder
     private var statusMessage: some View {
         if !model.testText.isEmpty {
@@ -121,7 +168,7 @@ struct SetupWindowView: View {
             Divider()
 
             HStack {
-                Text("After setup, use ./script/start_alpha.sh or ./script/install_lock_overlay_agent.sh to install.")
+                Text("After setup, copy the install command here or run ./script/start_alpha.sh from the checkout.")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()

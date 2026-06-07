@@ -3,6 +3,7 @@ import SwiftUI
 
 @MainActor
 final class SetupModel: ObservableObject {
+    let localSupport = SetupLocalSupport()
     let refreshIntervalOptions = [1, 5, 10, 15, 30]
 
     @Published var keyInput = ""
@@ -20,6 +21,8 @@ final class SetupModel: ObservableObject {
     @Published var goalAmountInput = ""
     @Published var lastRefreshText = "No cached MRR refresh yet"
     @Published var cacheDetailText = "No last-good MRR cache found"
+    @Published var supportText = "Run Diagnose from setup after building or installing. It shows safe PASS/WARN lines without printing MRR values."
+    @Published var isRunningDiagnostic = false
 
     init() {
         refreshStatus()

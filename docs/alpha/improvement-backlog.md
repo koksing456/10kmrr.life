@@ -26,6 +26,7 @@ These make the app feel more like something founders will keep installed.
 - Add stale/error state copy that is useful on the lock screen without becoming noisy. Done: overlay shows setup/key/refresh/cached states without raw Stripe details.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key. Done: setup and `./script/build_lock_overlay.sh --preview-mock` can launch a mock overlay before any Stripe key is configured.
 - Make alpha onboarding feel like a guided first-run flow instead of a dense settings form. Done: setup now prioritizes preview, Keychain, and refresh, with advanced overlay settings behind disclosure.
+- Bring safe diagnostics and support actions into setup so alpha testers do not have to remember every Terminal command. Done: setup can run diagnose from a detected source checkout, copy install/support commands, and open the local logs folder.
 - Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, installs, and diagnoses without asking for secrets in Terminal. Done: see `./script/start_alpha.sh`.
 
 ## P1: Distribution And Trust
@@ -51,6 +52,7 @@ These reduce maintenance risk.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
 - Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/check.sh`.
 - Add focused settings persistence tests for defaults, bounds, fallbacks, goal settings, and panel sizes. Done: `./script/test_overlay_settings.sh` uses an isolated UserDefaults suite.
+- Add focused tests for setup support command generation and diagnostic summary redaction. Done: `./script/test_setup_local_support.sh` covers checkout detection, shell quoting, command generation, and secret/MRR redaction.
 - Add CI checks for shell syntax, app build, public repo scan, MRR calculator tests, and Stripe client tests. Done: `.github/workflows/public-repo-check.yml` runs `./script/check.sh` on macOS.
 - Add a single local readiness command that runs public verification and signing preflight. Done: `./script/check.sh`.
 - Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
