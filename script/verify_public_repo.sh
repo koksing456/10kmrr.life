@@ -95,6 +95,9 @@ section "Alpha start flow"
 section "Alpha tracker generation"
 ./script/prepare_alpha_tracker.sh --self-test
 
+section "Alpha invite generator"
+./script/generate_alpha_invite.sh --self-test
+
 section "Alpha tester approval wrapper"
 ./script/approve_alpha_tester.sh --self-test
 

@@ -62,6 +62,12 @@ Approve testers and print their safe invite path with:
   --display-setup built_in
 ```
 
+Generate the full safe invite message with:
+
+```sh
+./script/generate_alpha_invite.sh --tester-id tester_001
+```
+
 Use `./script/record_alpha_user.sh` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.
 
 Record install attempts with the safe append script when the setup is partial, warns, or fails:

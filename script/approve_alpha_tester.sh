@@ -15,7 +15,7 @@ usage() {
 Usage: $0 --tester-id ID [options]
 
 Records an approved alpha tester in the private ignored tracker and prints the
-safe invite command for that tester. Keep identity/contact mapping outside this
+safe invite generator command for that tester. Keep identity/contact mapping outside this
 repo.
 
 Options:
@@ -67,6 +67,10 @@ print_invite() {
 Send this setup path to the approved tester:
 
 ./script/start_alpha.sh --tester-id $(shell_quote "$TESTER_ID")
+
+Or generate the full safe invite message:
+
+./script/generate_alpha_invite.sh --tester-id $(shell_quote "$TESTER_ID")
 
 Before setup, remind them:
 - Read SECURITY.md.

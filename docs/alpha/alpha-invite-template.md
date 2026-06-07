@@ -2,6 +2,12 @@
 
 Use this for approved gated alpha testers. Keep it short and do not ask for sensitive data.
 
+Generate the current invite for an approved tester with:
+
+```sh
+./script/generate_alpha_invite.sh --tester-id tester_001
+```
+
 ## Message
 
 Thanks for trying 10kmrr.life.
@@ -20,7 +26,7 @@ Setup path:
 ./script/start_alpha.sh --tester-id tester_001
 ```
 
-Replace `tester_001` with the private stable tester id assigned outside this public repo. This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
+Replace `tester_001` with the private stable tester id assigned outside this public repo, or use the generated invite command above. This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
 
 If something fails:
 

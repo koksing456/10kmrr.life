@@ -68,6 +68,7 @@ These reduce maintenance risk.
 These make learning from testers less manual.
 
 - Turn the alpha user tracker into a small private spreadsheet or lightweight CRM workflow. Done: see [private-alpha-workflow.md](./private-alpha-workflow.md) and CSV templates under [templates](./templates).
+- Add a safe invite generator after approving a tester. Done: `./script/generate_alpha_invite.sh` prints a no-secret setup message for one stable tester id.
 - Add a 7-day follow-up cadence with retained/not-retained tags. Done: private alpha workflow defines Day 0/1/3/7 cadence and retention tagging.
 - Track install funnel stages: requested, approved, built, configured key, previewed, installed, saw MRR, retained day 7. Done: workflow defines exact stage values and `install-funnel.csv`.
 - Track Lock Screen compatibility evidence separately from install friction. Done: `compatibility.csv` and `./script/record_alpha_compatibility.sh` record macOS, CPU, display setup, private glass, Lock Screen visibility, unlock behavior, LaunchAgent stability, and pass/warn/fail result.

@@ -71,7 +71,7 @@ Do not collect:
 Suggested workflow:
 
 1. Approve testers and print their safe invite path with ./script/approve_alpha_tester.sh.
-2. Send docs/alpha/alpha-invite-template.md to approved testers.
+2. Generate the approved tester invite with ./script/generate_alpha_invite.sh.
 3. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
 4. Ask for ./script/support_report.sh only if something fails.
 5. Record install attempts with ./script/record_alpha_install.sh.
@@ -92,6 +92,8 @@ Example approved tester and install evidence rows:
   --macos-version 15.5 \\
   --cpu apple_silicon \\
   --display-setup built_in
+
+./script/generate_alpha_invite.sh --tester-id tester_001
 
 ./script/record_alpha_install.sh \\
   --tester-id tester_001 \\
@@ -209,6 +211,7 @@ validate_tracker_readme() {
   test -s "$output_dir/README.md"
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
+  /usr/bin/grep -q './script/generate_alpha_invite.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"
   /usr/bin/grep -q './script/record_alpha_day7.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/alpha_weekly_summary.sh' "$output_dir/README.md"
