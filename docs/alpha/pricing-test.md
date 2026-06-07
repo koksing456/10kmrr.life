@@ -2,6 +2,8 @@
 
 This file is for alpha learning only. Do not publish pricing as final until retention and support load are understood.
 
+See [free-pro-boundary.md](./free-pro-boundary.md) for the product boundary this pricing test must preserve.
+
 ## Free Core
 
 Free should stay useful:
@@ -21,6 +23,7 @@ Strong Pro candidates:
 - Better setup UI.
 - Multi-account or multi-currency display preferences.
 - Priority support for macOS compatibility breaks.
+- MRR goal or milestone display.
 
 Weak Pro candidates:
 
@@ -42,6 +45,7 @@ Ask alpha users:
 - Would you pay for a signed installer and auto-update?
 - Would you pay for private macOS compatibility maintenance?
 - Which visual styles would make this feel worth keeping?
+- Would an MRR goal or milestone display be worth paying for?
 - What would make you uninstall it after a week?
 
 Do not collect Stripe keys, raw revenue logs, customer data, payment data, or unsanitized screenshots while testing willingness to pay.

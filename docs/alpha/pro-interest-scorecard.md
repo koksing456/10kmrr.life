@@ -4,6 +4,8 @@ Use this to evaluate whether Freemium + Pro has a real upgrade path.
 
 Do not collect Stripe keys, customer/payment data, or unsanitized revenue screenshots.
 
+Score only convenience and maintenance features that fit [free-pro-boundary.md](./free-pro-boundary.md).
+
 | Tester | Custom design | Position/size controls | Refresh/cache controls | Multi-currency polish | MRR goal/delta/milestone | Signed/notarized installer | Compatibility updates | Preferred pricing | Overall Pro signal |
 |---|---:|---:|---:|---:|---:|---:|---:|---|---|
 | Example Founder | 0-3 | 0-3 | 0-3 | 0-3 | 0-3 | 0-3 | 0-3 | one-time/monthly/annual/lifetime | none/low/medium/high |

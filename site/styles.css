@@ -294,12 +294,14 @@ h2 {
   font-weight: 760;
 }
 
-.feature-grid {
+.feature-grid,
+.boundary-grid {
   display: grid;
   gap: 16px;
 }
 
-.feature-grid article {
+.feature-grid article,
+.boundary-grid article {
   border-top: 1px solid var(--line);
   padding-top: 19px;
 }
@@ -310,11 +312,16 @@ h3 {
 }
 
 .feature-grid p,
+.boundary-grid p,
 .alpha-form p,
 .security-list span {
   color: var(--muted);
   font-size: 16px;
   line-height: 1.6;
+}
+
+.boundary-section {
+  background: #101820;
 }
 
 .security-band {
