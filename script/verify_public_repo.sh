@@ -89,6 +89,9 @@ section "Alpha start flow"
 section "Alpha tracker generation"
 ./script/prepare_alpha_tracker.sh --self-test
 
+section "Alpha status summary"
+./script/alpha_status.sh --self-test
+
 section "Markdown local links"
 ./script/verify_markdown_links.sh
 

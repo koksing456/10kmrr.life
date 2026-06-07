@@ -56,6 +56,14 @@ Run this before pushing release-readiness changes:
 
 The gate checks shell syntax, focused MRR calculator/cache/settings tests, Stripe client tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, required public docs, and signing readiness preflight.
 
+For a quick non-build status summary during alpha operations:
+
+```sh
+./script/alpha_status.sh
+```
+
+This summarizes source state, private tracker presence, signing readiness, latest GitHub Actions status when available, and safe next actions. It is not a replacement for `./script/check.sh` before release or repo changes.
+
 It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
 
 ```sh

@@ -124,6 +124,14 @@ Before pushing public-alpha repo changes:
 
 The public readiness gate checks shell syntax, focused MRR tests, MRR cache tests, Stripe request tests, overlay settings tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, the universal macOS build, and signing/notarization preflight.
 
+For a lightweight status summary that does not run the full build gate:
+
+```sh
+./script/alpha_status.sh
+```
+
+This summarizes the current git state, private alpha tracker presence, signing readiness, latest GitHub Actions status when available, and the next safe command to run. It does not print Stripe keys or cached MRR values.
+
 For the public repo sub-gate without signing preflight:
 
 ```sh
