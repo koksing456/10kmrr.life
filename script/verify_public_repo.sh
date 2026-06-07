@@ -150,7 +150,11 @@ require_site_phrase 'No alpha server stores your Stripe key or MRR'
 require_site_phrase 'Restricted key'
 require_site_phrase 'not a full analytics dashboard'
 require_site_phrase 'No hosted Stripe key storage'
-require_site_phrase 'Do not send Stripe keys, exact MRR, customer data, or screenshots with real revenue'
+require_site_phrase 'Do not send Stripe keys, exact MRR, email/contact data'
+require_site_phrase 'email/contact data'
+require_site_phrase 'payment data'
+require_site_phrase 'raw Stripe responses'
+require_site_phrase 'raw logs'
 
 if rg -ni '(download|public installer|buy now|start trial)' site/index.html; then
   printf 'Static landing page appears to imply public distribution or paid conversion before alpha readiness.\n' >&2
