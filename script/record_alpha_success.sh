@@ -126,7 +126,7 @@ append_success_records() {
   record_compatibility "$TRACKER_DIR"
 
   printf '\nRecorded successful alpha evidence packet for tester %s.\n' "$TESTER_ID"
-  printf 'Next: follow up on day 7, then record Pro/retention signal with ./script/record_alpha_pro_followup.sh.\n'
+  printf 'Next: follow up on day 7, then record retention and Pro signal with ./script/record_alpha_day7.sh.\n'
 }
 
 self_test() {

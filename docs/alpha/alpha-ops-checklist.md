@@ -75,7 +75,27 @@ Ask:
 - What would make it worth paying for?
 - What would make you uninstall it?
 
-Record the outcome in the private `pro-interest` and `alpha-users` trackers. Keep Pro pull separate from general feedback.
+Record the outcome in the private `pro-interest` and `alpha-users` trackers:
+
+```sh
+./script/record_alpha_day7.sh \
+  --tester-id tester_001 \
+  --retained-day-7 yes \
+  --overall-pro-signal medium \
+  --notes "kept it on for day 7"
+```
+
+Keep Pro pull separate from general feedback.
+
+## Weekly Review
+
+Run the safe aggregate summary before writing the weekly review row:
+
+```sh
+./script/alpha_weekly_summary.sh
+```
+
+Use the suggested `record_alpha_weekly_review.sh` command only after checking that the aggregate counts match the private tracker.
 
 ## Kill Criteria
 

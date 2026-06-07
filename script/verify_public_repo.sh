@@ -107,6 +107,9 @@ section "Alpha compatibility recorder"
 section "Alpha success evidence wrapper"
 ./script/record_alpha_success.sh --self-test
 
+section "Alpha Day 7 follow-up wrapper"
+./script/record_alpha_day7.sh --self-test
+
 section "Alpha local smoke recorder"
 ./script/record_alpha_local_smoke.sh --self-test
 
@@ -121,6 +124,9 @@ section "Alpha Pro follow-up recorder"
 
 section "Alpha weekly review recorder"
 ./script/record_alpha_weekly_review.sh --self-test
+
+section "Alpha weekly summary"
+./script/alpha_weekly_summary.sh --self-test
 
 section "Alpha status summary"
 ./script/alpha_status.sh --self-test

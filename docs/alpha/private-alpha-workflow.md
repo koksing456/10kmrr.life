@@ -152,10 +152,12 @@ Use [pro-interest-scorecard.md](./pro-interest-scorecard.md) and record only:
 - Overall Pro signal.
 - Short non-sensitive notes.
 
-Record Day 7 / Pro signal with:
+Record Day 7 / Pro signal with the wrapper. It writes the Pro-interest row and
+the alpha-users retention snapshot after preflighting both writes in a temporary
+tracker:
 
 ```sh
-./script/record_alpha_pro_followup.sh \
+./script/record_alpha_day7.sh \
   --tester-id tester_001 \
   --retained-day-7 yes \
   --signed-notarized-installer 3 \
@@ -191,6 +193,14 @@ Review:
 - Scope pull toward full analytics.
 
 Pause wider alpha expansion if install failure rate exceeds 30 percent for the same reason, if testers repeatedly try to send secrets, or if private macOS API behavior fails on common supported macOS versions.
+
+Start with the safe aggregate summary:
+
+```sh
+./script/alpha_weekly_summary.sh
+```
+
+It prints counts only and suggests a `record_alpha_weekly_review.sh` command.
 
 Record the aggregate weekly review with:
 

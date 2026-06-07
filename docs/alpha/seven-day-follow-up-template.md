@@ -25,6 +25,18 @@ Choose one:
 - removed_due_to_low_value
 - needs_follow_up
 
+## Safe Recorder
+
+After the follow-up, record only the safe retention and Pro signal summary:
+
+```sh
+./script/record_alpha_day7.sh \
+  --tester-id tester_001 \
+  --retained-day-7 yes \
+  --overall-pro-signal medium \
+  --notes "kept it on for day 7"
+```
+
 ## Notes Boundary
 
 Do not record exact private MRR. If revenue context is useful, record only a broad band, such as under_1k, 1k_to_10k, 10k_to_100k, or 100k_plus, or refer to mock/sanitized display assets.
