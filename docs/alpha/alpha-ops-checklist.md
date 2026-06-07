@@ -6,6 +6,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 ## Before Invite
 
+- Run `./script/prepare_alpha_tracker.sh` and keep the generated tracker private.
 - Confirm they use Stripe subscriptions.
 - Confirm they use a Mac daily.
 - Confirm they understand this is source alpha, not a notarized public installer.
@@ -17,10 +18,8 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 - Ask for macOS version.
 - Ask whether Apple Silicon or Intel.
-- Ask them to run `./script/build_lock_overlay.sh --verify`.
-- Ask them to configure through `./script/build_lock_overlay.sh --setup`.
-- Ask them to run `./script/build_lock_overlay.sh --preview-private-glass`.
-- Ask them to install only after preview/setup are understood.
+- Ask them to run `./script/start_alpha.sh`.
+- Use [install-smoke-checklist.md](./install-smoke-checklist.md) only when you need to isolate a specific failed stage.
 - If anything fails, ask for `./script/support_report.sh`, not raw logs.
 
 ## Never Collect

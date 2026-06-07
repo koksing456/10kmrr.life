@@ -6,7 +6,15 @@ Do not collect Stripe keys, exact private MRR, raw Stripe API responses, custome
 
 ## Tracker Setup
 
-Create a private spreadsheet or lightweight CRM with these sheets:
+Create a private local tracker workspace first:
+
+```sh
+./script/prepare_alpha_tracker.sh
+```
+
+This writes starter files under `build/alpha-tracker`, which is ignored by git. Move those files into a private spreadsheet or lightweight CRM if you prefer.
+
+Use these sheets:
 
 - `alpha-users`: one row per approved tester.
 - `install-funnel`: one row per setup attempt.
