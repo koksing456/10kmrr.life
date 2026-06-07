@@ -39,7 +39,7 @@ struct MRRLockOverlayView: View {
     private var panelContent: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 9) {
-                Text("Stripe MRR")
+                Text(headerText)
                     .font(.system(size: labelFontSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.82))
                 statusDot
@@ -189,9 +189,16 @@ struct MRRLockOverlayView: View {
         return .green
     }
 
+    private var headerText: String {
+        if model.isRefreshing { return "Refreshing Stripe" }
+        if model.errorText != nil { return model.statusText }
+        if model.statusText == "Cached" { return "Stripe MRR cached" }
+        return "Stripe MRR"
+    }
+
     private var footerStatusText: String? {
-        if model.errorText != nil, model.result != nil { return "Cached" }
-        if model.errorText != nil { return "Needs attention" }
+        if model.errorText != nil, model.result != nil { return "Using cached MRR" }
+        if model.errorText != nil { return model.statusText }
         if model.isRefreshing { return "Refreshing" }
         return nil
     }

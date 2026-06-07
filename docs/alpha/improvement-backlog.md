@@ -23,7 +23,7 @@ These make the app feel more like something founders will keep installed.
 - Add multi-display preference: main display, cursor display, or all displays. Done: setup can target main display, cursor display, or every connected display.
 - Add visual style presets: compact pill, full MRR panel, goal panel, and ultra-minimal number-only style.
 - Add MRR goal or milestone display as a Pro-signal experiment.
-- Add stale/error state copy that is useful on the lock screen without becoming noisy.
+- Add stale/error state copy that is useful on the lock screen without becoming noisy. Done: overlay shows setup/key/refresh/cached states without raw Stripe details.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key.
 
 ## P1: Distribution And Trust

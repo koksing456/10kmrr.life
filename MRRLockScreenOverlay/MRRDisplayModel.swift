@@ -60,7 +60,7 @@ final class MRRDisplayModel: ObservableObject {
             saveCache(fetched, lastUpdated: lastUpdated)
         } catch {
             staleSince = Date()
-            statusText = result == nil ? "Needs attention" : "Stale"
+            statusText = result == nil ? Self.safeStatusText(for: error) : "Stale"
             errorText = error.localizedDescription
         }
 
@@ -75,6 +75,16 @@ final class MRRDisplayModel: ObservableObject {
         formatter.minimumFractionDigits = 2
         let value = Decimal(minorUnits) / Decimal(100)
         return formatter.string(from: value as NSDecimalNumber) ?? "\(currency.uppercased()) \(value)"
+    }
+
+    private static func safeStatusText(for error: Error) -> String {
+        if case OverlayError.missingAPIKey = error {
+            return "Setup needed"
+        }
+        if case OverlayError.stripePermissionHint = error {
+            return "Check key"
+        }
+        return "Refresh failed"
     }
 
     private func loadCache() {
