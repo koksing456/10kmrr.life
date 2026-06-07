@@ -136,6 +136,37 @@ h1 {
   margin-top: 34px;
 }
 
+.hero-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  color: rgba(248, 251, 255, 0.66);
+  font-size: 13px;
+  font-weight: 680;
+}
+
+.hero-trust-strip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid rgba(248, 251, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(18px);
+}
+
+.hero-trust-strip span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(143, 227, 193, 0.12);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
