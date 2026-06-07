@@ -10,10 +10,13 @@ INTERACTIVE=true
 INSTALL=true
 OPEN_SETUP=true
 PREVIEW_MOCK=true
+CHECK_READINESS=true
+CACHE_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Cache"
+READINESS_TEST_MODE="${TENKMRR_START_ALPHA_READINESS_TEST_MODE:-}"
 
 usage() {
   cat <<EOF
-Usage: $0 [--dry-run] [--no-install] [--no-setup] [--no-preview] [--self-test] [--help]
+Usage: $0 [--dry-run] [--no-install] [--no-setup] [--no-preview] [--skip-readiness-check] [--self-test] [--help]
 
 Guides a gated alpha tester through the safe local first-run path:
   1. Build and verify the app.
@@ -29,6 +32,8 @@ Options:
   --no-install Skip LaunchAgent install and final diagnose.
   --no-setup   Do not open the setup window.
   --no-preview Do not launch the mock preview.
+  --skip-readiness-check
+               Install without confirming Keychain key and last-good cache.
   --self-test  Verify command composition without changing local state.
   --help       Show this help.
 EOF
@@ -45,13 +50,21 @@ Alpha start flow:
 2. Open the verified app's setup window.
 3. Launch the verified app's mock MRR preview.
 4. Wait for the tester to save a restricted read-only Stripe key in setup.
-5. ./script/install_lock_overlay_agent.sh
-6. ./script/diagnose.sh
+5. Confirm Keychain key status and last-good MRR cache without printing values.
+6. ./script/install_lock_overlay_agent.sh
+7. ./script/diagnose.sh
 
 Sensitive-data rule: do not paste Stripe keys, exact private MRR, raw Stripe
 responses, customer/payment data, raw logs, or unsanitized screenshots into
 support channels.
 EOF
+}
+
+self_test_cache() {
+  local output
+  output="$(TENKMRR_START_ALPHA_READINESS_TEST_MODE=missing confirm_ready_to_install 2>&1 || true)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe key is not configured'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Install paused before LaunchAgent changes'
 }
 
 self_test() {
@@ -60,12 +73,65 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q './script/build_lock_overlay.sh --verify'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/install_lock_overlay_agent.sh'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/diagnose.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Confirm Keychain key status and last-good MRR cache'
   printf '%s\n' "$output" | /usr/bin/grep -q 'do not paste Stripe keys'
   if printf '%s\n' "$output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'start_alpha self-test failed: dry-run output contained a secret-like token.\n' >&2
     exit 1
   fi
+  self_test_cache
   printf 'Alpha start flow self-test passed.\n'
+}
+
+confirm_ready_to_install() {
+  local ready=true
+  local readiness_mode="${TENKMRR_START_ALPHA_READINESS_TEST_MODE:-$READINESS_TEST_MODE}"
+
+  section "Confirm setup readiness"
+
+  if [[ "$readiness_mode" == "missing" ]]; then
+    printf 'WARN  Stripe key is not configured in Keychain.\n'
+    ready=false
+  elif "$ROOT_DIR/script/configure_stripe_key.sh" --status >/dev/null 2>&1; then
+    printf 'PASS  Stripe key is configured in Keychain. Key value was not printed.\n'
+  else
+    printf 'WARN  Stripe key is not configured in Keychain.\n'
+    ready=false
+  fi
+
+  if [[ "$readiness_mode" == "missing" ]]; then
+    printf 'WARN  Last-good MRR cache is missing.\n'
+    ready=false
+  elif /usr/bin/defaults read "$CACHE_DOMAIN" lastGoodMRR >/dev/null 2>&1; then
+    printf 'PASS  Last-good MRR cache exists. Cached value was not printed.\n'
+  else
+    printf 'WARN  Last-good MRR cache is missing.\n'
+    ready=false
+  fi
+
+  if [[ "$readiness_mode" == "missing" ]]; then
+    printf 'WARN  Last-updated timestamp is missing.\n'
+    ready=false
+  elif /usr/bin/defaults read "$CACHE_DOMAIN" lastUpdated >/dev/null 2>&1; then
+    printf 'PASS  Last-updated timestamp exists.\n'
+  else
+    printf 'WARN  Last-updated timestamp is missing.\n'
+    ready=false
+  fi
+
+  if [[ "$ready" != "true" ]]; then
+    cat <<EOF
+
+Install paused before LaunchAgent changes.
+Finish setup first:
+- Save a restricted read-only Stripe key in the setup window.
+- Click Refresh MRR and confirm setup shows a successful local refresh.
+- Run this script again, or run ./script/install_lock_overlay_agent.sh after setup is ready.
+
+Use --skip-readiness-check only for mock-only or repair testing.
+EOF
+    return 70
+  fi
 }
 
 for arg in "$@"; do
@@ -81,6 +147,9 @@ for arg in "$@"; do
       ;;
     --no-preview)
       PREVIEW_MOCK=false
+      ;;
+    --skip-readiness-check)
+      CHECK_READINESS=false
       ;;
     --self-test)
       self_test
@@ -140,6 +209,10 @@ EOF
 
 printf '\nPress Return to install the Lock Screen LaunchAgent, or Ctrl-C to stop here. '
 IFS= read -r _
+
+if [[ "$CHECK_READINESS" == "true" ]]; then
+  confirm_ready_to_install
+fi
 
 section "Install LaunchAgent"
 "$ROOT_DIR/script/install_lock_overlay_agent.sh"
