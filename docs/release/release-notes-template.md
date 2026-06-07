@@ -30,6 +30,7 @@ Short description of what changed.
 - macOS versions tested:
 - Apple Silicon tested: yes / no
 - Intel tested: yes / no / build available but Lock Screen behavior unverified
+- Intel support claim: included / excluded from this beta / unverified
 - Binary architecture: Apple Silicon arm64 / universal / other
 - External display setups tested:
 - Private glass behavior:

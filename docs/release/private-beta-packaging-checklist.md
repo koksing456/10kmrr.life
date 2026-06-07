@@ -8,6 +8,7 @@ Do not publish a public installer until signing, notarization, support, rollback
 
 - At least 5 successful installs on supported Macs.
 - If Intel is included in the private beta, at least 2 successful Intel installs with Lock Screen visibility verified.
+- If Intel is not included, run readiness and packaging with `--exclude-intel` and make the Intel exclusion explicit in release notes.
 - No repeated private macOS API failure on common supported macOS versions.
 - Install failure rate below 30 percent for the same reason.
 - `./script/check.sh` passes on a clean checkout.
@@ -25,6 +26,12 @@ Use strict mode before any private package dry run:
 
 ```sh
 ./script/private_beta_readiness.sh --require-ready
+```
+
+For an Apple Silicon-only private beta gate, exclude Intel explicitly:
+
+```sh
+./script/private_beta_readiness.sh --exclude-intel --require-ready
 ```
 
 ## Signing Inputs
@@ -77,6 +84,14 @@ Source-generated dry run:
 
 This first runs `./script/private_beta_readiness.sh --require-ready`, then writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
 
+For an Apple Silicon-only private beta package, run:
+
+```sh
+./script/package_private_beta.sh --adhoc --exclude-intel
+```
+
+The generated manifest must say Intel Lock Screen behavior is excluded/unverified.
+
 ## Smoke Test
 
 Preview the local source smoke plan first:
@@ -110,7 +125,7 @@ The runner records `pass` only when the commands succeed and the diagnostic/supp
 ## Release Notes Must Say
 
 - Gated private beta, not broad public release.
-- Intel support boundary if Intel Lock Screen behavior is still unverified.
+- Intel support boundary if Intel Lock Screen behavior is still unverified or explicitly excluded.
 - Private macOS API caveat.
 - Local-first Stripe key and MRR model.
 - No 10kmrr.life server stores Stripe keys or MRR in the current alpha path.

@@ -9,10 +9,11 @@ PACKAGE_DIR="$ROOT_DIR/build/private-beta"
 STAGE_DIR="$PACKAGE_DIR/stage"
 ADHOC=false
 SELF_TEST=false
+EXCLUDE_INTEL=false
 
 usage() {
   cat <<EOF
-Usage: $0 --adhoc
+Usage: $0 --adhoc [--exclude-intel]
        $0 --self-test
 
 Builds a private, unnotarized beta zip under build/private-beta.
@@ -21,6 +22,9 @@ This does not create a public installer. The --adhoc flag is required so the
 caller explicitly accepts that the package is ad-hoc signed, unnotarized, and
 only suitable for internal/private alpha testing. Packaging also requires
 ./script/private_beta_readiness.sh --require-ready to pass.
+
+Use --exclude-intel only when Intel Lock Screen behavior is not part of this
+private beta support claim. The manifest will record that boundary.
 EOF
 }
 
@@ -29,6 +33,7 @@ write_manifest() {
   local package_file="$2"
   local version="$3"
   local commit="$4"
+  local intel_support="$5"
 
   cat >"$manifest_path" <<EOF
 10kmrr.life private beta package
@@ -37,6 +42,7 @@ Package: $package_file
 Version: $version
 Commit: $commit
 Architecture: universal arm64 x86_64
+Intel support claim: $intel_support
 Signing: ad-hoc
 Notarized: no
 Distribution: private alpha testing only
@@ -61,8 +67,10 @@ self_test_manifest() {
   tmp_dir="$(mktemp -d -t 10kmrr-package-self-test.XXXXXX)"
   local manifest_path="$tmp_dir/manifest.txt"
 
-  write_manifest "$manifest_path" "10kmrr-life-0.1.0-test-unnotarized-private-beta.zip" "0.1.0" "testcommit"
+  write_manifest "$manifest_path" "10kmrr-life-0.1.0-test-unnotarized-private-beta.zip" "0.1.0" "testcommit" "included only with recorded Intel compatibility evidence"
 
+  /usr/bin/grep -q '^Architecture: universal arm64 x86_64$' "$manifest_path"
+  /usr/bin/grep -q '^Intel support claim: included only with recorded Intel compatibility evidence$' "$manifest_path"
   /usr/bin/grep -q '^Signing: ad-hoc$' "$manifest_path"
   /usr/bin/grep -q '^Notarized: no$' "$manifest_path"
   /usr/bin/grep -q '^Distribution: private alpha testing only$' "$manifest_path"
@@ -81,6 +89,9 @@ for arg in "$@"; do
   case "$arg" in
     --adhoc)
       ADHOC=true
+      ;;
+    --exclude-intel)
+      EXCLUDE_INTEL=true
       ;;
     --self-test)
       SELF_TEST=true
@@ -106,7 +117,14 @@ if [[ "$ADHOC" != "true" ]]; then
   exit 64
 fi
 
-/usr/bin/env -u TENKMRR_SIGNING_READY_OVERRIDE "$ROOT_DIR/script/private_beta_readiness.sh" --require-ready
+readiness_args=(--require-ready)
+intel_support="included only with recorded Intel compatibility evidence"
+if [[ "$EXCLUDE_INTEL" == "true" ]]; then
+  readiness_args+=(--exclude-intel)
+  intel_support="excluded from this private beta; Intel Lock Screen behavior unverified"
+fi
+
+/usr/bin/env -u TENKMRR_SIGNING_READY_OVERRIDE "$ROOT_DIR/script/private_beta_readiness.sh" "${readiness_args[@]}"
 "$ROOT_DIR/script/check.sh"
 
 commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
@@ -142,7 +160,7 @@ fi
   /usr/bin/shasum -a 256 "$(basename "$zip_path")" >"$sha_path"
 )
 
-write_manifest "$manifest_path" "$(basename "$zip_path")" "$version" "$commit"
+write_manifest "$manifest_path" "$(basename "$zip_path")" "$version" "$commit" "$intel_support"
 
 printf 'Wrote private beta package artifacts:\n'
 printf '  %s\n' "$zip_path"

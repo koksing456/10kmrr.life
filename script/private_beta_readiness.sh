@@ -5,10 +5,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
 REQUIRE_READY=false
 SELF_TEST=false
+EXCLUDE_INTEL=false
 
 usage() {
   cat <<EOF
-Usage: $0 [--tracker-dir DIR] [--require-ready] [--self-test] [--help]
+Usage: $0 [--tracker-dir DIR] [--require-ready] [--exclude-intel] [--self-test] [--help]
 
 Summarizes whether private beta packaging has enough local evidence to proceed.
 It does not print Stripe keys, MRR values, raw logs, raw Stripe responses, or
@@ -17,6 +18,8 @@ tester contact details.
 Options:
   --tracker-dir DIR  Tracker directory. Default: build/alpha-tracker.
   --require-ready    Exit non-zero unless evidence and signing are ready.
+  --exclude-intel    Do not require Intel Lock Screen compatibility evidence.
+                     Release notes must say Intel is excluded/unverified.
   --self-test        Verify parser and readiness rules with synthetic trackers.
   --help             Show this help.
 EOF
@@ -297,7 +300,10 @@ print_readiness() {
       ready=1
     fi
 
-    if [[ "$intel_success" -ge 2 ]]; then
+    if [[ "$EXCLUDE_INTEL" == "true" ]]; then
+      status_line "WARN" "Intel compatibility excluded from this private beta gate"
+      status_line "NEXT" "release notes must say Intel Lock Screen behavior is unverified/excluded"
+    elif [[ "$intel_success" -ge 2 ]]; then
       status_line "PASS" "Intel compatibility passes for universal beta: $intel_success/2"
     else
       status_line "WARN" "Intel compatibility passes for universal beta: $intel_success/2"
@@ -353,7 +359,9 @@ print_readiness() {
         status_line "NEXT" "missing Lock Screen compatibility passes: $missing_compatibility"
         status_line "NEXT" "record compatibility: ./script/record_alpha_compatibility.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass"
       fi
-      if [[ "$missing_intel" -gt 0 ]]; then
+      if [[ "$EXCLUDE_INTEL" == "true" ]]; then
+        status_line "NEXT" "Intel evidence is intentionally excluded from this gate"
+      elif [[ "$missing_intel" -gt 0 ]]; then
         status_line "NEXT" "missing Intel compatibility passes if Intel is included: $missing_intel"
         status_line "NEXT" "otherwise keep Intel out of private beta notes"
       fi
@@ -392,14 +400,18 @@ print_readiness() {
 }
 
 self_test() {
-  local temp_dir ready_output not_ready_output
+  local temp_dir ready_output ready_without_intel_output not_ready_output
   temp_dir="$(/usr/bin/mktemp -d -t 10kmrr-beta-ready.XXXXXX)"
   trap 'rm -rf "$temp_dir"' RETURN
 
   /bin/mkdir -p "$temp_dir/ready" "$temp_dir/not-ready"
+  /bin/mkdir -p "$temp_dir/ready-without-intel"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" "$temp_dir/ready/install-funnel.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/compatibility.csv" "$temp_dir/ready/compatibility.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/local-smoke.csv" "$temp_dir/ready/local-smoke.csv"
+  /bin/cp "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" "$temp_dir/ready-without-intel/install-funnel.csv"
+  /bin/cp "$ROOT_DIR/docs/alpha/templates/compatibility.csv" "$temp_dir/ready-without-intel/compatibility.csv"
+  /bin/cp "$ROOT_DIR/docs/alpha/templates/local-smoke.csv" "$temp_dir/ready-without-intel/local-smoke.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" "$temp_dir/not-ready/install-funnel.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/compatibility.csv" "$temp_dir/not-ready/compatibility.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/local-smoke.csv" "$temp_dir/not-ready/local-smoke.csv"
@@ -418,6 +430,20 @@ self_test() {
       --diagnose-summary "PASS summary only" >/dev/null
   done
 
+  for tester in tester_001 tester_002 tester_003 tester_004 tester_005; do
+    "$ROOT_DIR/script/record_alpha_install.sh" \
+      --tracker-dir "$temp_dir/ready-without-intel" \
+      --tester-id "$tester" \
+      --attempt-date 2026-06-08 \
+      --stage saw_mrr \
+      --build-verify pass \
+      --configured-key yes \
+      --previewed yes \
+      --installed yes \
+      --saw-mrr yes \
+      --diagnose-summary "PASS summary only" >/dev/null
+  done
+
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_001 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_002 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup external --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_003 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup multiple --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
@@ -425,11 +451,29 @@ self_test() {
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_005 --check-date 2026-06-08 --macos-version 15.5 --cpu intel --display-setup external --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
   "$ROOT_DIR/script/record_alpha_local_smoke.sh" --tracker-dir "$temp_dir/ready" --smoke-date 2026-06-08 --build-verify pass --install-agent pass --diagnose-after-install pass --repair-preserves-data pass --support-report-safe pass --uninstall-all pass --result pass >/dev/null
 
+  "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready-without-intel" --tester-id tester_001 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
+  "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready-without-intel" --tester-id tester_002 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup external --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
+  "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready-without-intel" --tester-id tester_003 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup multiple --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
+  "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready-without-intel" --tester-id tester_004 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
+  "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready-without-intel" --tester-id tester_005 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup external --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
+  "$ROOT_DIR/script/record_alpha_local_smoke.sh" --tracker-dir "$temp_dir/ready-without-intel" --smoke-date 2026-06-08 --build-verify pass --install-agent pass --diagnose-after-install pass --repair-preserves-data pass --support-report-safe pass --uninstall-all pass --result pass >/dev/null
+
   ready_output="$(TENKMRR_SIGNING_READY_OVERRIDE=pass "$0" --tracker-dir "$temp_dir/ready" --require-ready)"
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'private beta packaging evidence is ready'
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'successful installs with MRR seen: 5/5'
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'Intel compatibility passes for universal beta: 2/2'
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'local install/repair/uninstall smoke pass recorded'
+
+  if TENKMRR_SIGNING_READY_OVERRIDE=pass "$0" --tracker-dir "$temp_dir/ready-without-intel" --require-ready >/tmp/10kmrr-beta-ready-without-intel-self-test.$$ 2>&1; then
+    printf 'private_beta_readiness self-test failed: Apple Silicon-only tracker passed without --exclude-intel.\n' >&2
+    /bin/rm -f /tmp/10kmrr-beta-ready-without-intel-self-test.$$
+    exit 1
+  fi
+  /bin/rm -f /tmp/10kmrr-beta-ready-without-intel-self-test.$$
+
+  ready_without_intel_output="$(TENKMRR_SIGNING_READY_OVERRIDE=pass "$0" --tracker-dir "$temp_dir/ready-without-intel" --exclude-intel --require-ready)"
+  printf '%s\n' "$ready_without_intel_output" | /usr/bin/grep -q 'private beta packaging evidence is ready'
+  printf '%s\n' "$ready_without_intel_output" | /usr/bin/grep -q 'Intel compatibility excluded from this private beta gate'
 
   "$ROOT_DIR/script/record_alpha_install.sh" \
     --tracker-dir "$temp_dir/not-ready" \
@@ -457,7 +501,7 @@ self_test() {
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'missing successful installs with MRR seen: 5'
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q './script/record_alpha_install.sh --tester-id tester_XXX'
 
-  if printf '%s\n%s\n' "$ready_output" "$not_ready_output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
+  if printf '%s\n%s\n%s\n' "$ready_output" "$ready_without_intel_output" "$not_ready_output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'private_beta_readiness self-test failed: output contained a secret-like token.\n' >&2
     exit 1
   fi
@@ -477,6 +521,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --require-ready)
       REQUIRE_READY=true
+      shift
+      ;;
+    --exclude-intel)
+      EXCLUDE_INTEL=true
       shift
       ;;
     --self-test)
