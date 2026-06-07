@@ -118,6 +118,18 @@ For the full local readiness pass, including signing and notarization preflight:
 ./script/check.sh
 ```
 
+If an installed alpha build gets into a bad LaunchAgent or app-bundle state, repair it without removing the Stripe key, local cache, or display settings:
+
+```sh
+./script/repair_lock_overlay_agent.sh
+```
+
+Preview the repair steps first:
+
+```sh
+./script/repair_lock_overlay_agent.sh --dry-run
+```
+
 ## Static Alpha Page
 
 Preview the public-alpha landing page locally:
@@ -207,6 +219,12 @@ If the overlay does not appear or the MRR does not refresh, run:
 ```
 
 The diagnostic checks build status, install status, LaunchAgent state, Keychain presence, and local cache presence without printing the Stripe key or cached MRR value.
+
+If diagnose reports LaunchAgent executable, private glass, or log-path drift, run:
+
+```sh
+./script/repair_lock_overlay_agent.sh
+```
 
 The app logs structured local events such as refresh start/success/failure, overlay show/hide, and private API fallback. Logs do not include Stripe keys, exact MRR values, raw Stripe responses, or customer/payment data by default.
 

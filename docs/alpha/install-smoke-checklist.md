@@ -171,7 +171,7 @@ Record:
 Run:
 
 ```sh
-./script/install_lock_overlay_agent.sh
+./script/repair_lock_overlay_agent.sh
 ./script/diagnose.sh
 ```
 
@@ -181,6 +181,7 @@ Record:
 - LaunchAgent loaded after reinstall: yes / no
 - Stripe key still present in Keychain: yes / no
 - Cache still present: yes / no
+- Display settings still present: yes / no
 
 ## Outcome
 

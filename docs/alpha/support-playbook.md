@@ -86,13 +86,16 @@ Symptom:
 
 - Diagnose says LaunchAgent is not loaded.
 - Install script warns that the LaunchAgent did not report as loaded.
+- Diagnose says the LaunchAgent executable, private glass argument, or log paths drifted.
 
 Action:
 
 ```sh
-./script/install_lock_overlay_agent.sh
+./script/repair_lock_overlay_agent.sh
 ./script/diagnose.sh
 ```
+
+The repair script rebuilds the app and reinstalls the LaunchAgent while preserving the Stripe Keychain entry, local cache, and display settings.
 
 If still failing, record:
 
@@ -164,6 +167,12 @@ Remove app and LaunchAgent:
 
 ```sh
 ./script/uninstall_lock_overlay_agent.sh
+```
+
+Repair app and LaunchAgent while keeping Keychain, cache, and display settings:
+
+```sh
+./script/repair_lock_overlay_agent.sh
 ```
 
 Remove app, LaunchAgent, local cache, and display settings:

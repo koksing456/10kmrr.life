@@ -65,6 +65,9 @@ section "Installer plist generation"
 section "Uninstall command self-test"
 ./script/uninstall_lock_overlay_agent.sh --self-test
 
+section "Repair command self-test"
+./script/repair_lock_overlay_agent.sh --self-test
+
 section "Signing preflight parser"
 ./script/signing_preflight.sh --self-test
 

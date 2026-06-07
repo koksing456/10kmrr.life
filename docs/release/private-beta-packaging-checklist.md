@@ -11,7 +11,7 @@ Do not publish a public installer until signing, notarization, support, rollback
 - No repeated private macOS API failure on common supported macOS versions.
 - Install failure rate below 30 percent for the same reason.
 - `./script/verify_public_repo.sh` passes on a clean checkout.
-- `./script/install_lock_overlay_agent.sh` and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
+- `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
 - `./script/support_report.sh` produces a safe report without raw secrets or exact MRR.
 
 ## Signing Inputs
@@ -65,6 +65,7 @@ For each private beta package:
 - Install LaunchAgent.
 - Lock screen and confirm overlay visibility.
 - Run `./script/diagnose.sh`.
+- Run `./script/repair_lock_overlay_agent.sh` and confirm Keychain, cache, and display settings are preserved.
 - Run `./script/support_report.sh`.
 - Uninstall with `./script/uninstall_lock_overlay_agent.sh --all`.
 
