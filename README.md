@@ -6,6 +6,8 @@ Your Stripe MRR, on your Mac Lock Screen.
 
 The current app is `MRRLockScreenOverlay`: a macOS background app that reads Stripe subscription data locally, computes Stripe-like MRR, and displays it as a glass panel on the Mac Lock Screen.
 
+![Sanitized 10kmrr.life landing demo](./docs/demo/assets/landing-hero.png)
+
 ## Why I Built This
 
 I wanted my MRR to feel present, not buried inside another dashboard.

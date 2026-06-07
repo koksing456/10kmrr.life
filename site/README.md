@@ -15,3 +15,9 @@ http://127.0.0.1:4173
 ```
 
 The page uses mock MRR only. Do not replace it with real revenue, real Stripe screenshots, customer data, payment data, or unsanitized Lock Screen screenshots.
+
+Capture sanitized demo assets:
+
+```sh
+./script/capture_demo_assets.sh
+```

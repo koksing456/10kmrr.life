@@ -13,6 +13,22 @@ Use only mock or sanitized MRR values in public demo assets.
 - [ ] Private macOS API caveat is not contradicted by the surrounding copy.
 - [ ] Demo does not imply this is a fully public notarized release.
 
+## Generate Sanitized Landing Assets
+
+Run:
+
+```sh
+./script/capture_demo_assets.sh
+```
+
+This captures the static landing page with mock MRR only:
+
+- `docs/demo/assets/landing-hero.png`
+- `docs/demo/assets/landing-desktop.png`
+- `docs/demo/assets/landing-mobile.png`
+
+The script checks for horizontal overflow on mobile and verifies the mock demo label is present.
+
 ## Recommended Mock Values
 
 Use values that are clearly illustrative:
