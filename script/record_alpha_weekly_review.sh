@@ -59,6 +59,11 @@ validate_safe_text() {
     exit 1
   fi
 
+  if printf '%s\n' "$value" | /usr/bin/grep -Eiq '(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)'; then
+    printf 'Unsafe %s: contains placeholder evidence. Use a real stable tester id, a concrete macOS version, or unknown.\n' "$label" >&2
+    exit 1
+  fi
+
   if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?|\$[0-9][0-9,]*(\.[0-9]{2})?|([Mm][Rr][Rr]|[Aa][Rr][Rr]|[Rr]evenue|[Aa]mount)[[:space:]:=]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
     printf 'Unsafe %s: contains obvious money amount.\n' "$label" >&2
     exit 1
@@ -197,6 +202,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-08 --next-action 'raw customer cus_1234567890abcdef in support notes' >/dev/null 2>&1; then
     printf 'record_alpha_weekly_review self-test failed: Stripe object id was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-08 --next-action 'use tester_XXX for next invite' >/dev/null 2>&1; then
+    printf 'record_alpha_weekly_review self-test failed: placeholder tester id was accepted.\n' >&2
     exit 1
   fi
 

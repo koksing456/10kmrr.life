@@ -60,6 +60,11 @@ validate_safe_text() {
     exit 1
   fi
 
+  if printf '%s\n' "$value" | /usr/bin/grep -Eiq '(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)'; then
+    printf 'Unsafe %s: contains placeholder evidence. Use a real stable tester id, a concrete macOS version, or unknown.\n' "$label" >&2
+    exit 1
+  fi
+
   if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?|\$[0-9][0-9,]*(\.[0-9]{2})?|([Mm][Rr][Rr]|[Aa][Rr][Rr]|[Rr]evenue|[Aa]mount)[[:space:]:=]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
     printf 'Unsafe %s: contains obvious money amount.\n' "$label" >&2
     exit 1
@@ -183,6 +188,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --support-report-safe maybe >/dev/null 2>&1; then
     printf 'record_alpha_local_smoke self-test failed: invalid support report value was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --next-action 'record on macOS 15.x' >/dev/null 2>&1; then
+    printf 'record_alpha_local_smoke self-test failed: placeholder macOS version was accepted.\n' >&2
     exit 1
   fi
 

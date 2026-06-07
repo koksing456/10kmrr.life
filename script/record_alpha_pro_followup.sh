@@ -64,6 +64,11 @@ validate_safe_text() {
     exit 1
   fi
 
+  if printf '%s\n' "$value" | /usr/bin/grep -Eiq '(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)'; then
+    printf 'Unsafe %s: contains placeholder evidence. Use a real stable tester id, a concrete macOS version, or unknown.\n' "$label" >&2
+    exit 1
+  fi
+
   if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?|\$[0-9][0-9,]*(\.[0-9]{2})?|([Mm][Rr][Rr]|[Aa][Rr][Rr]|[Rr]evenue|[Aa]mount)[[:space:]:=]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
     printf 'Unsafe %s: contains obvious money amount.\n' "$label" >&2
     exit 1
@@ -211,6 +216,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_005 --notes 'customer_email from raw Stripe response' >/dev/null 2>&1; then
     printf 'record_alpha_pro_followup self-test failed: raw Stripe customer field was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_XXX >/dev/null 2>&1; then
+    printf 'record_alpha_pro_followup self-test failed: placeholder tester id was accepted.\n' >&2
     exit 1
   fi
 
