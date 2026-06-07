@@ -19,7 +19,8 @@ Builds a private, unnotarized beta zip under build/private-beta.
 
 This does not create a public installer. The --adhoc flag is required so the
 caller explicitly accepts that the package is ad-hoc signed, unnotarized, and
-only suitable for internal/private alpha testing.
+only suitable for internal/private alpha testing. Packaging also requires
+./script/private_beta_readiness.sh --require-ready to pass.
 EOF
 }
 
@@ -48,6 +49,7 @@ Safety boundary:
 - Use ./script/uninstall_lock_overlay_agent.sh --all for a full local reset.
 
 Verification:
+- ./script/private_beta_readiness.sh --require-ready passed before packaging.
 - ./script/check.sh passed before packaging.
 - codesign --verify --deep --strict passed.
 - lipo verified arm64 and x86_64 slices.
@@ -67,6 +69,7 @@ self_test_manifest() {
   /usr/bin/grep -q 'Do not publish this zip as a public installer' "$manifest_path"
   /usr/bin/grep -q 'Do not bundle Stripe keys' "$manifest_path"
   /usr/bin/grep -q 'unsanitized screenshots' "$manifest_path"
+  /usr/bin/grep -q 'private_beta_readiness.sh --require-ready passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'check.sh passed before packaging' "$manifest_path"
 
   rm -rf "$tmp_dir"
@@ -102,6 +105,7 @@ if [[ "$ADHOC" != "true" ]]; then
   exit 64
 fi
 
+"$ROOT_DIR/script/private_beta_readiness.sh" --require-ready
 "$ROOT_DIR/script/check.sh"
 
 commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"

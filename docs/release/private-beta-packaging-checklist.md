@@ -64,7 +64,7 @@ Source-generated dry run:
 ./script/package_private_beta.sh --adhoc
 ```
 
-This writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
+This first runs `./script/private_beta_readiness.sh --require-ready`, then writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
 
 ## Smoke Test
 

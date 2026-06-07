@@ -92,6 +92,7 @@ For an internal package dry run only:
 ```
 
 This creates an unnotarized private zip under `build/private-beta`. It is not a public installer.
+The packaging script refuses to continue unless `./script/private_beta_readiness.sh --require-ready` passes first.
 
 For Developer ID readiness:
 
