@@ -27,7 +27,7 @@ These make the app feel more like something founders will keep installed.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key. Done: setup and `./script/build_lock_overlay.sh --preview-mock` can launch a mock overlay before any Stripe key is configured.
 - Make alpha onboarding feel like a guided first-run flow instead of a dense settings form. Done: setup now prioritizes preview, Keychain, and refresh, with advanced overlay settings behind disclosure.
 - Bring safe diagnostics and support actions into setup so alpha testers do not have to remember every Terminal command. Done: setup can run diagnose from a detected source checkout, generate/open a sanitized support report, copy install/support commands, and open the local logs folder.
-- Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, installs, and diagnoses without asking for secrets in Terminal. Done: see `./script/start_alpha.sh`.
+- Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, checks setup readiness without printing secrets or cached MRR, installs, and diagnoses. Done: see `./script/start_alpha.sh`.
 
 ## P1: Distribution And Trust
 

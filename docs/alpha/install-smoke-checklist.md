@@ -33,7 +33,7 @@ Preferred guided run:
 ./script/start_alpha.sh
 ```
 
-Use the detailed steps below when you need to isolate which stage failed.
+The guided run pauses before LaunchAgent changes unless setup has a Keychain key and last-good MRR cache. Use the detailed steps below when you need to isolate which stage failed.
 
 Run:
 
@@ -60,6 +60,7 @@ In the setup window:
 - [ ] Use Preview Mock before adding a real Stripe key.
 - [ ] Save restricted Stripe key.
 - [ ] Test Stripe access.
+- [ ] Refresh MRR and confirm setup shows a successful local refresh.
 - [ ] Save refresh and position settings.
 
 Record:
@@ -67,6 +68,7 @@ Record:
 - Mock preview from setup: pass / warn / fail
 - Key setup result: pass / warn / fail
 - Stripe test result: pass / warn / fail
+- Last-good cache created: yes / no
 - Do not record the key or exact MRR.
 
 ## Preview
