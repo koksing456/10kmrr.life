@@ -44,7 +44,7 @@ If they cannot generate the support report, ask them to run:
 ./script/diagnose.sh
 ```
 
-The support report redacts local paths, Stripe-key-like strings, Stripe object IDs, email-like contact data, webhook secrets, and obvious money amounts. It includes suggested next steps for setup, repair, and full readiness checks. It does not include log excerpts by default. If `--include-logs` is used, the excerpts are still redacted and must be reviewed before sharing.
+The support report redacts local paths, Stripe-key-like strings, Stripe object IDs, raw Stripe field names, email-like contact data, webhook secrets, and obvious money amounts. It includes suggested next steps for setup, repair, and full readiness checks. It does not include log excerpts by default. If `--include-logs` is used, the excerpts are still redacted and must be reviewed before sharing.
 
 If the issue is source/build related, ask for:
 

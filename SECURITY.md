@@ -65,7 +65,7 @@ Do not share:
 - Raw Stripe API responses.
 - Unsanitized screenshots with real MRR.
 
-`./script/support_report.sh` redacts local paths, Stripe-key-like strings, Stripe object IDs, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default. If you pass `--include-logs`, the excerpts are still redacted; only use that after reviewing the logs for sensitive output.
+`./script/support_report.sh` redacts local paths, Stripe-key-like strings, Stripe object IDs, raw Stripe field names, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default. If you pass `--include-logs`, the excerpts are still redacted; only use that after reviewing the logs for sensitive output.
 
 ## Compatibility Caveat
 

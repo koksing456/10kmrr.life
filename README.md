@@ -290,7 +290,7 @@ For alpha support, generate a sanitized local report:
 ./script/support_report.sh
 ```
 
-The report includes sanitized diagnostics, log metadata, and suggested next steps such as setup, repair, or full readiness checks. It redacts local paths, Stripe-key-like strings, Stripe object IDs, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default.
+The report includes sanitized diagnostics, log metadata, and suggested next steps such as setup, repair, or full readiness checks. It redacts local paths, Stripe-key-like strings, Stripe object IDs, raw Stripe field names, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default.
 
 Only use `./script/support_report.sh --include-logs` after confirming the local logs do not contain sensitive output; the included excerpts are still passed through the redactor.
 
