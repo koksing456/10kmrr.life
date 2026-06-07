@@ -72,6 +72,9 @@ done
 section "Public docs"
 test -s README.md
 test -s SECURITY.md
+test -s PRIVACY.md
+test -s CONTRIBUTING.md
+test -s CHANGELOG.md
 test -s LICENSE
 test -s .github/ISSUE_TEMPLATE/alpha_request.yml
 test -s docs/alpha/free-pro-boundary.md
@@ -81,5 +84,6 @@ test -s docs/alpha/compatibility-matrix.md
 test -s docs/alpha/support-playbook.md
 test -s docs/alpha/improvement-backlog.md
 test -s docs/release/release-strategy.md
+test -s docs/release/release-notes-template.md
 
 printf '\nPublic repo verification passed.\n'

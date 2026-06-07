@@ -56,6 +56,7 @@ Keychain lookup currently uses:
 The legacy service is read for compatibility with the earlier prototype and is migrated to the current service on successful app read.
 
 See [SECURITY.md](./SECURITY.md) for support and disclosure boundaries.
+See [PRIVACY.md](./PRIVACY.md) for the public privacy summary.
 
 ## Local Architecture
 
@@ -213,6 +214,8 @@ The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./d
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).
 The improvement backlog lives at [docs/alpha/improvement-backlog.md](./docs/alpha/improvement-backlog.md).
+Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
+The changelog lives at [CHANGELOG.md](./CHANGELOG.md).
 
 ## Open Source Boundary
 
