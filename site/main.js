@@ -1,11 +1,17 @@
 const canvas = document.getElementById("hero-canvas");
-const context = canvas.getContext("2d");
+const context = canvas ? canvas.getContext("2d") : null;
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let width = 0;
 let height = 0;
 let deviceScale = 1;
+let animationFrame = 0;
 
 function resize() {
+  if (!canvas || !context) {
+    return;
+  }
+
   deviceScale = Math.min(window.devicePixelRatio || 1, 2);
   width = Math.floor(window.innerWidth);
   height = Math.floor(Math.max(window.innerHeight, 760));
@@ -17,6 +23,10 @@ function resize() {
 }
 
 function ribbon(points, offset, color, widthScale, time) {
+  if (!context) {
+    return;
+  }
+
   context.beginPath();
   for (let index = 0; index < points; index += 1) {
     const progress = index / (points - 1);
@@ -37,7 +47,11 @@ function ribbon(points, offset, color, widthScale, time) {
   context.stroke();
 }
 
-function frame(now) {
+function drawScene(now) {
+  if (!context) {
+    return;
+  }
+
   const time = now * 0.00022;
   const gradient = context.createLinearGradient(0, 0, width, height);
   gradient.addColorStop(0, "#051524");
@@ -58,10 +72,42 @@ function frame(now) {
   context.lineWidth = 4;
   context.strokeStyle = "rgba(255, 255, 255, 0.58)";
   context.stroke();
+}
 
-  window.requestAnimationFrame(frame);
+function frame(now) {
+  drawScene(now);
+
+  if (!motionQuery.matches) {
+    animationFrame = window.requestAnimationFrame(frame);
+  }
 }
 
 resize();
-window.addEventListener("resize", resize);
-window.requestAnimationFrame(frame);
+drawScene(0);
+
+function handleMotionChange() {
+  if (animationFrame) {
+    window.cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
+  }
+
+  drawScene(0);
+  if (!motionQuery.matches) {
+    animationFrame = window.requestAnimationFrame(frame);
+  }
+}
+
+window.addEventListener("resize", () => {
+  resize();
+  drawScene(0);
+});
+
+if (typeof motionQuery.addEventListener === "function") {
+  motionQuery.addEventListener("change", handleMotionChange);
+} else if (typeof motionQuery.addListener === "function") {
+  motionQuery.addListener(handleMotionChange);
+}
+
+if (!motionQuery.matches) {
+  animationFrame = window.requestAnimationFrame(frame);
+}

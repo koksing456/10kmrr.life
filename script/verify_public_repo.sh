@@ -122,6 +122,13 @@ section "Alpha status summary"
 section "Markdown local links"
 ./script/verify_markdown_links.sh
 
+section "Static site syntax"
+if ! command -v node >/dev/null 2>&1; then
+  printf 'node is required to verify site/main.js syntax.\n' >&2
+  exit 1
+fi
+node --check site/main.js
+
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify
 /usr/bin/lipo build/LockScreenOverlay/MRRLockScreenOverlay.app/Contents/MacOS/MRRLockScreenOverlay -verify_arch arm64 x86_64
