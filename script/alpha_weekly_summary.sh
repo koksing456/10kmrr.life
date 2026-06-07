@@ -166,6 +166,15 @@ emit_summary() {
   printf 'medium/high Pro signals: %s\n' "$pro_signals"
   printf 'prior weekly reviews: %s\n' "$weekly_reviews"
 
+  if [[ "$users" -eq 0 && "$installs" -eq 0 && "$compatibility" -eq 0 && "$smoke" -eq 0 && "$pro_followups" -eq 0 ]]; then
+    printf '\n==> Weekly review not suggested yet\n'
+    printf 'NEXT  collect first alpha evidence before writing a weekly review row.\n'
+    printf 'NEXT  single recommended action: ./script/alpha.sh next\n'
+    printf 'NEXT  preview invite without writing evidence: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run\n'
+    printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
+    return
+  fi
+
   printf '\n==> Suggested weekly review row\n'
   printf './script/record_alpha_weekly_review.sh \\\n'
   printf '  --week-start %s \\\n' "$WEEK_START"
@@ -190,6 +199,14 @@ self_test() {
 
   /bin/mkdir -p "$temp_dir/tracker"
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
+
+  output="$("$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-15)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Weekly review not suggested yet'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'collect first alpha evidence before writing a weekly review row'
+  if printf '%s\n' "$output" | /usr/bin/grep -q './script/record_alpha_weekly_review.sh'; then
+    printf 'alpha_weekly_summary self-test failed: empty tracker suggested a weekly review row.\n' >&2
+    exit 1
+  fi
 
   "$ROOT_DIR/script/record_alpha_success.sh" \
     --tracker-dir "$temp_dir/tracker" \

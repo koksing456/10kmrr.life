@@ -223,7 +223,7 @@ Start with the safe aggregate summary:
 ./script/alpha_weekly_summary.sh
 ```
 
-It prints counts only and suggests a `record_alpha_weekly_review.sh` command.
+It prints counts only. It suggests a `record_alpha_weekly_review.sh` command only after at least one non-example alpha evidence row exists.
 Run `./script/audit_alpha_tracker.sh` before writing the weekly review if any rows were edited manually.
 
 Record the aggregate weekly review with:
