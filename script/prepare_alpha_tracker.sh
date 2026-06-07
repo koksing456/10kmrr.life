@@ -25,7 +25,7 @@ templates. The default output is build/alpha-tracker, which is ignored by git.
 
 Options:
   --output DIR   Write tracker files to DIR instead of build/alpha-tracker.
-  --force        Replace existing generated tracker files in the output dir.
+  --force        Replace empty generated tracker files; refuses private rows.
   --readme-only  Refresh only README.md without replacing tracker CSV files.
   --self-test    Verify tracker generation in a temporary directory.
   --help         Show this help.

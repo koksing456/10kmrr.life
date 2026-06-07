@@ -117,7 +117,8 @@ print_tracker_status() {
         status_line "PASS" "tracker headers match current templates"
       else
         status_line "WARN" "tracker headers differ from current templates"
-        status_line "NEXT" "regenerate empty tracker templates with: ./script/prepare_alpha_tracker.sh --force"
+        status_line "NEXT" "if tracker CSVs have no private rows, refresh templates with: ./script/prepare_alpha_tracker.sh --force"
+        status_line "NEXT" "if tracker CSVs have private rows, migrate those rows into fresh private templates instead of overwriting"
       fi
       if tracker_readme_current; then
         status_line "PASS" "tracker README matches current safety workflow"
