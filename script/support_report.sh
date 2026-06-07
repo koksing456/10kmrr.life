@@ -63,6 +63,8 @@ sanitize_stream() {
     s/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/<redacted-email>/gi;
     s/\b[A-Z]{2,4}\$[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/g;
     s/\b[A-Z]{3}\s+[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/g;
+    s/\$[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/g;
+    s/\b(?:MRR|ARR|revenue|amount)\s*[:=]?\s*[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/gi;
   '
 }
 
@@ -113,6 +115,9 @@ self_test() {
       printf 'email=founder@example.com\n'
       printf 'mrr=US$10,248.00\n'
       printf 'mrr=USD 10248.00\n'
+      printf 'mrr=$10,248.00\n'
+      printf 'mrr=MRR 10248.00\n'
+      printf 'arr=ARR: 120000\n'
     } | sanitize_stream
   )"
 
@@ -140,7 +145,7 @@ self_test() {
     printf 'Support report self-test failed: email-like value was not redacted.\n' >&2
     exit 1
   fi
-  if printf '%s\n' "$output" | /usr/bin/grep -Eq '(US\$10,248\.00|USD 10248\.00)'; then
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq '(US\$10,248\.00|USD 10248\.00|\$10,248\.00|MRR 10248\.00|ARR: 120000)'; then
     printf 'Support report self-test failed: obvious money amount was not redacted.\n' >&2
     exit 1
   fi

@@ -86,6 +86,16 @@ struct SetupLocalSupport {
                 with: "[redacted amount]",
                 options: .regularExpression
             )
+            .replacingOccurrences(
+                of: "\\$[0-9][0-9,]*(\\.[0-9]{2})?",
+                with: "[redacted amount]",
+                options: .regularExpression
+            )
+            .replacingOccurrences(
+                of: "(?i)\\b(MRR|ARR|revenue|amount)\\s*[:=]?\\s*[0-9][0-9,]*(\\.[0-9]{2})?",
+                with: "[redacted amount]",
+                options: .regularExpression
+            )
 
         let usefulPrefixes = ["PASS  ", "WARN  ", "FAIL  ", "ERROR ", "NEXT  ", "RULE  ", "Suggested next steps:", "  - "]
         let summaryLines = safeOutput

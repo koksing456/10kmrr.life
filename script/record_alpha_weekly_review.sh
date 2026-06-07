@@ -59,7 +59,7 @@ validate_safe_text() {
     exit 1
   fi
 
-  if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?|\$[0-9][0-9,]*(\.[0-9]{2})?|([Mm][Rr][Rr]|[Aa][Rr][Rr]|[Rr]evenue|[Aa]mount)[[:space:]:=]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
     printf 'Unsafe %s: contains obvious money amount.\n' "$label" >&2
     exit 1
   fi
@@ -172,6 +172,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-08 --next-action 'MRR US$10,248.00' >/dev/null 2>&1; then
     printf 'record_alpha_weekly_review self-test failed: obvious money amount was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-08 --next-action '$10,248.00' >/dev/null 2>&1; then
+    printf 'record_alpha_weekly_review self-test failed: bare dollar amount was accepted.\n' >&2
     exit 1
   fi
 

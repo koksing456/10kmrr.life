@@ -114,6 +114,8 @@ private enum SetupLocalSupportTests {
         PASS  Last-good MRR cache exists. Cached value was not printed.
         WARN  Stripe key \(restrictedLivePrefix)1234567890abcdef should never be shown.
         WARN  Demo amount US$12,345.67 should not be shown.
+        WARN  Demo amount $351.93 should not be shown.
+        WARN  MRR 10248.00 should not be shown.
         Suggested next steps:
           - Generate sanitized support report: ./script/support_report.sh
         """
@@ -130,6 +132,8 @@ private enum SetupLocalSupportTests {
         try assertNotContains(summary, "/Users/example", "home path redaction")
         try assertNotContains(summary, "1234567890abcdef", "secret suffix redaction")
         try assertNotContains(summary, "12,345.67", "amount value redaction")
+        try assertNotContains(summary, "351.93", "bare dollar amount redaction")
+        try assertNotContains(summary, "10248.00", "MRR-labelled amount redaction")
     }
 
     private static func assertEqual<T: Equatable>(_ actual: T, _ expected: T, _ message: String) throws {

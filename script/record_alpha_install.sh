@@ -61,7 +61,7 @@ validate_safe_text() {
     exit 1
   fi
 
-  if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '([A-Z]{2,4}\$[0-9][0-9,]*(\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\.[0-9]{2})?|\$[0-9][0-9,]*(\.[0-9]{2})?|([Mm][Rr][Rr]|[Aa][Rr][Rr]|[Rr]evenue|[Aa]mount)[[:space:]:=]+[0-9][0-9,]*(\.[0-9]{2})?)'; then
     printf 'Unsafe %s: contains obvious money amount. Use yes/no or a sanitized range instead.\n' "$label" >&2
     exit 1
   fi
@@ -171,6 +171,14 @@ self_test() {
     --tester-id tester_002 \
     --diagnose-summary 'MRR was US$10,248.00' >/dev/null 2>&1; then
     printf 'record_alpha_install self-test failed: obvious money amount was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id tester_002 \
+    --diagnose-summary 'MRR 10248.00' >/dev/null 2>&1; then
+    printf 'record_alpha_install self-test failed: MRR-labelled money amount was accepted.\n' >&2
     exit 1
   fi
 
