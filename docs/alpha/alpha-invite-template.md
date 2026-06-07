@@ -28,7 +28,7 @@ If something fails:
 ./script/support_report.sh
 ```
 
-Share only the sanitized support report summary or the failing section name. Use `--include-logs` only after checking the logs do not contain sensitive output.
+Share only the sanitized support report summary or the failing section name. Use `--include-logs` only after checking the redacted excerpts do not contain sensitive output.
 
 Day 7 question:
 

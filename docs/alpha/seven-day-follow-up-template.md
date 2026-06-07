@@ -27,6 +27,6 @@ Choose one:
 
 ## Notes Boundary
 
-Do not record exact private MRR unless the tester intentionally shares a sanitized value.
+Do not record exact private MRR. If revenue context is useful, record only a broad band, such as under_1k, 1k_to_10k, 10k_to_100k, or 100k_plus, or refer to mock/sanitized display assets.
 
 If the tester gives feedback that may become a public quote, use [testimonial-approval-template.md](./testimonial-approval-template.md). Do not publish informal follow-up replies as testimonials.

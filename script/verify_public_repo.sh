@@ -260,6 +260,16 @@ require_phrase() {
   fi
 }
 
+reject_phrase() {
+  local file="$1"
+  local pattern="$2"
+
+  if rg -q "$pattern" "$file"; then
+    printf 'Unsafe public-alpha wording found in %s: %s\n' "$file" "$pattern" >&2
+    exit 1
+  fi
+}
+
 require_phrase README.md 'gated alpha'
 require_phrase README.md 'not a public installer'
 require_phrase README.md 'private macOS behavior'
@@ -270,6 +280,8 @@ require_phrase SECURITY.md 'restricted read-only Stripe API key'
 require_phrase SECURITY.md 'Never send your Stripe key'
 require_phrase SECURITY.md 'private macOS behavior'
 require_phrase SECURITY.md 'not yet a notarized public release'
+require_phrase SECURITY.md 'It does not include log excerpts by default'
+require_phrase SECURITY.md 'the excerpts are still redacted'
 require_phrase PRIVACY.md 'does not upload your Stripe key, MRR, customer data, payment data, or Stripe API responses'
 require_phrase PRIVACY.md 'Do not include'
 require_phrase PRIVACY.md 'not a notarized public Mac app yet'
@@ -278,7 +290,16 @@ require_phrase docs/release/release-notes-template.md 'No real MRR screenshots a
 require_phrase docs/release/release-notes-template.md 'not a public notarized installer'
 require_phrase docs/alpha/alpha-request-template.md 'Keep name, handle, email, and preferred contact mapping outside this repo and outside public GitHub issues'
 require_phrase docs/alpha/alpha-user-tracker.md 'Use stable tester ids such as `tester_001`'
+require_phrase docs/alpha/install-smoke-checklist.md 'Do not record exact MRR'
+require_phrase docs/alpha/seven-day-follow-up-template.md 'Do not record exact private MRR'
+require_phrase docs/alpha/support-playbook.md 'the excerpts are still redacted'
 require_phrase docs/demo/landing-skeleton.md 'Name, handle, email, or preferred contact in the public request flow'
+
+for public_alpha_doc in README.md SECURITY.md docs/alpha/*.md .github/ISSUE_TEMPLATE/*.md; do
+  reject_phrase "$public_alpha_doc" 'intentionally shares a sanitized value'
+  reject_phrase "$public_alpha_doc" 'exact private MRR unless'
+  reject_phrase "$public_alpha_doc" 'exact MRR unless'
+done
 
 section "GitHub issue safety wording"
 for issue_template in .github/ISSUE_TEMPLATE/alpha_feedback.md .github/ISSUE_TEMPLATE/alpha_request.yml .github/ISSUE_TEMPLATE/bug_report.md; do

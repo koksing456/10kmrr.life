@@ -26,7 +26,7 @@ Prefer:
 ./script/support_report.sh
 ```
 
-Paste only the sanitized report sections relevant to the issue. Do not use `--include-logs` unless you have reviewed the logs for sensitive output.
+Paste only the sanitized report sections relevant to the issue. Do not use `--include-logs` unless you have reviewed the redacted excerpts for sensitive output.
 
 If you cannot generate a support report, run:
 

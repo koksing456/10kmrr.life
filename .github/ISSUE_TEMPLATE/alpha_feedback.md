@@ -33,6 +33,6 @@ What felt good, confusing, or unnecessary?
 
 If blocked, what was the first step that failed?
 
-If a local script failed, run `./script/support_report.sh` and paste only the sanitized sections relevant to the issue. Do not use `--include-logs` unless they have been reviewed and sanitized.
+If a local script failed, run `./script/support_report.sh` and paste only the sanitized sections relevant to the issue. Do not use `--include-logs` unless the redacted excerpts have been reviewed and sanitized.
 
 If a build or source verification failed, run `./script/check.sh` and paste only the failing section name plus a non-sensitive summary.

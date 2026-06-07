@@ -19,7 +19,7 @@ Writes a sanitized local support report to:
 
 The report redacts local HOME/repo paths, Stripe-key-like strings, Stripe object
 IDs, email-like contact data, and obvious money amounts. By default it does not
-include raw log contents.
+include log excerpts.
 
 Options:
   --include-logs  Include the last safe-redacted stdout/stderr log lines.
@@ -240,7 +240,7 @@ run_section() {
     run_section "Recent Stderr Log" /usr/bin/tail -n 80 "$ERR_LOG"
   else
     printf '\n## Recent Logs\n\n'
-    printf 'Not included. Rerun with --include-logs only after confirming the tester did not capture sensitive output.\n'
+    printf 'Not included. Rerun with --include-logs only after confirming the tester did not capture sensitive output; included excerpts are still redacted.\n'
   fi
 } >"$REPORT_PATH"
 

@@ -6,7 +6,7 @@ Use this checklist for each approved alpha tester or local release smoke. It ver
 
 - Use a restricted read-only Stripe key only.
 - Do not paste the key into notes, issues, screenshots, or chat.
-- Do not record exact MRR unless the tester intentionally shares a sanitized value.
+- Do not record exact MRR. If revenue context matters, use only a broad band or mock/sanitized display.
 - Record pass/warn/fail summaries, not raw logs.
 - Run install steps only on a machine where the tester accepts the private macOS API caveat.
 
