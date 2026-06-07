@@ -321,7 +321,7 @@ cat <<EOF
 
 Alpha start complete.
 Lock the Mac to verify the overlay on the Lock Screen.
-If anything looks wrong, run ./script/support_report.sh and share only the
+If anything looks wrong, run ./script/alpha.sh support-report and share only the
 sanitized summary or failing section name.
 EOF
 

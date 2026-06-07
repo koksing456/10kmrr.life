@@ -52,7 +52,7 @@ Safe to share:
 - App build date or commit.
 - Whether `./script/build_lock_overlay.sh --verify` passes.
 - Whether `./script/diagnose.sh` reports pass, warn, or fail for each check.
-- The sanitized output from `./script/support_report.sh`.
+- The sanitized output from `./script/alpha.sh support-report`.
 - Non-sensitive app error summaries.
 - Whether the generated LaunchAgent exists.
 
@@ -65,7 +65,7 @@ Do not share:
 - Raw Stripe API responses.
 - Unsanitized screenshots with real MRR.
 
-`./script/support_report.sh` redacts local paths, Stripe-key-like strings, Stripe object IDs, raw Stripe field names, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default. If you pass `--include-logs`, the excerpts are still redacted; only use that after reviewing the logs for sensitive output.
+`./script/alpha.sh support-report` redacts local paths, Stripe-key-like strings, Stripe object IDs, raw Stripe field names, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default. If you pass `--include-logs`, the excerpts are still redacted; only use that after reviewing the logs for sensitive output.
 
 ## Compatibility Caveat
 

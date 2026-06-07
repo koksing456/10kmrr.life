@@ -98,7 +98,7 @@ print_next_steps() {
     printf -- '- After configuring a key, refresh MRR from setup to create the local last-good cache.\n'
   fi
 
-  printf -- '- For source/build issues, run the full local readiness check: `./script/check.sh`.\n'
+  printf -- '- For source/build issues, run the full local readiness check: `./script/alpha.sh check`.\n'
   printf -- '- Share only this sanitized report or pass/warn/fail summaries. Do not add Stripe keys, exact MRR, raw Stripe responses, customer data, or unsanitized revenue screenshots.\n'
 }
 
@@ -187,7 +187,7 @@ WARN  No last-good MRR cache yet.' | sanitize_stream)"
     printf 'Support report self-test failed: repair next step missing.\n' >&2
     exit 1
   fi
-  if ! printf '%s\n' "$next_steps" | /usr/bin/grep -q './script/check.sh'; then
+  if ! printf '%s\n' "$next_steps" | /usr/bin/grep -q './script/alpha.sh check'; then
     printf 'Support report self-test failed: check next step missing.\n' >&2
     exit 1
   fi

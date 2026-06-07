@@ -30,7 +30,7 @@ Record:
 Preferred guided run:
 
 ```sh
-./script/start_alpha.sh
+./script/alpha.sh start
 ```
 
 The guided run pauses before LaunchAgent changes unless setup has a Keychain key and last-good MRR cache. Use the detailed steps below when you need to isolate which stage failed.

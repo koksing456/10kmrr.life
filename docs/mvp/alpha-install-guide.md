@@ -7,7 +7,7 @@ This guide is for gated private alpha testers.
 Preferred guided path:
 
 ```sh
-./script/start_alpha.sh
+./script/alpha.sh start
 ```
 
 The guided flow builds the app, opens setup, launches a mock preview, waits for you to save a restricted key in the macOS setup window, confirms a Keychain key and last-good MRR cache exist without printing either value, then installs the LaunchAgent and runs diagnose. If setup is not ready yet, it pauses before LaunchAgent changes.

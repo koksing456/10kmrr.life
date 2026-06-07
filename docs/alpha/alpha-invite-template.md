@@ -5,7 +5,7 @@ Use this for approved gated alpha testers. Keep it short and do not ask for sens
 Generate the current invite for an approved tester with:
 
 ```sh
-./script/generate_alpha_invite.sh --tester-id tester_001
+./script/alpha.sh invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --dry-run
 ```
 
 ## Message
@@ -23,10 +23,10 @@ Before setup:
 Setup path:
 
 ```sh
-./script/start_alpha.sh --tester-id tester_001
+./script/alpha.sh start --tester-id tester_001
 ```
 
-Replace `tester_001` with the private stable tester id assigned outside this public repo, or use the generated invite command above. This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
+Replace `tester_001` with the private stable tester id assigned outside this public repo. This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
 
 If something fails:
 

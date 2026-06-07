@@ -74,17 +74,17 @@ Suggested workflow:
 2. Write a local readiness report with ./script/alpha.sh report when you need a shareable private status packet.
 3. Prepare the approved tester invite packet with ./script/alpha.sh invite.
 4. Send the generated invite body from build/alpha-invites/tester_001.md.
-5. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
-6. Ask for ./script/support_report.sh only if something fails.
-7. Record common support issues with ./script/record_alpha_support_issue.sh.
+5. Ask them to run ./script/alpha.sh start --tester-id tester_001.
+6. Ask for ./script/alpha.sh support-report only if something fails.
+7. Record common support issues with ./script/alpha.sh support.
 8. Record install attempts with ./script/record_alpha_install.sh when you need custom partial evidence.
 9. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
-   For a successful tester, run the record_alpha_success.sh command printed by start_alpha.sh.
-10. Preview private beta local smoke with ./script/run_local_smoke.sh.
-11. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record.
-12. Record Day 7 / Pro signal with ./script/record_alpha_day7.sh.
-13. Review weekly safe aggregates with ./script/alpha_weekly_summary.sh.
-14. Audit private tracker safety with ./script/audit_alpha_tracker.sh.
+   For a successful tester, run the alpha.sh success command printed by start.
+10. Preview private beta local smoke with ./script/alpha.sh smoke.
+11. Record private beta local smoke on a clean smoke machine with ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record.
+12. Record Day 7 / Pro signal with ./script/alpha.sh day7.
+13. Review weekly safe aggregates with ./script/alpha.sh weekly.
+14. Audit private tracker safety with ./script/alpha.sh audit.
 15. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
 16. Record only pass/warn/fail summaries and non-sensitive blockers.
 
@@ -137,17 +137,17 @@ Example approved tester and install evidence rows:
 
 Successful tester shortcut:
 
-./script/record_alpha_success.sh \\
+./script/alpha.sh success \\
   --tester-id tester_001 \\
   --macos-version 15.5 \\
   --cpu apple_silicon \\
   --display-setup built_in
 
-./script/run_local_smoke.sh
+./script/alpha.sh smoke
 
-./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
+./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record
 
-./script/record_alpha_day7.sh \\
+./script/alpha.sh day7 \\
   --tester-id tester_001 \\
   --retained-day-7 yes \\
   --signed-notarized-installer 3 \\
@@ -232,11 +232,11 @@ validate_tracker_readme() {
   /usr/bin/grep -q './script/alpha.sh next' "$output_dir/README.md"
   /usr/bin/grep -q './script/alpha.sh report' "$output_dir/README.md"
   /usr/bin/grep -q './script/alpha.sh invite' "$output_dir/README.md"
-  /usr/bin/grep -q './script/record_alpha_support_issue.sh' "$output_dir/README.md"
-  /usr/bin/grep -q './script/audit_alpha_tracker.sh' "$output_dir/README.md"
-  /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"
-  /usr/bin/grep -q './script/record_alpha_day7.sh' "$output_dir/README.md"
-  /usr/bin/grep -q './script/alpha_weekly_summary.sh' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh support' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh audit' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh day7' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha.sh weekly' "$output_dir/README.md"
 }
 
 validate_generated_tracker() {

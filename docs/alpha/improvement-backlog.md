@@ -27,14 +27,14 @@ These make the app feel more like something founders will keep installed.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key. Done: setup and `./script/build_lock_overlay.sh --preview-mock` can launch a mock overlay before any Stripe key is configured.
 - Make alpha onboarding feel like a guided first-run flow instead of a dense settings form. Done: setup now prioritizes preview, Keychain, and refresh, with advanced overlay settings behind disclosure.
 - Bring safe diagnostics and support actions into setup so alpha testers do not have to remember every Terminal command. Done: setup can run diagnose from a detected source checkout, generate/open a sanitized support report, copy install/support commands, and open the local logs folder.
-- Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, checks setup readiness without printing secrets or cached MRR, installs, and diagnoses. Done: see `./script/start_alpha.sh`.
+- Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, checks setup readiness without printing secrets or cached MRR, installs, and diagnoses. Done: see `./script/alpha.sh start`.
 
 ## P1: Distribution And Trust
 
 These reduce friction and make the source alpha easier to trust.
 
 - Build a universal binary or document Apple Silicon-only support clearly. Done: `./script/build_lock_overlay.sh --verify` now builds a universal `arm64` and `x86_64` app; docs still mark Intel Lock Screen behavior as alpha-unverified.
-- Add signed and notarized private beta packaging after compatibility data is stronger. Done: `./script/package_private_beta.sh --signed` is implemented and remains gated by alpha evidence, local smoke, Developer ID signing, and notary readiness.
+- Add signed and notarized private beta packaging after compatibility data is stronger. Done: `./script/alpha.sh package --signed` is implemented and remains gated by alpha evidence, local smoke, Developer ID signing, and notary readiness.
 - Add an uninstall option that can optionally remove local cache and settings, not only the app and LaunchAgent. Done: `./script/uninstall_lock_overlay_agent.sh --local-data` and `--all`.
 - Add a repair/reinstall helper that preserves Keychain, cache, and display settings. Done: `./script/repair_lock_overlay_agent.sh`.
 - Migrate the old Keychain service name to a cleaner `life.10kmrr.MRRLockScreenOverlay` service while preserving compatibility. Done: app and scripts prefer the current service and keep legacy fallback/delete coverage.
@@ -42,7 +42,7 @@ These reduce friction and make the source alpha easier to trust.
 - Add a public privacy page that mirrors README and SECURITY in plain product language. Done: see [PRIVACY.md](../../PRIVACY.md).
 - Add a private beta evidence readiness gate before package dry runs. Done: `./script/private_beta_readiness.sh` checks install evidence, Lock Screen compatibility, Intel evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
 - Record private beta local smoke evidence separately from user alpha evidence. Done: `local-smoke.csv` and `./script/record_alpha_local_smoke.sh` track build/install/diagnose/repair/support-report/uninstall pass-warn-fail evidence before package dry runs.
-- Add an executable local smoke runner so private beta evidence is not assembled by memory. Done: `./script/run_local_smoke.sh` previews by default, requires `--apply` for local state changes, and requires `--full-reset --confirm-full-reset --record` for a full local smoke pass row.
+- Add an executable local smoke runner so private beta evidence is not assembled by memory. Done: `./script/alpha.sh smoke` previews by default, requires `--apply` for local state changes, and requires `--full-reset --confirm-full-reset --record` for a full local smoke pass row.
 
 ## P1: Engineering Quality
 
@@ -53,15 +53,15 @@ These reduce maintenance risk.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases. Done: sanitized fixture now covers 8 focused calculator cases.
 - Add focused MRR cache tests for missing, saved, timestamp-missing, and corrupt-cache states. Done: `./script/test_mrr_cache.sh` uses an isolated UserDefaults suite.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
-- Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/check.sh`.
+- Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/alpha.sh check`.
 - Add focused settings persistence tests for defaults, bounds, fallbacks, goal settings, and panel sizes. Done: `./script/test_overlay_settings.sh` uses an isolated UserDefaults suite.
 - Add focused tests for setup support command generation and diagnostic summary redaction. Done: `./script/test_setup_local_support.sh` covers checkout detection, shell quoting, command generation, support report path handling, and secret/MRR redaction.
 - Add CI checks for shell syntax, app build, public repo scan, MRR calculator tests, and Stripe client tests. Done: `.github/workflows/public-repo-check.yml` runs `./script/check.sh` on macOS.
-- Add a single local readiness command that runs public verification and signing preflight. Done: `./script/check.sh`.
+- Add a single local readiness command that runs public verification and signing preflight. Done: `./script/alpha.sh check`.
 - Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
 - Add a debug mode that explains which private API path failed without dumping sensitive runtime data. Done: `--debug` / `--preview-debug` exposes safe private API failure labels.
-- Add a sanitized support report for alpha testers. Done: `./script/support_report.sh` writes a redacted local report and keeps raw logs out by default.
-- Add safety self-tests for diagnose and uninstall flows, plus public-alpha wording gates. Done: `./script/check.sh` runs diagnostic redaction, uninstall dry-run, and trust-boundary wording checks.
+- Add a sanitized support report for alpha testers. Done: `./script/alpha.sh support-report` writes a redacted local report and keeps raw logs out by default.
+- Add safety self-tests for diagnose and uninstall flows, plus public-alpha wording gates. Done: `./script/alpha.sh check` runs diagnostic redaction, uninstall dry-run, and trust-boundary wording checks.
 
 ## P2: Alpha Ops
 

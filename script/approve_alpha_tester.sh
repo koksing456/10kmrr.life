@@ -66,11 +66,11 @@ print_invite() {
 
 Send this setup path to the approved tester:
 
-./script/start_alpha.sh --tester-id $(shell_quote "$TESTER_ID")
+./script/alpha.sh start --tester-id $(shell_quote "$TESTER_ID")
 
 Or generate the full safe invite message:
 
-./script/generate_alpha_invite.sh --tester-id $(shell_quote "$TESTER_ID")
+./script/alpha.sh invite --tester-id $(shell_quote "$TESTER_ID") --macos-version "$MACOS_VERSION" --cpu "$CPU" --display-setup "$DISPLAY_SETUP" --dry-run
 
 Before setup, remind them:
 - Read SECURITY.md.
@@ -80,7 +80,7 @@ Before setup, remind them:
 
 If setup fails, ask for:
 
-./script/support_report.sh
+./script/alpha.sh support-report
 
 Share only the sanitized support report summary or the failing section name.
 EOF
@@ -112,7 +112,7 @@ self_test() {
     --cpu apple_silicon \
     --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
-  printf '%s\n' "$output" | /usr/bin/grep -q "./script/start_alpha.sh --tester-id 'tester_001'"
+  printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh start --tester-id 'tester_001'"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id 'founder@example.com' >/dev/null 2>&1; then

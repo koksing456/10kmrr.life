@@ -334,7 +334,7 @@ print_readiness() {
       status_line "PASS" "local install/repair/uninstall smoke pass recorded"
     else
       status_line "WARN" "local install/repair/uninstall smoke pass not recorded"
-      status_line "NEXT" "run: ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
+      status_line "NEXT" "run: ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record"
       ready=1
     fi
 
@@ -368,8 +368,8 @@ print_readiness() {
       fi
       if [[ "$smoke_success" -lt 1 ]]; then
         status_line "NEXT" "missing local smoke pass: 1"
-        status_line "NEXT" "preview first: ./script/run_local_smoke.sh"
-        status_line "NEXT" "record on clean smoke machine only: ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
+        status_line "NEXT" "preview first: ./script/alpha.sh smoke"
+        status_line "NEXT" "record on clean smoke machine only: ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record"
       fi
     fi
   fi
@@ -384,14 +384,14 @@ print_readiness() {
   fi
 
   section "Required local smoke"
-  status_line "NEXT" "before packaging, run: ./script/check.sh"
-  status_line "NEXT" "smoke local install/repair/uninstall: ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
-  status_line "NEXT" "generate sanitized support report: ./script/support_report.sh"
+  status_line "NEXT" "before packaging, run: ./script/alpha.sh check"
+  status_line "NEXT" "smoke local install/repair/uninstall: ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record"
+  status_line "NEXT" "generate sanitized support report: ./script/alpha.sh support-report"
 
   if [[ "$ready" -eq 0 ]]; then
     section "Decision"
     status_line "PASS" "private beta packaging evidence is ready"
-    status_line "NEXT" "run: ./script/package_private_beta.sh --signed"
+    status_line "NEXT" "run: ./script/alpha.sh package --signed"
   else
     section "Decision"
     status_line "WARN" "private beta packaging evidence is not ready"

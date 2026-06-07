@@ -385,7 +385,7 @@ recommend() {
     emit_action \
       "record clean local smoke evidence" \
       "private beta gate needs one local install/repair/support/uninstall smoke pass" \
-      "./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
+      "./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record"
     return
   fi
 

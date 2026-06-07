@@ -28,7 +28,7 @@ Keep changes aligned with that promise. Avoid expanding into a full analytics da
 Run:
 
 ```sh
-./script/check.sh
+./script/alpha.sh check
 ```
 
 This checks shell syntax, MRR calculator fixtures, Stripe client behavior, overlay settings persistence, app build/signing, sanitized demo assets, obvious Stripe secret patterns, local-only paths, ignored private folders, required public docs, and local signing/notarization readiness.

@@ -229,13 +229,13 @@ When the overlay app is running, the 10kmrr.life menu bar item can open setup, r
 Alpha installs are gated. If you are approved for alpha testing, use the guided first-run flow:
 
 ```sh
-./script/start_alpha.sh
+./script/alpha.sh start
 ```
 
 If you are coordinating an approved tester, pass the private stable tester id:
 
 ```sh
-./script/start_alpha.sh --tester-id tester_001
+./script/alpha.sh start --tester-id tester_001
 ```
 
 The guided flow builds the app, opens setup, launches a mock preview, waits for you to save a restricted key in the macOS setup window, confirms a Keychain key and last-good MRR cache exist without printing either value, then installs the LaunchAgent and runs diagnose. If setup is not ready yet, the script pauses before changing the LaunchAgent. After install, it prints the safe evidence command to run after you manually confirm MRR is visible, the overlay appears on the Lock Screen, and the overlay hides after unlock.
@@ -243,7 +243,7 @@ The guided flow builds the app, opens setup, launches a mock preview, waits for 
 To preview the steps without changing local state:
 
 ```sh
-./script/start_alpha.sh --dry-run --tester-id tester_001
+./script/alpha.sh start --dry-run --tester-id tester_001
 ```
 
 To install directly after setup is ready:

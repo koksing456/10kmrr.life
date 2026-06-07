@@ -232,7 +232,7 @@ prepare_packet() {
 
   printf 'Prepared safe alpha invite packet: %s\n' "$output_file"
   printf 'Send the invite body from that file to the approved tester.\n'
-  printf 'Next tester command: ./script/start_alpha.sh --tester-id %s\n' "$(shell_quote "$TESTER_ID")"
+  printf 'Next tester command: ./script/alpha.sh start --tester-id %s\n' "$(shell_quote "$TESTER_ID")"
 }
 
 self_test() {
@@ -253,7 +253,7 @@ self_test() {
     --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Prepared safe alpha invite packet'
   test -s "$temp_dir/invites/tester_001.md"
-  /usr/bin/grep -q './script/start_alpha.sh --tester-id tester_001' "$temp_dir/invites/tester_001.md"
+  /usr/bin/grep -q './script/alpha.sh start --tester-id tester_001' "$temp_dir/invites/tester_001.md"
   /usr/bin/grep -q './script/record_alpha_success.sh' "$temp_dir/invites/tester_001.md"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 

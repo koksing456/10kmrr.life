@@ -79,12 +79,12 @@ template_header_matches() {
 tracker_readme_current() {
   local readme="$TRACKER_DIR/README.md"
   [[ -f "$readme" ]] || return 1
-  /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$readme" &&
+    /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$readme" &&
     /usr/bin/grep -q './script/alpha.sh invite' "$readme" &&
-    /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$readme" &&
-    /usr/bin/grep -q './script/record_alpha_success.sh' "$readme" &&
-    /usr/bin/grep -q './script/record_alpha_day7.sh' "$readme" &&
-    /usr/bin/grep -q './script/alpha_weekly_summary.sh' "$readme" &&
+    /usr/bin/grep -q './script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record' "$readme" &&
+    /usr/bin/grep -q './script/alpha.sh success' "$readme" &&
+    /usr/bin/grep -q './script/alpha.sh day7' "$readme" &&
+    /usr/bin/grep -q './script/alpha.sh weekly' "$readme" &&
     /usr/bin/grep -q 'Stripe object IDs' "$readme"
 }
 
@@ -168,7 +168,7 @@ print_signing_status() {
   section "Signing and notarization"
   if "$ROOT_DIR/script/signing_preflight.sh" --require-ready >/tmp/10kmrr-alpha-status-signing.$$ 2>&1; then
     status_line "PASS" "Developer ID signing prerequisites appear ready"
-    status_line "NEXT" "private signed package: ./script/package_private_beta.sh --signed"
+    status_line "NEXT" "private signed package: ./script/alpha.sh package --signed"
   else
     status_line "WARN" "Developer ID signed/notarized beta is not ready"
     status_line "NEXT" "details: ./script/alpha.sh signing"
@@ -187,20 +187,20 @@ print_ci_status() {
 
   if ! command -v gh >/dev/null 2>&1; then
     status_line "WARN" "gh CLI not available"
-    status_line "NEXT" "run local gate: ./script/check.sh"
+    status_line "NEXT" "run local gate: ./script/alpha.sh check"
     return
   fi
 
   if ! repo="$(github_repo_slug)"; then
     status_line "WARN" "could not infer GitHub repo from origin remote"
-    status_line "NEXT" "run local gate: ./script/check.sh"
+    status_line "NEXT" "run local gate: ./script/alpha.sh check"
     return
   fi
 
   latest="$(gh run list --repo "$repo" --limit 1 --json status,conclusion,headSha,displayTitle,workflowName --jq '.[] | [.workflowName, .displayTitle, .status, (.conclusion // ""), (.headSha[0:7])] | @tsv' 2>/dev/null || true)"
   if [[ -z "$latest" ]]; then
     status_line "WARN" "could not read latest GitHub Actions run"
-    status_line "NEXT" "run local gate: ./script/check.sh"
+    status_line "NEXT" "run local gate: ./script/alpha.sh check"
     return
   fi
 
@@ -216,8 +216,7 @@ print_ci_status() {
 
 print_next_actions() {
   section "Default next actions"
-  status_line "NEXT" "before repo changes: ./script/check.sh"
-  status_line "NEXT" "operator check shortcut: ./script/alpha.sh check"
+  status_line "NEXT" "before repo changes: ./script/alpha.sh check"
   status_line "NEXT" "single recommended action: ./script/alpha.sh next"
   status_line "NEXT" "write readiness report: ./script/alpha.sh report"
   status_line "NEXT" "prepare tester invite packet: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"

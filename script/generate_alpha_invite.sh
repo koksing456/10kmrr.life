@@ -58,7 +58,7 @@ Before setup:
 Setup path:
 
 \`\`\`sh
-./script/start_alpha.sh --tester-id $TESTER_ID
+./script/alpha.sh start --tester-id $TESTER_ID
 \`\`\`
 
 This opens the setup window and mock preview before installing. The setup flow stores the restricted key in macOS Keychain and refreshes MRR locally.
@@ -66,7 +66,7 @@ This opens the setup window and mock preview before installing. The setup flow s
 If something fails:
 
 \`\`\`sh
-./script/support_report.sh
+./script/alpha.sh support-report
 \`\`\`
 
 Share only the sanitized support report summary or the failing section name. Use --include-logs only after checking the redacted excerpts do not contain sensitive output.
@@ -90,8 +90,8 @@ self_test() {
 
   output="$("$0" --tester-id tester_001)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Thanks for trying 10kmrr.life'
-  printf '%s\n' "$output" | /usr/bin/grep -q './script/start_alpha.sh --tester-id tester_001'
-  printf '%s\n' "$output" | /usr/bin/grep -q './script/support_report.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh start --tester-id tester_001'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh support-report'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Do not send Stripe keys, exact MRR'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Lock Screen panel appears: yes/no'
 

@@ -66,7 +66,7 @@ Safety boundary:
 
 Verification:
 - ./script/private_beta_readiness.sh --require-ready passed before packaging.
-- ./script/check.sh passed before packaging.
+- ./script/alpha.sh check passed before packaging.
 - codesign --verify --deep --strict passed.
 - lipo verified arm64 and x86_64 slices.
 EOF
@@ -113,7 +113,7 @@ self_test_manifest() {
   /usr/bin/grep -q 'Do not bundle Stripe keys' "$manifest_path"
   /usr/bin/grep -q 'unsanitized screenshots' "$manifest_path"
   /usr/bin/grep -q 'private_beta_readiness.sh --require-ready passed before packaging' "$manifest_path"
-  /usr/bin/grep -q 'check.sh passed before packaging' "$manifest_path"
+  /usr/bin/grep -q 'alpha.sh check passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'env -u TENKMRR_SIGNING_READY_OVERRIDE' "$0"
   /usr/bin/grep -q -- '--signed' "$0"
   /usr/bin/grep -q 'notarytool submit' "$0"

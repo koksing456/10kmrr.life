@@ -46,7 +46,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe key'
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Cached value was not printed|No last-good MRR cache yet'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Suggested next steps'
-  printf '%s\n' "$output" | /usr/bin/grep -q './script/support_report.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh support-report'
 
   if printf '%s\n' "$output" | /usr/bin/grep -Eq "$secret_pattern"; then
     printf 'diagnose self-test failed: output contained a Stripe-like secret.\n' >&2
@@ -160,7 +160,7 @@ if exists_executable "$INSTALLED_EXECUTABLE"; then
   print_bundle_version "Installed" "$INSTALLED_APP"
 else
   warn "Installed app missing. Run ./script/install_lock_overlay_agent.sh"
-  add_suggested_action "Run guided alpha setup: ./script/start_alpha.sh"
+  add_suggested_action "Run guided alpha setup: ./script/alpha.sh start"
 fi
 
 if [[ -f "$TARGET_PLIST" ]]; then
@@ -312,4 +312,4 @@ else
   done <<< "$SUGGESTED_ACTIONS"
 fi
 printf '  - Preview without locking: ./script/build_lock_overlay.sh --preview-private-glass\n'
-printf '  - Generate sanitized support report: ./script/support_report.sh\n'
+printf '  - Generate sanitized support report: ./script/alpha.sh support-report\n'
