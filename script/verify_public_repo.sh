@@ -129,6 +129,34 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 node --check site/main.js
 
+section "Static site boundary"
+test -s site/index.html
+test -s site/styles.css
+test -s site/main.js
+require_site_phrase() {
+  local pattern="$1"
+
+  if ! rg -q "$pattern" site/index.html; then
+    printf 'Expected static landing page wording missing: %s\n' "$pattern" >&2
+    exit 1
+  fi
+}
+
+require_site_phrase 'Private Mac alpha'
+require_site_phrase 'Request private alpha'
+require_site_phrase 'issues/new\?template=alpha_request\.yml'
+require_site_phrase 'Mock demo'
+require_site_phrase 'No alpha server stores your Stripe key or MRR'
+require_site_phrase 'Restricted key'
+require_site_phrase 'not a full analytics dashboard'
+require_site_phrase 'No hosted Stripe key storage'
+require_site_phrase 'Do not send Stripe keys, exact MRR, customer data, or screenshots with real revenue'
+
+if rg -ni '(download|public installer|buy now|start trial)' site/index.html; then
+  printf 'Static landing page appears to imply public distribution or paid conversion before alpha readiness.\n' >&2
+  exit 1
+fi
+
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify
 /usr/bin/lipo build/LockScreenOverlay/MRRLockScreenOverlay.app/Contents/MacOS/MRRLockScreenOverlay -verify_arch arm64 x86_64
