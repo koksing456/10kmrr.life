@@ -357,12 +357,14 @@ The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./doc
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
 Refresh only the local tracker instructions with `./script/prepare_alpha_tracker.sh --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
 Use `./script/alpha.sh next` as the daily operator entrypoint; it prints one safe recommended next action from aggregate tracker state.
+Use `./script/alpha.sh check` before repo changes or releases; it runs the full public-alpha repo gate and signing preflight.
 Write a local private readiness report with `./script/alpha.sh report`; it writes `build/alpha-readiness-report.md`, which is ignored by git.
 Audit manually edited private tracker rows with `./script/audit_alpha_tracker.sh`; it reports only file, line, and issue type, not row contents.
 Prepare the approved tester invite packet with `./script/alpha.sh invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in`; it approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`.
 Preview the same packet without writing tracker rows or invite files with `./script/alpha.sh invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --dry-run`.
 Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_day7.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, and obvious money amounts where relevant.
 For common setup/support failures, use `./script/record_alpha_support_issue.sh --tester-id tester_001 --issue-type lock_screen --result fail` instead of manually composing install and compatibility rows.
+For support diagnostics, use `./script/alpha.sh support-report`; for private beta source smoke, use `./script/alpha.sh smoke` first because the default is a dry run.
 For the common success case after a tester installs, sees MRR, confirms Lock Screen visibility, and confirms the overlay hides after unlock, use the shorter evidence packet:
 
 ```sh

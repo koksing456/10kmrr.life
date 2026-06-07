@@ -15,6 +15,7 @@ Commands:
   status    Print alpha status summary.
   next      Print one recommended next action.
   report    Write the private readiness report under build/.
+  check     Run the full public-alpha repo gate and signing preflight.
   tracker   Prepare or refresh the private tracker workspace.
   invite    Prepare an approved tester invite packet.
   start     Start guided alpha setup for a tester.
@@ -23,6 +24,9 @@ Commands:
   day7      Record Day 7 retention and Pro signal.
   weekly    Print safe weekly aggregate summary.
   audit     Audit private tracker rows for unsafe fields.
+  smoke     Preview or run guarded local smoke checks.
+  support-report
+           Generate a sanitized local support report.
   signing   Check Developer ID and notary prerequisites.
   beta-ready
            Check private beta evidence and signing readiness.
@@ -44,6 +48,7 @@ command_script() {
     status) printf '%s\n' "$ROOT_DIR/script/alpha_status.sh" ;;
     next) printf '%s\n' "$ROOT_DIR/script/alpha_next_action.sh" ;;
     report) printf '%s\n' "$ROOT_DIR/script/alpha_readiness_report.sh" ;;
+    check) printf '%s\n' "$ROOT_DIR/script/check.sh" ;;
     tracker) printf '%s\n' "$ROOT_DIR/script/prepare_alpha_tracker.sh" ;;
     invite) printf '%s\n' "$ROOT_DIR/script/prepare_alpha_invite_packet.sh" ;;
     start) printf '%s\n' "$ROOT_DIR/script/start_alpha.sh" ;;
@@ -52,6 +57,8 @@ command_script() {
     day7) printf '%s\n' "$ROOT_DIR/script/record_alpha_day7.sh" ;;
     weekly) printf '%s\n' "$ROOT_DIR/script/alpha_weekly_summary.sh" ;;
     audit) printf '%s\n' "$ROOT_DIR/script/audit_alpha_tracker.sh" ;;
+    smoke) printf '%s\n' "$ROOT_DIR/script/run_local_smoke.sh" ;;
+    support-report) printf '%s\n' "$ROOT_DIR/script/support_report.sh" ;;
     signing) printf '%s\n' "$ROOT_DIR/script/signing_preflight.sh" ;;
     beta-ready) printf '%s\n' "$ROOT_DIR/script/private_beta_readiness.sh" ;;
     package) printf '%s\n' "$ROOT_DIR/script/package_private_beta.sh" ;;
@@ -78,6 +85,12 @@ self_test() {
 
   output="$("$0" beta-ready --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private beta readiness self-test passed'
+
+  output="$("$0" smoke --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Local smoke runner self-test passed'
+
+  output="$("$0" support-report --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Support report redaction self-test passed'
 
   output="$("$0" invite --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/invites" --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Prepared safe alpha invite packet'

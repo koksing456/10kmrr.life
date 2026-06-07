@@ -217,6 +217,7 @@ print_ci_status() {
 print_next_actions() {
   section "Default next actions"
   status_line "NEXT" "before repo changes: ./script/check.sh"
+  status_line "NEXT" "operator check shortcut: ./script/alpha.sh check"
   status_line "NEXT" "single recommended action: ./script/alpha.sh next"
   status_line "NEXT" "write readiness report: ./script/alpha.sh report"
   status_line "NEXT" "prepare tester invite packet: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
@@ -227,7 +228,7 @@ print_next_actions() {
   status_line "NEXT" "record successful tester: ./script/alpha.sh success --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
   status_line "NEXT" "record Day 7 follow-up: ./script/alpha.sh day7 --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
   status_line "NEXT" "weekly alpha summary: ./script/alpha.sh weekly"
-  status_line "NEXT" "debug tester issue: ./script/support_report.sh"
+  status_line "NEXT" "debug tester issue: ./script/alpha.sh support-report"
   status_line "NEXT" "check private beta gate: ./script/alpha.sh beta-ready"
 }
 

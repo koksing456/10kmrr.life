@@ -9,6 +9,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Run `./script/prepare_alpha_tracker.sh` and keep the generated tracker private.
 - Use `./script/prepare_alpha_tracker.sh --readme-only` for tracker instruction refreshes after rows exist.
 - Run `./script/alpha.sh next` first when deciding what to do next.
+- Run `./script/alpha.sh check` before repo changes or releases.
 - Run `./script/alpha.sh report` when you need a private readiness report under `build/`.
 - Run `./script/audit_alpha_tracker.sh` if tracker rows were edited manually.
 - Confirm they use Stripe subscriptions.
@@ -31,11 +32,11 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - If they install, see MRR, see the Lock Screen overlay, and confirm it hides after unlock, run the success packet command printed by `start_alpha.sh`.
 - If they are blocked or hit a warning, record the common support issue with `./script/record_alpha_support_issue.sh --tester-id tester_XXX --issue-type lock_screen --result fail`.
 - Use `./script/record_alpha_install.sh` and `./script/record_alpha_compatibility.sh` separately when a stage is partial, warns, or fails.
-- If anything fails, ask for `./script/support_report.sh`, not raw logs.
+- If anything fails, ask for `./script/alpha.sh support-report`, not raw logs.
 
 ## Before Private Beta Packaging
 
-- Preview the local smoke sequence with `./script/run_local_smoke.sh`.
+- Preview the local smoke sequence with `./script/alpha.sh smoke`.
 - On a clean smoke machine, run and record with `./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record`.
 - Re-run `./script/private_beta_readiness.sh`.
 - Do not continue to package dry runs until local smoke has a pass row and the remaining blocker is only signing/notarization.
