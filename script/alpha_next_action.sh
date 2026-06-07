@@ -353,7 +353,7 @@ recommend() {
     emit_action \
       "prepare the first alpha invite packet" \
       "private beta evidence cannot move until at least one tester is approved and invited" \
-      "./script/prepare_alpha_invite_packet.sh --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in"
+      "./script/alpha.sh invite --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in"
     return
   fi
 
@@ -361,7 +361,7 @@ recommend() {
     emit_action \
       "start approved tester and collect install evidence" \
       "there are approved testers without install evidence rows" \
-      "./script/start_alpha.sh --tester-id tester_001"
+      "./script/alpha.sh start --tester-id tester_001"
     return
   fi
 
@@ -369,7 +369,7 @@ recommend() {
     emit_action \
       "resolve or record support blockers before widening alpha" \
       "tracker has warn/fail support evidence" \
-      "./script/alpha_weekly_summary.sh"
+      "./script/alpha.sh weekly"
     return
   fi
 
@@ -377,7 +377,7 @@ recommend() {
     emit_action \
       "collect successful Apple Silicon tester evidence" \
       "private beta gate needs 5 successful installs and 5 Lock Screen compatibility passes" \
-      "./script/record_alpha_success.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
+      "./script/alpha.sh success --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
     return
   fi
 
@@ -393,7 +393,7 @@ recommend() {
     emit_action \
       "record Day 7 retention and Pro signal" \
       "some successful testers do not yet have Day 7 follow-up evidence" \
-      "./script/record_alpha_day7.sh --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
+      "./script/alpha.sh day7 --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
     return
   fi
 
@@ -401,7 +401,7 @@ recommend() {
     emit_action \
       "write the first weekly alpha review" \
       "safe aggregate evidence exists but no weekly decision row has been recorded" \
-      "./script/alpha_weekly_summary.sh"
+      "./script/alpha.sh weekly"
     return
   fi
 
