@@ -300,10 +300,12 @@ emit_action() {
   local reason="$2"
   local command="$3"
   local command_label="RUN"
+  local has_placeholder=false
 
   if printf '%s\n' "$command" | /usr/bin/grep -Eq 'tester_XXX|15\.x' &&
      ! printf '%s\n' "$command" | /usr/bin/grep -q -- '--dry-run'; then
     command_label="TEMPLATE"
+    has_placeholder=true
   fi
 
   printf '10kmrr.life alpha next action\n'
@@ -313,8 +315,8 @@ emit_action() {
   line "$command_label" "$command"
   section "Boundary"
   line "RULE" "do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots"
-  if [[ "$command_label" == "TEMPLATE" ]]; then
-    line "RULE" "replace tester_XXX and 15.x before writing tracker evidence"
+  if [[ "$has_placeholder" == "true" ]]; then
+    line "RULE" "replace placeholder values before running this template command"
   fi
 }
 
@@ -362,7 +364,7 @@ recommend() {
     emit_action \
       "preview the first alpha invite packet without writing evidence" \
       "private beta evidence cannot move until a real tester is approved; preview the packet first to avoid fake tracker rows" \
-      "./script/alpha.sh invite --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
+      "./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
     return
   fi
 
@@ -370,7 +372,7 @@ recommend() {
     emit_action \
       "start approved tester and collect install evidence" \
       "there are approved testers without install evidence rows" \
-      "./script/alpha.sh start --tester-id tester_001"
+      "./script/alpha.sh start --tester-id tester_XXX"
     return
   fi
 
@@ -439,6 +441,7 @@ self_test() {
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
+  printf '%s\n' "$output" | /usr/bin/grep -q -- '--tester-id tester_XXX'
 
   "$ROOT_DIR/script/approve_alpha_tester.sh" \
     --tracker-dir "$temp_dir/tracker" \
@@ -448,6 +451,8 @@ self_test() {
     --display-setup built_in >/dev/null
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'start approved tester and collect install evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q '^TEMPLATE'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh start --tester-id tester_XXX'
 
   "$ROOT_DIR/script/record_alpha_support_issue.sh" \
     --tracker-dir "$temp_dir/tracker" \
@@ -469,7 +474,7 @@ self_test() {
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'collect successful Apple Silicon tester evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q '^TEMPLATE'
-  printf '%s\n' "$output" | /usr/bin/grep -q 'replace tester_XXX and 15.x before writing tracker evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'replace placeholder values before running this template command'
 
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
   for index in 1 2 3 4 5; do

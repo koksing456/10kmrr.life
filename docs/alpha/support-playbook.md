@@ -57,7 +57,7 @@ They should paste only the pass/warn/fail summary and the failing section name.
 Record common support blockers with:
 
 ```sh
-./script/record_alpha_support_issue.sh \
+./script/alpha.sh support \
   --tester-id tester_001 \
   --issue-type lock_screen \
   --result fail \

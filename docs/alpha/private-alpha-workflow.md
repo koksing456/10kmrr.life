@@ -76,7 +76,7 @@ Record install attempts with the safe append script when the setup is partial, w
 For common support blockers, use the shorter support issue packet:
 
 ```sh
-./script/record_alpha_support_issue.sh \
+./script/alpha.sh support \
   --tester-id tester_001 \
   --issue-type lock_screen \
   --result fail \

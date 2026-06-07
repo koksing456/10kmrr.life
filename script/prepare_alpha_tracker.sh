@@ -101,7 +101,7 @@ Example approved tester and install evidence rows:
   --cpu apple_silicon \\
   --display-setup built_in
 
-./script/record_alpha_support_issue.sh \\
+./script/alpha.sh support \\
   --tester-id tester_001 \\
   --issue-type lock_screen \\
   --result fail \\

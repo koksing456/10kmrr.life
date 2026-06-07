@@ -30,7 +30,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Use `./script/alpha.sh start` without a tester id only when the tester will report evidence later through another private channel.
 - Use [install-smoke-checklist.md](./install-smoke-checklist.md) only when you need to isolate a specific failed stage.
 - If they install, see MRR, see the Lock Screen overlay, and confirm it hides after unlock, run the success packet command printed by `start_alpha.sh`.
-- If they are blocked or hit a warning, record the common support issue with `./script/record_alpha_support_issue.sh --tester-id tester_XXX --issue-type lock_screen --result fail`.
+- If they are blocked or hit a warning, record the common support issue with `./script/alpha.sh support --tester-id tester_XXX --issue-type lock_screen --result fail` after replacing `tester_XXX`.
 - Use `./script/record_alpha_install.sh` and `./script/record_alpha_compatibility.sh` separately when a stage is partial, warns, or fails.
 - If anything fails, ask for `./script/alpha.sh support-report`, not raw logs.
 

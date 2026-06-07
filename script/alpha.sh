@@ -34,7 +34,7 @@ Commands:
 
 Examples:
   $0 next
-  $0 invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --dry-run
+  $0 invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run
   $0 invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in
   $0 start --tester-id tester_001
   $0 success --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in
