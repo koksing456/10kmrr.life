@@ -71,6 +71,7 @@ self_test_manifest() {
   /usr/bin/grep -q 'unsanitized screenshots' "$manifest_path"
   /usr/bin/grep -q 'private_beta_readiness.sh --require-ready passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'check.sh passed before packaging' "$manifest_path"
+  /usr/bin/grep -q 'env -u TENKMRR_SIGNING_READY_OVERRIDE' "$0"
 
   rm -rf "$tmp_dir"
   printf 'Private beta package manifest self-test passed.\n'
@@ -105,7 +106,7 @@ if [[ "$ADHOC" != "true" ]]; then
   exit 64
 fi
 
-"$ROOT_DIR/script/private_beta_readiness.sh" --require-ready
+/usr/bin/env -u TENKMRR_SIGNING_READY_OVERRIDE "$ROOT_DIR/script/private_beta_readiness.sh" --require-ready
 "$ROOT_DIR/script/check.sh"
 
 commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
