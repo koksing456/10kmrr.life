@@ -156,7 +156,7 @@ render_invite_packet() {
     printf '\n\n## Operator Next Steps\n\n'
     printf 'After the tester reports success, record:\n\n'
     printf '```sh\n'
-    printf './script/record_alpha_success.sh \\\n'
+    printf './script/alpha.sh success \\\n'
     printf '  --tester-id %s \\\n' "$(shell_quote "$TESTER_ID")"
     printf '  --macos-version %s \\\n' "$(shell_quote "$MACOS_VERSION")"
     printf '  --cpu %s \\\n' "$(shell_quote "$CPU")"
@@ -164,7 +164,7 @@ render_invite_packet() {
     printf '```\n\n'
     printf 'If setup fails, record a safe support issue instead:\n\n'
     printf '```sh\n'
-    printf './script/record_alpha_support_issue.sh --tester-id %s --issue-type lock_screen --result fail\n' "$(shell_quote "$TESTER_ID")"
+    printf './script/alpha.sh support --tester-id %s --issue-type lock_screen --result fail\n' "$(shell_quote "$TESTER_ID")"
     printf '```\n'
   } >"$target_file"
 }
@@ -262,7 +262,8 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Prepared safe alpha invite packet'
   test -s "$temp_dir/invites/tester_001.md"
   /usr/bin/grep -q './script/alpha.sh start --tester-id tester_001' "$temp_dir/invites/tester_001.md"
-  /usr/bin/grep -q './script/record_alpha_success.sh' "$temp_dir/invites/tester_001.md"
+  /usr/bin/grep -q './script/alpha.sh success' "$temp_dir/invites/tester_001.md"
+  /usr/bin/grep -q './script/alpha.sh support' "$temp_dir/invites/tester_001.md"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 
   output="$("$0" \

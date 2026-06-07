@@ -32,7 +32,7 @@ macOS setup window.
 Options:
   --tester-id ID
                 Stable private tester id. If provided, the final output includes
-                a ready-to-run record_alpha_success.sh command.
+                a ready-to-run alpha.sh success command.
   --dry-run     Print the steps without building, opening setup, previewing, or installing.
   --no-install Skip LaunchAgent install and final diagnose.
   --no-setup   Do not open the setup window.
@@ -59,7 +59,7 @@ Alpha start flow:
 6. ./script/install_lock_overlay_agent.sh
 7. ./script/diagnose.sh
 8. After manually confirming Lock Screen visibility and unlock behavior, record
-   success with ./script/record_alpha_success.sh.
+   success with ./script/alpha.sh success.
 
 Sensitive-data rule: do not paste Stripe keys, exact private MRR, raw Stripe
 responses, customer/payment data, raw logs, or unsanitized screenshots into
@@ -96,6 +96,11 @@ validate_tester_id() {
     printf 'Unsafe --tester-id. Use a stable private id like tester_001, not contact data, secrets, Stripe ids, or revenue values.\n' >&2
     exit 64
   fi
+
+  if printf '%s\n' "$value" | /usr/bin/grep -Eiq '^(tester_XXX|tester_xxx)$'; then
+    printf 'Template --tester-id is not valid for alpha start. Omit --tester-id for a template command, or replace tester_XXX with a real assigned tester id.\n' >&2
+    exit 64
+  fi
 }
 
 print_success_record_command() {
@@ -120,7 +125,7 @@ EOF
   cat <<EOF
 
 Record the safe success evidence:
-./script/record_alpha_success.sh \\
+./script/alpha.sh success \\
   --tester-id $tester_arg \\
   --macos-version $(shell_quote "$macos_version") \\
   --cpu $(shell_quote "$cpu_family") \\
@@ -128,6 +133,10 @@ Record the safe success evidence:
 
 Change --display-setup to external, multiple, or clamshell when that matches the tester machine.
 EOF
+
+  if [[ -z "$TESTER_ID" ]]; then
+    printf 'Replace tester_XXX before recording evidence, or rerun start with --tester-id after assigning a real private tester id.\n'
+  fi
 }
 
 self_test_cache() {
@@ -144,11 +153,16 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q './script/build_lock_overlay.sh --verify'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/install_lock_overlay_agent.sh'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/diagnose.sh'
-  printf '%s\n' "$output" | /usr/bin/grep -q './script/record_alpha_success.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh success'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Replace tester_XXX before recording evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Confirm Keychain key status and last-good MRR cache'
   printf '%s\n' "$output" | /usr/bin/grep -q 'do not paste Stripe keys'
   output="$("$0" --dry-run --tester-id tester_001)"
-  printf '%s\n' "$output" | /usr/bin/grep -q './script/record_alpha_success.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh success'
+  if "$0" --dry-run --tester-id tester_XXX >/dev/null 2>&1; then
+    printf 'start_alpha self-test failed: template tester id was accepted.\n' >&2
+    exit 1
+  fi
   if "$0" --dry-run --tester-id 'founder@example.com' >/dev/null 2>&1; then
     printf 'start_alpha self-test failed: email-like tester id was accepted.\n' >&2
     exit 1

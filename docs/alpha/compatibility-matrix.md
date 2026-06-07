@@ -13,7 +13,7 @@ Generate the private ignored tracker with:
 For a successful tester, append install and compatibility evidence together with:
 
 ```sh
-./script/record_alpha_success.sh \
+./script/alpha.sh success \
   --tester-id tester_001 \
   --macos-version 15.5 \
   --cpu apple_silicon \

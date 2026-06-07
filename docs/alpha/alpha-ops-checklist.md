@@ -65,7 +65,7 @@ Track only:
 Successful Apple Silicon example:
 
 ```sh
-./script/record_alpha_success.sh \
+./script/alpha.sh success \
   --tester-id tester_001 \
   --macos-version 15.5 \
   --cpu apple_silicon \

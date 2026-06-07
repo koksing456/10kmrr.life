@@ -313,7 +313,7 @@ print_readiness() {
 
     if [[ "$install_rows" -eq 0 ]]; then
       status_line "WARN" "install failure rate: unavailable (0 install rows)"
-      status_line "NEXT" "after a successful tester, record both rows with ./script/record_alpha_success.sh"
+      status_line "NEXT" "after a successful tester, record both rows with ./script/alpha.sh success"
       ready=1
     elif [[ "$failure_rate" -lt 30 ]]; then
       status_line "PASS" "install failure rate: ${failure_rate}%"
@@ -352,7 +352,7 @@ print_readiness() {
 
       section "Next evidence packet"
       if [[ "$missing_installs" -gt 0 || "$missing_compatibility" -gt 0 ]]; then
-        status_line "NEXT" "record a successful Apple Silicon tester: ./script/record_alpha_success.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
+        status_line "NEXT" "record a successful Apple Silicon tester: ./script/alpha.sh success --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
       fi
       if [[ "$missing_installs" -gt 0 ]]; then
         status_line "NEXT" "missing successful installs with MRR seen: $missing_installs"
@@ -500,7 +500,7 @@ self_test() {
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'repeated private API failure detected'
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'Next evidence packet'
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'missing successful installs with MRR seen: 5'
-  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q './script/record_alpha_success.sh --tester-id tester_XXX'
+  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q './script/alpha.sh success --tester-id tester_XXX'
 
   if printf '%s\n%s\n%s\n' "$ready_output" "$ready_without_intel_output" "$not_ready_output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'private_beta_readiness self-test failed: output contained a secret-like token.\n' >&2

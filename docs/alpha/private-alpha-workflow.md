@@ -111,7 +111,7 @@ Use [compatibility-matrix.md](./compatibility-matrix.md) for the field definitio
 For the common successful case, record install success and Lock Screen compatibility together:
 
 ```sh
-./script/record_alpha_success.sh \
+./script/alpha.sh success \
   --tester-id tester_001 \
   --macos-version 15.5 \
   --cpu apple_silicon \
