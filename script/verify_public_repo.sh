@@ -98,6 +98,7 @@ test -s docs/alpha/templates/pro-interest.csv
 test -s docs/alpha/templates/weekly-review.csv
 test -s docs/release/release-strategy.md
 test -s docs/release/release-notes-template.md
+test -s docs/release/private-beta-packaging-checklist.md
 
 section "GitHub label manifest"
 for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do

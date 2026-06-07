@@ -30,6 +30,8 @@ The alpha should first prove:
 4. Notarized beta installer if compatibility is stable.
 5. Public installer only after support, security, and rollback expectations are documented.
 
+Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md) before creating any private signed package.
+
 ## Release Checklist
 
 - `./script/verify_public_repo.sh` passes.
@@ -37,6 +39,7 @@ The alpha should first prove:
 - `./script/test_mrr_calculator.sh` passes.
 - `./script/install_lock_overlay_agent.sh` works from a clean checkout.
 - `./script/diagnose.sh` gives safe, actionable output.
+- `./script/support_report.sh` gives a sanitized report without raw secrets or exact MRR.
 - No Stripe keys, real MRR screenshots, local-only paths, or generated artifacts are committed.
 - README and SECURITY docs clearly mention private macOS API risk.
 - Release notes state whether the build is Apple Silicon-only or universal.

@@ -252,6 +252,7 @@ The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha
 The improvement backlog lives at [docs/alpha/improvement-backlog.md](./docs/alpha/improvement-backlog.md).
 Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
 The changelog lives at [CHANGELOG.md](./CHANGELOG.md).
+Private beta packaging criteria live at [docs/release/private-beta-packaging-checklist.md](./docs/release/private-beta-packaging-checklist.md).
 
 ## Open Source Boundary
 
