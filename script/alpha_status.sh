@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+DEFAULT_TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+TRACKER_DIR="$DEFAULT_TRACKER_DIR"
 NO_NETWORK=false
 SELF_TEST=false
 
@@ -26,6 +27,27 @@ require_arg() {
   if [[ $# -lt 2 || "${2:-}" == --* ]]; then
     printf 'Missing value for %s.\n' "$option" >&2
     exit 64
+  fi
+}
+
+shell_quote() {
+  local value="$1"
+  printf "'%s'" "${value//\'/\'\\\'\'}"
+}
+
+tracker_prepare_command() {
+  if [[ "$TRACKER_DIR" == "$DEFAULT_TRACKER_DIR" ]]; then
+    printf './script/alpha.sh tracker'
+  else
+    printf './script/alpha.sh tracker --output %s' "$(shell_quote "$TRACKER_DIR")"
+  fi
+}
+
+tracker_audit_command() {
+  if [[ "$TRACKER_DIR" == "$DEFAULT_TRACKER_DIR" ]]; then
+    printf './script/alpha.sh audit'
+  else
+    printf './script/alpha.sh audit --tracker-dir %s' "$(shell_quote "$TRACKER_DIR")"
   fi
 }
 
@@ -132,14 +154,14 @@ print_tracker_status() {
         status_line "PASS" "tracker headers match current templates"
       else
         status_line "WARN" "tracker headers differ from current templates"
-        status_line "NEXT" "if tracker CSVs have no private rows, refresh templates with: ./script/prepare_alpha_tracker.sh --force"
+        status_line "NEXT" "if tracker CSVs have no private rows, refresh templates with: $(tracker_prepare_command) --force"
         status_line "NEXT" "if tracker CSVs have private rows, migrate those rows into fresh private templates instead of overwriting"
       fi
       if tracker_readme_current; then
         status_line "PASS" "tracker README matches current safety workflow"
       else
         status_line "WARN" "tracker README is missing current safety workflow"
-        status_line "NEXT" "refresh tracker README without replacing CSV rows: ./script/prepare_alpha_tracker.sh --readme-only"
+        status_line "NEXT" "refresh tracker README without replacing CSV rows: $(tracker_prepare_command) --readme-only"
       fi
       users_count="$(tracked_row_count "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv")"
       install_count="$(tracked_row_count "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv")"
@@ -159,15 +181,15 @@ print_tracker_status() {
       else
         status_line "WARN" "tracker audit found issues or could not run"
         printf '%s\n' "$audit_output"
-        status_line "NEXT" "sanitize tracker rows before widening alpha: ./script/audit_alpha_tracker.sh"
+        status_line "NEXT" "sanitize tracker rows before widening alpha: $(tracker_audit_command)"
       fi
     else
       status_line "WARN" "tracker folder exists but expected CSV files are missing"
-      status_line "NEXT" "repair missing tracker files without replacing existing rows: ./script/prepare_alpha_tracker.sh"
+      status_line "NEXT" "repair missing tracker files without replacing existing rows: $(tracker_prepare_command)"
     fi
   else
     status_line "WARN" "private tracker not generated yet"
-    status_line "NEXT" "run: ./script/prepare_alpha_tracker.sh"
+    status_line "NEXT" "run: $(tracker_prepare_command)"
   fi
 
   status_line "RULE" "do not collect Stripe keys, Stripe object IDs, exact private MRR, raw logs, raw Stripe responses, customer/payment data, or unsanitized screenshots"
@@ -231,8 +253,8 @@ print_next_actions() {
   status_line "NEXT" "preview tester invite packet without writing evidence: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
   status_line "NEXT" "write invite packet only for a real approved tester: replace tester_XXX and 15.x, then remove --dry-run"
   status_line "NEXT" "template, replace tester_XXX first: ./script/alpha.sh start --tester-id tester_XXX"
-  status_line "NEXT" "collect safe evidence: ./script/alpha.sh tracker"
-  status_line "NEXT" "audit private tracker: ./script/alpha.sh audit"
+  status_line "NEXT" "collect safe evidence: $(tracker_prepare_command)"
+  status_line "NEXT" "audit private tracker: $(tracker_audit_command)"
   status_line "NEXT" "template, replace tester_XXX first: ./script/alpha.sh support --tester-id tester_XXX --issue-type lock_screen --result fail"
   status_line "NEXT" "template, replace tester_XXX and 15.x first: ./script/alpha.sh success --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
   status_line "NEXT" "template, replace tester_XXX first: ./script/alpha.sh day7 --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
@@ -254,6 +276,8 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private alpha evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q "private tracker exists: $temp_dir/tracker"
   printf '%s\n' "$output" | /usr/bin/grep -q 'tracker audit found no unsafe manual entries'
+  printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh tracker --output '$temp_dir/tracker'"
+  printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh audit --tracker-dir '$temp_dir/tracker'"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Signing and notarization'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Default next actions'
   printf '%s\n' "$output" | /usr/bin/grep -q 'replace tester_XXX and 15.x, then remove --dry-run'

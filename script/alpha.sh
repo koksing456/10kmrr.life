@@ -23,6 +23,7 @@ Commands:
   support   Record a common safe support issue packet.
   day7      Record Day 7 retention and Pro signal.
   weekly    Print safe weekly aggregate summary.
+  review    Record one safe aggregate weekly review row.
   audit     Audit private tracker rows for unsafe fields.
   smoke     Preview or run guarded local smoke checks.
   support-report
@@ -31,6 +32,7 @@ Commands:
   beta-ready
            Check private beta evidence and signing readiness.
   package   Build a gated private beta package.
+  labels    Preview or apply GitHub issue labels from .github/labels.yml.
 
 Examples:
   $0 next
@@ -56,12 +58,14 @@ command_script() {
     support) printf '%s\n' "$ROOT_DIR/script/record_alpha_support_issue.sh" ;;
     day7) printf '%s\n' "$ROOT_DIR/script/record_alpha_day7.sh" ;;
     weekly) printf '%s\n' "$ROOT_DIR/script/alpha_weekly_summary.sh" ;;
+    review) printf '%s\n' "$ROOT_DIR/script/record_alpha_weekly_review.sh" ;;
     audit) printf '%s\n' "$ROOT_DIR/script/audit_alpha_tracker.sh" ;;
     smoke) printf '%s\n' "$ROOT_DIR/script/run_local_smoke.sh" ;;
     support-report) printf '%s\n' "$ROOT_DIR/script/support_report.sh" ;;
     signing) printf '%s\n' "$ROOT_DIR/script/signing_preflight.sh" ;;
     beta-ready) printf '%s\n' "$ROOT_DIR/script/private_beta_readiness.sh" ;;
     package) printf '%s\n' "$ROOT_DIR/script/package_private_beta.sh" ;;
+    labels) printf '%s\n' "$ROOT_DIR/script/sync_github_labels.sh" ;;
     *) return 1 ;;
   esac
 }
@@ -87,11 +91,17 @@ self_test() {
   output="$("$0" beta-ready --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private beta readiness self-test passed'
 
+  output="$("$0" review --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha weekly review recorder self-test passed'
+
   output="$("$0" smoke --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Local smoke runner self-test passed'
 
   output="$("$0" support-report --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Support report redaction self-test passed'
+
+  output="$("$0" labels --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'GitHub label sync self-test passed'
 
   output="$("$0" invite --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/invites" --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Prepared safe alpha invite packet'

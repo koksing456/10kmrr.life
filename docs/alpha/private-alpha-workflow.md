@@ -9,12 +9,12 @@ Do not collect Stripe keys, Stripe object IDs, exact private MRR, raw Stripe API
 Create a private local tracker workspace first:
 
 ```sh
-./script/prepare_alpha_tracker.sh
+./script/alpha.sh tracker
 ```
 
 This writes starter files under `build/alpha-tracker`, which is ignored by git. Move those files into a private spreadsheet or lightweight CRM if you prefer.
-If only the generated tracker README is stale, refresh it with `./script/prepare_alpha_tracker.sh --readme-only` so existing CSV rows are preserved. `--force` refuses to overwrite tracker CSVs that already contain private rows.
-Audit manually edited tracker rows with `./script/audit_alpha_tracker.sh` before widening alpha. The audit prints only file, line, and issue type, not private row contents.
+If only the generated tracker README is stale, refresh it with `./script/alpha.sh tracker --readme-only` so existing CSV rows are preserved. `--force` refuses to overwrite tracker CSVs that already contain private rows.
+Audit manually edited tracker rows with `./script/alpha.sh audit` before widening alpha. The audit prints only file, line, and issue type, not private row contents.
 Use `./script/alpha.sh next` as the daily operator entrypoint. It reads aggregate tracker state and prints one safe recommended next command.
 Use `./script/alpha.sh check` before repo changes or releases.
 Use `./script/alpha.sh report` when you need a local private status packet. It writes `build/alpha-readiness-report.md`, which is ignored by git.
@@ -223,13 +223,13 @@ Start with the safe aggregate summary:
 ./script/alpha.sh weekly
 ```
 
-It prints counts only. It suggests a `record_alpha_weekly_review.sh` command only after at least one non-example alpha evidence row exists.
-Run `./script/audit_alpha_tracker.sh` before writing the weekly review if any rows were edited manually.
+It prints counts only. It suggests a `./script/alpha.sh review` command only after at least one non-example alpha evidence row exists.
+Run `./script/alpha.sh audit` before writing the weekly review if any rows were edited manually.
 
 Record the aggregate weekly review with:
 
 ```sh
-./script/record_alpha_weekly_review.sh \
+./script/alpha.sh review \
   --week-start 2026-06-08 \
   --support-load low \
   --setup-failure-rate low \

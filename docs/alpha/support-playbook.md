@@ -74,7 +74,7 @@ If tracker rows were edited manually during support, audit the private tracker
 before widening alpha:
 
 ```sh
-./script/audit_alpha_tracker.sh
+./script/alpha.sh audit
 ```
 
 The audit prints only file, line, and issue type. It does not print private row

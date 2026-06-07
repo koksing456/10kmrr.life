@@ -56,7 +56,7 @@ Use strict mode before any private package dry run:
 - README and SECURITY docs clearly mention private macOS API risk.
 - Release notes state whether the build is Apple Silicon-only or universal.
 - GitHub issue templates warn against posting sensitive data.
-- GitHub issue labels are synced from `.github/labels.yml` or at least dry-run with `./script/sync_github_labels.sh --dry-run`.
+- GitHub issue labels are synced from `.github/labels.yml` or at least dry-run with `./script/alpha.sh labels --dry-run`.
 
 ## Public Repo Gate
 
@@ -80,8 +80,8 @@ If your private tracker lives outside the default ignored `build/alpha-tracker` 
 It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
 
 ```sh
-./script/sync_github_labels.sh --dry-run
-./script/sync_github_labels.sh --apply
+./script/alpha.sh labels --dry-run
+./script/alpha.sh labels --apply
 ```
 
 It does not install the LaunchAgent. Install/reinstall remains a separate local smoke test because it mutates the user's machine state. Preview that sequence with:

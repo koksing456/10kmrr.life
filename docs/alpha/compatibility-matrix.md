@@ -7,7 +7,7 @@ Current source alpha builds a universal `arm64` and `x86_64` binary. Apple Silic
 Generate the private ignored tracker with:
 
 ```sh
-./script/prepare_alpha_tracker.sh
+./script/alpha.sh tracker
 ```
 
 For a successful tester, append install and compatibility evidence together with:

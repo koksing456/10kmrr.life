@@ -156,7 +156,7 @@ For the public repo sub-gate without signing preflight:
 Preview GitHub issue label setup before applying it:
 
 ```sh
-./script/sync_github_labels.sh --dry-run
+./script/alpha.sh labels --dry-run
 ```
 
 If an installed alpha build gets into a bad LaunchAgent or app-bundle state, repair it without removing the Stripe key, local cache, or display settings:
@@ -355,15 +355,15 @@ The alpha invite template lives at [docs/alpha/alpha-invite-template.md](./docs/
 The Free vs Pro boundary lives at [docs/alpha/free-pro-boundary.md](./docs/alpha/free-pro-boundary.md).
 The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alpha/alpha-ops-checklist.md).
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
-Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
-Refresh only the local tracker instructions with `./script/prepare_alpha_tracker.sh --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
+Create a private ignored tracker workspace with `./script/alpha.sh tracker` before inviting testers.
+Refresh only the local tracker instructions with `./script/alpha.sh tracker --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
 Use `./script/alpha.sh next` as the daily operator entrypoint; it prints one safe recommended next action from aggregate tracker state.
 Use `./script/alpha.sh check` before repo changes or releases; it runs the full public-alpha repo gate and signing preflight.
 Write a local private readiness report with `./script/alpha.sh report`; it writes `build/alpha-readiness-report.md`, which is ignored by git.
-Audit manually edited private tracker rows with `./script/audit_alpha_tracker.sh`; it reports only file, line, and issue type, not row contents.
+Audit manually edited private tracker rows with `./script/alpha.sh audit`; it reports only file, line, and issue type, not row contents.
 Preview the tester invite packet without writing tracker rows or invite files with `./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run`.
 Prepare the approved tester invite packet only after you have a real tester assigned to that stable id: replace `tester_XXX` and `15.x`, then remove `--dry-run`. The write command approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`.
-Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_day7.sh`, and `./script/record_alpha_weekly_review.sh`; they reject placeholder evidence, contact-like data, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, and obvious money amounts where relevant.
+Append safe tracker rows through the focused `./script/alpha.sh success`, `./script/alpha.sh support`, `./script/alpha.sh day7`, `./script/alpha.sh smoke`, and `./script/alpha.sh weekly` flows where possible. The underlying recorders reject placeholder evidence, contact-like data, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, and obvious money amounts where relevant.
 For common setup/support failures, use `./script/alpha.sh support --tester-id tester_001 --issue-type lock_screen --result fail` instead of manually composing install and compatibility rows.
 For support diagnostics, use `./script/alpha.sh support-report`; for private beta source smoke, use `./script/alpha.sh smoke` first because the default is a dry run.
 For the common success case after a tester installs, sees MRR, confirms Lock Screen visibility, and confirms the overlay hides after unlock, use the shorter evidence packet:

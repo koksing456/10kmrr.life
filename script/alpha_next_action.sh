@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+DEFAULT_TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+TRACKER_DIR="$DEFAULT_TRACKER_DIR"
 SELF_TEST=false
 NO_SIGNING=false
 
@@ -27,6 +28,27 @@ require_arg() {
   if [[ $# -lt 2 || "${2:-}" == --* ]]; then
     printf 'Missing value for %s.\n' "$option" >&2
     exit 64
+  fi
+}
+
+shell_quote() {
+  local value="$1"
+  printf "'%s'" "${value//\'/\'\\\'\'}"
+}
+
+tracker_prepare_command() {
+  if [[ "$TRACKER_DIR" == "$DEFAULT_TRACKER_DIR" ]]; then
+    printf './script/alpha.sh tracker'
+  else
+    printf './script/alpha.sh tracker --output %s' "$(shell_quote "$TRACKER_DIR")"
+  fi
+}
+
+tracker_audit_command() {
+  if [[ "$TRACKER_DIR" == "$DEFAULT_TRACKER_DIR" ]]; then
+    printf './script/alpha.sh audit'
+  else
+    printf './script/alpha.sh audit --tracker-dir %s' "$(shell_quote "$TRACKER_DIR")"
   fi
 }
 
@@ -327,7 +349,7 @@ recommend() {
     emit_action \
       "prepare private alpha tracker" \
       "tracker files are missing or incomplete" \
-      "./script/prepare_alpha_tracker.sh"
+      "$(tracker_prepare_command)"
     return
   fi
 
@@ -335,7 +357,7 @@ recommend() {
     emit_action \
       "sanitize private tracker rows" \
       "tracker audit found unsafe manual entries or header drift" \
-      "./script/audit_alpha_tracker.sh"
+      "$(tracker_audit_command)"
     return
   fi
 
@@ -442,6 +464,11 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--tester-id tester_XXX'
+
+  /bin/rm -rf "$temp_dir/missing-tracker"
+  output="$("$0" --tracker-dir "$temp_dir/missing-tracker" --no-signing)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'prepare private alpha tracker'
+  printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh tracker --output '$temp_dir/missing-tracker'"
 
   "$ROOT_DIR/script/approve_alpha_tester.sh" \
     --tracker-dir "$temp_dir/tracker" \

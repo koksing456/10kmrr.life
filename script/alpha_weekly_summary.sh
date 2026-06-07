@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+DEFAULT_TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
+TRACKER_DIR="$DEFAULT_TRACKER_DIR"
 WEEK_START="$(/bin/date '+%Y-%m-%d')"
 SELF_TEST=false
 
@@ -30,6 +31,11 @@ require_arg() {
   fi
 }
 
+shell_quote() {
+  local value="$1"
+  printf "'%s'" "${value//\'/\'\\\'\'}"
+}
+
 ensure_tracker() {
   local required=(
     "alpha-users.csv"
@@ -44,7 +50,7 @@ ensure_tracker() {
   for name in "${required[@]}"; do
     if [[ ! -s "$TRACKER_DIR/$name" ]]; then
       printf 'Alpha tracker file missing: %s\n' "$TRACKER_DIR/$name" >&2
-      printf 'Run ./script/prepare_alpha_tracker.sh first.\n' >&2
+      printf 'Run ./script/alpha.sh tracker first.\n' >&2
       exit 1
     fi
   done
@@ -176,7 +182,10 @@ emit_summary() {
   fi
 
   printf '\n==> Suggested weekly review row\n'
-  printf './script/record_alpha_weekly_review.sh \\\n'
+  printf './script/alpha.sh review \\\n'
+  if [[ "$TRACKER_DIR" != "$DEFAULT_TRACKER_DIR" ]]; then
+    printf '  --tracker-dir %s \\\n' "$(shell_quote "$TRACKER_DIR")"
+  fi
   printf '  --week-start %s \\\n' "$WEEK_START"
   printf '  --support-load %s \\\n' "$support_load"
   printf '  --setup-failure-rate %s \\\n' "$setup_failure_rate"
@@ -186,7 +195,7 @@ emit_summary() {
   printf '  --secret-sharing-risk %s \\\n' "$secret_sharing_risk"
   printf '  --scope-pull %s \\\n' "$scope_pull"
   printf '  --decision %s \\\n' "$decision"
-  printf '  --next-action %q\n' "$next_action"
+  printf '  --next-action %s\n' "$(shell_quote "$next_action")"
 
   printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
 }
@@ -203,7 +212,7 @@ self_test() {
   output="$("$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-15)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Weekly review not suggested yet'
   printf '%s\n' "$output" | /usr/bin/grep -q 'collect first alpha evidence before writing a weekly review row'
-  if printf '%s\n' "$output" | /usr/bin/grep -q './script/record_alpha_weekly_review.sh'; then
+  if printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh review'; then
     printf 'alpha_weekly_summary self-test failed: empty tracker suggested a weekly review row.\n' >&2
     exit 1
   fi
@@ -228,6 +237,8 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'install rows that saw MRR: 1'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Day 7 retained: 1'
   printf '%s\n' "$output" | /usr/bin/grep -q 'medium/high Pro signals: 1'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh review'
+  printf '%s\n' "$output" | /usr/bin/grep -q -- "--tracker-dir '$temp_dir/tracker'"
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--decision continue'
 
   if printf '%s\n' "$output" | /usr/bin/grep -Eq "(sk_live_|sk_test_|rk_${live_env}_|rk_test_|whsec_|MRR US\\$|founder@example\\.com|cus_[A-Za-z0-9]+)"; then

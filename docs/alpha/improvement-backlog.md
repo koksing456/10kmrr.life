@@ -40,7 +40,7 @@ These reduce friction and make the source alpha easier to trust.
 - Migrate the old Keychain service name to a cleaner `life.10kmrr.MRRLockScreenOverlay` service while preserving compatibility. Done: app and scripts prefer the current service and keep legacy fallback/delete coverage.
 - Add release versioning and a visible app version/build commit in setup and diagnostics. Done: setup and `./script/diagnose.sh` show version and commit.
 - Add a public privacy page that mirrors README and SECURITY in plain product language. Done: see [PRIVACY.md](../../PRIVACY.md).
-- Add a private beta evidence readiness gate before package dry runs. Done: `./script/private_beta_readiness.sh` checks install evidence, Lock Screen compatibility, Intel evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
+- Add a private beta evidence readiness gate before package dry runs. Done: `./script/alpha.sh beta-ready` checks install evidence, Lock Screen compatibility, Intel evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
 - Record private beta local smoke evidence separately from user alpha evidence. Done: `local-smoke.csv` and `./script/record_alpha_local_smoke.sh` track build/install/diagnose/repair/support-report/uninstall pass-warn-fail evidence before package dry runs.
 - Add an executable local smoke runner so private beta evidence is not assembled by memory. Done: `./script/alpha.sh smoke` previews by default, requires `--apply` for local state changes, and requires `--full-reset --confirm-full-reset --record` for a full local smoke pass row.
 
@@ -68,14 +68,14 @@ These reduce maintenance risk.
 These make learning from testers less manual.
 
 - Turn the alpha user tracker into a small private spreadsheet or lightweight CRM workflow. Done: see [private-alpha-workflow.md](./private-alpha-workflow.md) and CSV templates under [templates](./templates).
-- Add a private tracker safety audit for manual row edits. Done: `./script/audit_alpha_tracker.sh` reports only file, line, and issue type.
-- Add a single next-action recommender for daily alpha operations. Done: `./script/alpha_next_action.sh` reads aggregate tracker state and prints one safe next command.
+- Add a private tracker safety audit for manual row edits. Done: `./script/alpha.sh audit` reports only file, line, and issue type.
+- Add a single next-action recommender for daily alpha operations. Done: `./script/alpha.sh next` reads aggregate tracker state and prints one safe next command.
 - Add a unified alpha operator entrypoint. Done: `./script/alpha.sh` dispatches common private alpha commands without changing the focused lower-level scripts.
 - Add signing and packaging shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh signing`, `./script/alpha.sh beta-ready`, and `./script/alpha.sh package` delegate to the existing guarded scripts.
 - Add check, smoke, and support-report shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh check`, `./script/alpha.sh smoke`, and `./script/alpha.sh support-report` delegate to the guarded lower-level scripts.
 - Add a safe private readiness report. Done: `./script/alpha_readiness_report.sh` writes `build/alpha-readiness-report.md` with aggregate status and blocker sections.
-- Add a safe invite generator after approving a tester. Done: `./script/generate_alpha_invite.sh` prints a no-secret setup message for one stable tester id.
-- Add a first-tester invite packet wrapper. Done: `./script/prepare_alpha_invite_packet.sh` approves the tester and writes a private invite packet under ignored `build/alpha-invites/`.
+- Add a safe invite generator after approving a tester. Done: `./script/alpha.sh invite --dry-run` prints a no-secret setup message for one stable tester id without writing evidence.
+- Add a first-tester invite packet wrapper. Done: `./script/alpha.sh invite` approves the tester and writes a private invite packet under ignored `build/alpha-invites/`.
 - Add a no-write invite preview. Done: `./script/alpha.sh invite --dry-run` prints the safe packet without writing tracker rows or invite files.
 - Add a common support issue recorder for blocked testers. Done: `./script/record_alpha_support_issue.sh` writes safe install evidence and compatibility evidence where relevant.
 - Add a 7-day follow-up cadence with retained/not-retained tags. Done: private alpha workflow defines Day 0/1/3/7 cadence and retention tagging.
@@ -83,7 +83,7 @@ These make learning from testers less manual.
 - Track Lock Screen compatibility evidence separately from install friction. Done: `compatibility.csv` and `./script/record_alpha_compatibility.sh` record macOS, CPU, display setup, private glass, Lock Screen visibility, unlock behavior, LaunchAgent stability, and pass/warn/fail result.
 - Track Pro pull separately from general feedback. Done: `pro-interest.csv` and scorecard keep Pro signal separate.
 - Add a Day 7 convenience recorder so retention and Pro signal update together. Done: `./script/record_alpha_day7.sh` writes the Pro-interest row and alpha-users snapshot after preflight.
-- Add a weekly aggregate summary before writing review rows. Done: `./script/alpha_weekly_summary.sh` prints safe counts and a suggested weekly recorder command.
+- Add a weekly aggregate summary before writing review rows. Done: `./script/alpha.sh weekly` prints safe counts and a suggested weekly recorder command.
 - Add a rule that screenshots must use mock, blurred, or intentionally disclosed MRR. Done: screenshot rule is in private alpha workflow and demo checklist.
 - Add a weekly alpha review checklist: support load, retention, setup failure rate, Pro signal, compatibility failures. Done: `weekly-review.csv` and workflow define the weekly review.
 
@@ -107,7 +107,7 @@ These help if the repo becomes public-facing.
 - Add `CODE_OF_CONDUCT.md` only if community contribution becomes real. Done: public repo now includes a concise conduct policy with no-secret/no-private-revenue rules.
 - Add a `CHANGELOG.md` once alpha versions are tagged. Done: initialized for alpha source changes.
 - Add GitHub labels for install, compatibility, security, MRR semantics, visual design, alpha requests, bug reports, and alpha feedback. Done: see `.github/labels.yml`.
-- Add a safe label sync helper so the manifest can be applied without manual drift. Done: `./script/sync_github_labels.sh --dry-run` previews the `gh` commands and `--apply` updates GitHub.
+- Add a safe label sync helper so the manifest can be applied without manual drift. Done: `./script/alpha.sh labels --dry-run` previews the `gh` commands and `--apply` updates GitHub.
 - Add release notes template that repeats private API and no-public-installer caveats. Done: see [docs/release/release-notes-template.md](../release/release-notes-template.md).
 
 ## Keep Avoiding
