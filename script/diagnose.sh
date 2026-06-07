@@ -45,6 +45,8 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Overlay visual style setting: (default )?hero'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe key'
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Cached value was not printed|No last-good MRR cache yet'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Suggested next steps'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/support_report.sh'
 
   if printf '%s\n' "$output" | /usr/bin/grep -Eq "$secret_pattern"; then
     printf 'diagnose self-test failed: output contained a Stripe-like secret.\n' >&2
@@ -96,6 +98,16 @@ fail() {
   printf 'FAIL  %s\n' "$1"
 }
 
+SUGGESTED_ACTIONS=""
+
+add_suggested_action() {
+  local action="$1"
+  if printf '%s' "$SUGGESTED_ACTIONS" | /usr/bin/grep -Fxq "$action"; then
+    return
+  fi
+  SUGGESTED_ACTIONS="${SUGGESTED_ACTIONS}${action}"$'\n'
+}
+
 exists_executable() {
   local path="$1"
   [[ -x "$path" ]]
@@ -140,6 +152,7 @@ if exists_executable "$BUILD_EXECUTABLE"; then
   print_bundle_version "Build" "$BUILD_APP"
 else
   warn "Build artifact missing. Run ./script/build_lock_overlay.sh --verify"
+  add_suggested_action "Build the app: ./script/build_lock_overlay.sh --verify"
 fi
 
 if exists_executable "$INSTALLED_EXECUTABLE"; then
@@ -147,6 +160,7 @@ if exists_executable "$INSTALLED_EXECUTABLE"; then
   print_bundle_version "Installed" "$INSTALLED_APP"
 else
   warn "Installed app missing. Run ./script/install_lock_overlay_agent.sh"
+  add_suggested_action "Run guided alpha setup: ./script/start_alpha.sh"
 fi
 
 if [[ -f "$TARGET_PLIST" ]]; then
@@ -160,6 +174,7 @@ if [[ -f "$TARGET_PLIST" ]]; then
     pass "LaunchAgent uses this user's HOME path."
   else
     warn "LaunchAgent does not appear to use this user's HOME path."
+    add_suggested_action "Repair LaunchAgent paths: ./script/repair_lock_overlay_agent.sh"
   fi
 
   plist_executable="$(plist_value "$TARGET_PLIST" "ProgramArguments:0")"
@@ -172,21 +187,25 @@ if [[ -f "$TARGET_PLIST" ]]; then
     pass "LaunchAgent runs the installed overlay executable."
   else
     warn "LaunchAgent executable mismatch. Reinstall with ./script/install_lock_overlay_agent.sh"
+    add_suggested_action "Repair LaunchAgent executable drift: ./script/repair_lock_overlay_agent.sh"
   fi
 
   if [[ "$plist_mode_arg" == "--private-glass" ]]; then
     pass "LaunchAgent enables private glass mode."
   else
     warn "LaunchAgent is missing --private-glass. Reinstall with ./script/install_lock_overlay_agent.sh"
+    add_suggested_action "Repair private glass LaunchAgent mode: ./script/repair_lock_overlay_agent.sh"
   fi
 
   if [[ "$plist_stdout" == "$expected_log_prefix"* && "$plist_stderr" == "$expected_log_prefix"* ]]; then
     pass "LaunchAgent writes logs under Application Support."
   else
     warn "LaunchAgent log paths are unexpected. Reinstall with ./script/install_lock_overlay_agent.sh"
+    add_suggested_action "Repair LaunchAgent log paths: ./script/repair_lock_overlay_agent.sh"
   fi
 else
   warn "LaunchAgent plist missing: $TARGET_PLIST"
+  add_suggested_action "Install the Lock Screen overlay: ./script/install_lock_overlay_agent.sh"
 fi
 
 launchctl_output="$(/usr/bin/mktemp -t 10kmrr-launchctl.XXXXXX)"
@@ -205,6 +224,7 @@ if /bin/launchctl print "gui/$(id -u)/$LABEL" >"$launchctl_output" 2>/dev/null; 
   fi
 else
   warn "LaunchAgent is not loaded."
+  add_suggested_action "Install or reload the LaunchAgent: ./script/install_lock_overlay_agent.sh"
 fi
 rm -f "$launchctl_output"
 
@@ -220,18 +240,21 @@ elif /usr/bin/security find-generic-password \
   warn "Stripe key exists under legacy Keychain service. The app will migrate it on next successful read."
 else
   warn "Stripe key missing. Run ./script/build_lock_overlay.sh --setup"
+  add_suggested_action "Open setup and save a restricted key: ./script/build_lock_overlay.sh --setup"
 fi
 
 if /usr/bin/defaults read "$CACHE_DOMAIN" lastGoodMRR >/dev/null 2>&1; then
   pass "Last-good MRR cache exists. Cached value was not printed."
 else
   warn "No last-good MRR cache yet."
+  add_suggested_action "Refresh MRR from setup after saving a restricted key."
 fi
 
 if /usr/bin/defaults read "$CACHE_DOMAIN" lastUpdated >/dev/null 2>&1; then
   pass "Last-updated timestamp exists."
 else
   warn "No last-updated timestamp yet."
+  add_suggested_action "Refresh MRR from setup to create a last-updated timestamp."
 fi
 
 refresh_interval="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" refreshIntervalSeconds 2>/dev/null || true; } | /usr/bin/head -1)"
@@ -279,11 +302,14 @@ else
   pass "Goal setting: not configured"
 fi
 
-printf '\nSafe next steps:\n'
-printf '  Configure key: ./script/build_lock_overlay.sh --setup\n'
-printf '  Build verify:  ./script/build_lock_overlay.sh --verify\n'
-printf '  Preview:       ./script/build_lock_overlay.sh --preview-private-glass\n'
-printf '  Mock preview:  ./script/build_lock_overlay.sh --preview-mock\n'
-printf '  Debug preview: ./script/build_lock_overlay.sh --preview-debug\n'
-printf '  Install:       ./script/install_lock_overlay_agent.sh\n'
-printf '  Verbose diag:  ./script/diagnose.sh --verbose\n'
+printf '\nSuggested next steps:\n'
+if [[ -z "$SUGGESTED_ACTIONS" ]]; then
+  printf '  - No required repair detected. Lock the Mac to verify the overlay visually.\n'
+else
+  while IFS= read -r action; do
+    [[ -z "$action" ]] && continue
+    printf '  - %s\n' "$action"
+  done <<< "$SUGGESTED_ACTIONS"
+fi
+printf '  - Preview without locking: ./script/build_lock_overlay.sh --preview-private-glass\n'
+printf '  - Generate sanitized support report: ./script/support_report.sh\n'
