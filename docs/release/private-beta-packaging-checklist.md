@@ -34,6 +34,14 @@ Preferred private beta shape:
 - No installer that writes secrets.
 - Clear uninstall path in the release notes.
 
+Source-generated dry run:
+
+```sh
+./script/package_private_beta.sh --adhoc
+```
+
+This writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
+
 ## Smoke Test
 
 For each private beta package:

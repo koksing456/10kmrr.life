@@ -17,6 +17,7 @@ This project is in gated public alpha. There is no public notarized installer ye
 - Overlay settings for refresh interval, vertical and horizontal placement, size, display targeting, visual style, and local MRR goal.
 - Visual presets: full, compact, number-only, goal, and focus.
 - Universal source build for `arm64` and `x86_64`, with Intel Lock Screen behavior still tracked through alpha compatibility evidence.
+- Explicit private beta package dry run script for unnotarized internal zip artifacts.
 - Structured local logs without keys, exact MRR, raw Stripe responses, or customer/payment data.
 - Sanitized landing, social, GitHub preview, and short demo video assets.
 - Static alpha landing page with story, before/after demo, local-first security model, and gated alpha CTA.

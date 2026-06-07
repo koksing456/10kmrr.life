@@ -18,6 +18,7 @@ bash -n \
   script/diagnose.sh \
   script/install_lock_overlay_agent.sh \
   script/open_setup.sh \
+  script/package_private_beta.sh \
   script/serve_site.sh \
   script/support_report.sh \
   script/test_mrr_calculator.sh \

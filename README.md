@@ -263,3 +263,5 @@ The intended open-source core is the local app, MRR calculation, Keychain handli
 Paid convenience may later include signed/notarized installers, auto-update, premium visual designs, compatibility maintenance, and priority support.
 
 No public installer is linked until signing, notarization, and support expectations are ready.
+
+For private package dry runs only, `./script/package_private_beta.sh --adhoc` creates an explicitly unnotarized zip under `build/private-beta`. Do not publish it as a public installer.

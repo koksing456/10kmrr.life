@@ -56,3 +56,11 @@ Run this before pushing release-readiness changes:
 The gate checks shell syntax, focused MRR calculator tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, and required public docs.
 
 It does not install the LaunchAgent. Install/reinstall remains a separate local manual test because it mutates the user's machine state.
+
+For an internal package dry run only:
+
+```sh
+./script/package_private_beta.sh --adhoc
+```
+
+This creates an unnotarized private zip under `build/private-beta`. It is not a public installer.
