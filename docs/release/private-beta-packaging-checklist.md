@@ -6,7 +6,8 @@ Do not publish a public installer until signing, notarization, support, rollback
 
 ## Preconditions
 
-- At least 5 successful installs on supported Apple Silicon Macs.
+- At least 5 successful installs on supported Macs.
+- If Intel is included in the private beta, at least 2 successful Intel installs with Lock Screen visibility verified.
 - No repeated private macOS API failure on common supported macOS versions.
 - Install failure rate below 30 percent for the same reason.
 - `./script/verify_public_repo.sh` passes on a clean checkout.
@@ -50,7 +51,7 @@ For each private beta package:
 ## Release Notes Must Say
 
 - Gated private beta, not broad public release.
-- Apple Silicon support boundary if Intel is still unbuilt.
+- Intel support boundary if Intel Lock Screen behavior is still unverified.
 - Private macOS API caveat.
 - Local-first Stripe key and MRR model.
 - No 10kmrr.life server stores Stripe keys or MRR in the current alpha path.

@@ -8,22 +8,27 @@ INFO_PLIST="$ROOT_DIR/MRRLockScreenOverlay/Info.plist"
 BUILD_DIR="$ROOT_DIR/build/LockScreenOverlay"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
 EXECUTABLE="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+OBJECT_DIR="$BUILD_DIR/Objects"
 
-build_app() {
-  rm -rf "$APP_BUNDLE"
-  mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources" "$ROOT_DIR/build/logs"
-  cp "$INFO_PLIST" "$APP_BUNDLE/Contents/Info.plist"
-  local commit
-  commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
-  /usr/libexec/PlistBuddy -c "Set :TenKMRRCommit $commit" "$APP_BUNDLE/Contents/Info.plist" 2>/dev/null || \
-    /usr/libexec/PlistBuddy -c "Add :TenKMRRCommit string $commit" "$APP_BUNDLE/Contents/Info.plist"
+collect_sources() {
   local sources=()
   while IFS= read -r source; do
     sources+=("$source")
   done < <(/usr/bin/find "$SOURCE_DIR" -name '*.swift' -print | /usr/bin/sort)
+  printf '%s\n' "${sources[@]}"
+}
+
+compile_arch() {
+  local arch="$1"
+  local output="$OBJECT_DIR/$APP_NAME-$arch"
+  local sources=()
+  while IFS= read -r source; do
+    sources+=("$source")
+  done < <(collect_sources)
+
   /usr/bin/swiftc \
     -swift-version 5 \
-    -target arm64-apple-macos14.0 \
+    -target "$arch-apple-macos14.0" \
     -O \
     -framework AppKit \
     -framework SwiftUI \
@@ -31,7 +36,26 @@ build_app() {
     -framework CoreGraphics \
     -framework CoreFoundation \
     "${sources[@]}" \
-    -o "$EXECUTABLE"
+    -o "$output"
+}
+
+build_app() {
+  rm -rf "$APP_BUNDLE"
+  rm -rf "$OBJECT_DIR"
+  mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources" "$ROOT_DIR/build/logs" "$OBJECT_DIR"
+  cp "$INFO_PLIST" "$APP_BUNDLE/Contents/Info.plist"
+  local commit
+  commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
+  /usr/libexec/PlistBuddy -c "Set :TenKMRRCommit $commit" "$APP_BUNDLE/Contents/Info.plist" 2>/dev/null || \
+    /usr/libexec/PlistBuddy -c "Add :TenKMRRCommit string $commit" "$APP_BUNDLE/Contents/Info.plist"
+
+  compile_arch arm64
+  compile_arch x86_64
+  /usr/bin/lipo \
+    -create \
+    "$OBJECT_DIR/$APP_NAME-arm64" \
+    "$OBJECT_DIR/$APP_NAME-x86_64" \
+    -output "$EXECUTABLE"
   /usr/bin/codesign --force --sign - --timestamp=none "$APP_BUNDLE" >/dev/null
   printf 'Built %s\n' "$APP_BUNDLE"
 }

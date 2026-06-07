@@ -2,7 +2,7 @@
 
 Use this matrix to track private macOS API behavior across alpha machines. Do not include Stripe keys, exact MRR, raw logs, or unsanitized screenshots.
 
-Current source alpha builds an Apple Silicon-only binary. Intel rows are useful for demand tracking and future compatibility notes, but they are not supported by the current build script.
+Current source alpha builds a universal `arm64` and `x86_64` binary. Apple Silicon is the locally verified path; Intel Lock Screen/private API behavior still needs alpha compatibility evidence.
 
 ## Matrix
 

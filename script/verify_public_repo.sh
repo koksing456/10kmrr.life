@@ -29,6 +29,7 @@ section "MRR calculator tests"
 
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify
+/usr/bin/lipo build/LockScreenOverlay/MRRLockScreenOverlay.app/Contents/MacOS/MRRLockScreenOverlay -verify_arch arm64 x86_64
 
 section "Demo asset presence"
 test -s docs/demo/assets/landing-hero.png

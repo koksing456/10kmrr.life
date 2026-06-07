@@ -7,7 +7,7 @@
 - Public repo: yes.
 - Public downloadable installer: no.
 - Gated alpha install from source: yes.
-- Current source build architecture: Apple Silicon arm64 only.
+- Current source build architecture: universal arm64 and x86_64.
 - Notarized distribution: not yet.
 - Auto-update: not yet.
 

@@ -16,6 +16,8 @@ The same setup window also lets you choose:
 
 - Refresh interval.
 - Vertical overlay position.
+- Horizontal overlay position.
+- Panel size, display targeting, visual style, and optional local MRR goal.
 
 Settings are stored locally and apply the next time the overlay starts.
 

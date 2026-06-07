@@ -50,6 +50,8 @@ When debugging, share only:
 
 The lock-screen overlay depends on private macOS behavior for lock-screen placement and private glass rendering.
 
+The source build can produce a universal `arm64` and `x86_64` binary. Apple Silicon is the locally verified path; Intel behavior still needs tester evidence before broad claims.
+
 That means:
 
 - Future macOS releases may break the overlay.
