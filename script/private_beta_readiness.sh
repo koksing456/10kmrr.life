@@ -197,6 +197,34 @@ repeated_private_api_failures() {
   ' "$file" 2>/dev/null || printf '0'
 }
 
+local_smoke_passes() {
+  local file="$1"
+  local template_file="$ROOT_DIR/docs/alpha/templates/local-smoke.csv"
+  local template_example
+  template_example="$(/usr/bin/sed -n '2p' "$template_file")"
+
+  /usr/bin/awk -F, -v template_example="$template_example" '
+    function clean(value) {
+      gsub(/^"/, "", value)
+      gsub(/"$/, "", value)
+      return value
+    }
+    NR > 1 && length($0) > 0 && $0 != template_example {
+      build=clean($2)
+      install=clean($3)
+      diagnose=clean($4)
+      repair=clean($5)
+      report=clean($6)
+      uninstall=clean($7)
+      result=clean($8)
+      if (build == "pass" && install == "pass" && diagnose == "pass" && repair == "pass" && report == "pass" && uninstall == "pass" && result == "pass") {
+        count++
+      }
+    }
+    END { print count + 0 }
+  ' "$file" 2>/dev/null || printf '0'
+}
+
 signing_ready() {
   if [[ "${TENKMRR_SIGNING_READY_OVERRIDE:-}" == "pass" ]]; then
     return 0
@@ -224,27 +252,32 @@ print_readiness() {
   local ready=0
   local install_file="$TRACKER_DIR/install-funnel.csv"
   local compatibility_file="$TRACKER_DIR/compatibility.csv"
+  local smoke_file="$TRACKER_DIR/local-smoke.csv"
   local install_template="$ROOT_DIR/docs/alpha/templates/install-funnel.csv"
   local compatibility_template="$ROOT_DIR/docs/alpha/templates/compatibility.csv"
+  local smoke_template="$ROOT_DIR/docs/alpha/templates/local-smoke.csv"
   local install_rows compatibility_rows install_success install_failures compatibility_success intel_success repeated_failures
+  local smoke_rows smoke_success
   local failure_rate=0
 
   printf '10kmrr.life private beta readiness\n'
   print_source_status
 
   section "Alpha evidence"
-  if [[ ! -s "$install_file" || ! -s "$compatibility_file" ]]; then
-    status_line "WARN" "private tracker is missing install or compatibility CSVs"
+  if [[ ! -s "$install_file" || ! -s "$compatibility_file" || ! -s "$smoke_file" ]]; then
+    status_line "WARN" "private tracker is missing install, compatibility, or local-smoke CSVs"
     status_line "NEXT" "run: ./script/prepare_alpha_tracker.sh --force"
     ready=1
   else
     install_rows="$(csv_count_rows "$install_file" "$install_template")"
     compatibility_rows="$(csv_count_rows "$compatibility_file" "$compatibility_template")"
+    smoke_rows="$(csv_count_rows "$smoke_file" "$smoke_template")"
     install_success="$(successful_installs "$install_file")"
     install_failures="$(failed_install_attempts "$install_file")"
     compatibility_success="$(compatibility_passes "$compatibility_file")"
     intel_success="$(intel_compatibility_passes "$compatibility_file")"
     repeated_failures="$(repeated_private_api_failures "$compatibility_file")"
+    smoke_success="$(local_smoke_passes "$smoke_file")"
 
     if [[ "$install_rows" -gt 0 ]]; then
       failure_rate=$(( install_failures * 100 / install_rows ))
@@ -291,8 +324,17 @@ print_readiness() {
       ready=1
     fi
 
+    if [[ "$smoke_success" -ge 1 ]]; then
+      status_line "PASS" "local install/repair/uninstall smoke pass recorded"
+    else
+      status_line "WARN" "local install/repair/uninstall smoke pass not recorded"
+      status_line "NEXT" "run local smoke checklist, then record with ./script/record_alpha_local_smoke.sh"
+      ready=1
+    fi
+
     status_line "INFO" "install rows reviewed: $install_rows"
     status_line "INFO" "compatibility rows reviewed: $compatibility_rows"
+    status_line "INFO" "local smoke rows reviewed: $smoke_rows"
   fi
 
   section "Signing"
@@ -329,8 +371,10 @@ self_test() {
   /bin/mkdir -p "$temp_dir/ready" "$temp_dir/not-ready"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" "$temp_dir/ready/install-funnel.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/compatibility.csv" "$temp_dir/ready/compatibility.csv"
+  /bin/cp "$ROOT_DIR/docs/alpha/templates/local-smoke.csv" "$temp_dir/ready/local-smoke.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" "$temp_dir/not-ready/install-funnel.csv"
   /bin/cp "$ROOT_DIR/docs/alpha/templates/compatibility.csv" "$temp_dir/not-ready/compatibility.csv"
+  /bin/cp "$ROOT_DIR/docs/alpha/templates/local-smoke.csv" "$temp_dir/not-ready/local-smoke.csv"
 
   for tester in tester_001 tester_002 tester_003 tester_004 tester_005; do
     "$ROOT_DIR/script/record_alpha_install.sh" \
@@ -351,11 +395,13 @@ self_test() {
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_003 --check-date 2026-06-08 --macos-version 15.5 --cpu apple_silicon --display-setup multiple --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_004 --check-date 2026-06-08 --macos-version 15.5 --cpu intel --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
   "$ROOT_DIR/script/record_alpha_compatibility.sh" --tracker-dir "$temp_dir/ready" --tester-id tester_005 --check-date 2026-06-08 --macos-version 15.5 --cpu intel --display-setup external --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass >/dev/null
+  "$ROOT_DIR/script/record_alpha_local_smoke.sh" --tracker-dir "$temp_dir/ready" --smoke-date 2026-06-08 --build-verify pass --install-agent pass --diagnose-after-install pass --repair-preserves-data pass --support-report-safe pass --uninstall-all pass --result pass >/dev/null
 
   ready_output="$(TENKMRR_SIGNING_READY_OVERRIDE=pass "$0" --tracker-dir "$temp_dir/ready" --require-ready)"
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'private beta packaging evidence is ready'
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'successful installs with MRR seen: 5/5'
   printf '%s\n' "$ready_output" | /usr/bin/grep -q 'Intel compatibility passes for universal beta: 2/2'
+  printf '%s\n' "$ready_output" | /usr/bin/grep -q 'local install/repair/uninstall smoke pass recorded'
 
   "$ROOT_DIR/script/record_alpha_install.sh" \
     --tracker-dir "$temp_dir/not-ready" \

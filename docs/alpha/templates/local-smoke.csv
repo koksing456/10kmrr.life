@@ -1,0 +1,2 @@
+smoke_date,build_verify,install_agent,diagnose_after_install,repair_preserves_data,support_report_safe,uninstall_all,result,blocker,next_action
+2026-06-08,not_run,not_run,not_run,not_run,not_run,not_run,warn,not collected,run local smoke before beta packaging

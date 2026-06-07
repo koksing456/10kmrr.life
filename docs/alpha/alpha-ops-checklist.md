@@ -23,6 +23,13 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Record compatibility with `./script/record_alpha_compatibility.sh` after preview/install/Lock Screen visibility are checked.
 - If anything fails, ask for `./script/support_report.sh`, not raw logs.
 
+## Before Private Beta Packaging
+
+- Run the local smoke steps in [../release/private-beta-packaging-checklist.md](../release/private-beta-packaging-checklist.md).
+- Record the result with `./script/record_alpha_local_smoke.sh`.
+- Re-run `./script/private_beta_readiness.sh`.
+- Do not continue to package dry runs until local smoke has a pass row and the remaining blocker is only signing/notarization.
+
 ## Never Collect
 
 - Stripe API keys.

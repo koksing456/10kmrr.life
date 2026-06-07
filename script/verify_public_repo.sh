@@ -101,6 +101,9 @@ section "Alpha install evidence recorder"
 section "Alpha compatibility recorder"
 ./script/record_alpha_compatibility.sh --self-test
 
+section "Alpha local smoke recorder"
+./script/record_alpha_local_smoke.sh --self-test
+
 section "Alpha user recorder"
 ./script/record_alpha_user.sh --self-test
 
@@ -188,6 +191,7 @@ test -s docs/alpha/improvement-backlog.md
 test -s docs/alpha/templates/alpha-users.csv
 test -s docs/alpha/templates/install-funnel.csv
 test -s docs/alpha/templates/compatibility.csv
+test -s docs/alpha/templates/local-smoke.csv
 test -s docs/alpha/templates/pro-interest.csv
 test -s docs/alpha/templates/weekly-review.csv
 test -s docs/release/release-strategy.md

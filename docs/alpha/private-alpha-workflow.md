@@ -19,6 +19,7 @@ Use these sheets:
 - `alpha-users`: one row per approved tester.
 - `install-funnel`: one row per setup attempt.
 - `compatibility`: one row per Lock Screen compatibility check.
+- `local-smoke`: one row per private beta local smoke run.
 - `pro-interest`: one row per 7-day follow-up.
 - `weekly-review`: one row per weekly alpha review.
 
@@ -29,6 +30,7 @@ Starter CSV templates live in [templates](./templates):
 - [alpha-users.csv](./templates/alpha-users.csv)
 - [install-funnel.csv](./templates/install-funnel.csv)
 - [compatibility.csv](./templates/compatibility.csv)
+- [local-smoke.csv](./templates/local-smoke.csv)
 - [pro-interest.csv](./templates/pro-interest.csv)
 - [weekly-review.csv](./templates/weekly-review.csv)
 
@@ -101,6 +103,24 @@ Record Lock Screen compatibility with:
 ```
 
 Record only the pass/warn/fail outcome and non-sensitive blocker summaries. Keep screenshots mock, blurred, or explicitly sanitized.
+
+## Local Beta Smoke
+
+Before any private beta package dry run, run the local smoke steps from [../release/private-beta-packaging-checklist.md](../release/private-beta-packaging-checklist.md), then record the outcome:
+
+```sh
+./script/record_alpha_local_smoke.sh \
+  --build-verify pass \
+  --install-agent pass \
+  --diagnose-after-install pass \
+  --repair-preserves-data pass \
+  --support-report-safe pass \
+  --uninstall-all pass \
+  --result pass \
+  --next-action "ready for beta gate"
+```
+
+This records only pass/warn/fail evidence. Do not paste raw command output or logs.
 
 ## 7-Day Cadence
 

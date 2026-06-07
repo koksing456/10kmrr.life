@@ -132,6 +132,14 @@ For a lightweight status summary that does not run the full build gate:
 
 This summarizes the current git state, private alpha tracker presence, signing readiness, latest GitHub Actions status when available, and the next safe command to run. It does not print Stripe keys or cached MRR values.
 
+For private beta package readiness after alpha evidence is collected:
+
+```sh
+./script/private_beta_readiness.sh
+```
+
+This checks install evidence, Lock Screen compatibility, local install/repair/uninstall smoke evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
+
 For the public repo sub-gate without signing preflight:
 
 ```sh
@@ -335,7 +343,7 @@ The Free vs Pro boundary lives at [docs/alpha/free-pro-boundary.md](./docs/alpha
 The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alpha/alpha-ops-checklist.md).
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
-Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_pro_followup.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, and obvious money amounts where relevant.
+Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_pro_followup.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, and obvious money amounts where relevant.
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).
