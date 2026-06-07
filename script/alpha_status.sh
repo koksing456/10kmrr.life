@@ -76,6 +76,13 @@ template_header_matches() {
   [[ "$(/usr/bin/head -1 "$generated_file")" == "$(/usr/bin/head -1 "$template_file")" ]]
 }
 
+tracker_readme_current() {
+  local readme="$TRACKER_DIR/README.md"
+  [[ -f "$readme" ]] || return 1
+  /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$readme" &&
+    /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$readme"
+}
+
 print_git_status() {
   local branch commit dirty
 
@@ -111,6 +118,12 @@ print_tracker_status() {
       else
         status_line "WARN" "tracker headers differ from current templates"
         status_line "NEXT" "regenerate empty tracker templates with: ./script/prepare_alpha_tracker.sh --force"
+      fi
+      if tracker_readme_current; then
+        status_line "PASS" "tracker README matches current safety workflow"
+      else
+        status_line "WARN" "tracker README is missing current safety workflow"
+        status_line "NEXT" "refresh tracker README with: ./script/prepare_alpha_tracker.sh --force"
       fi
       users_count="$(tracked_row_count "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv")"
       install_count="$(tracked_row_count "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv")"

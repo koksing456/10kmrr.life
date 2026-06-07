@@ -45,6 +45,8 @@ Track only non-sensitive fields:
 - blocker summary
 - next action
 
+Use stable tester ids such as tester_001. Keep identity and contact mapping outside this repo.
+
 Do not collect:
 
 - Stripe API keys
@@ -162,6 +164,7 @@ validate_generated_tracker() {
   /usr/bin/head -1 "$output_dir/pro-interest.csv" | /usr/bin/grep -q 'tester_id,follow_up_date,retained_day_7'
   /usr/bin/head -1 "$output_dir/weekly-review.csv" | /usr/bin/grep -q 'week_start,support_load,setup_failure_rate'
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
+  /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
   /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$output_dir/README.md"
 
   if /usr/bin/grep -R -E '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)' "$output_dir" >/dev/null; then
