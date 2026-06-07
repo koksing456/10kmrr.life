@@ -12,6 +12,7 @@ LABEL="life.10kmrr.mrr-lock-overlay"
 KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
 CACHE_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Cache"
+SETTINGS_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Settings"
 VERBOSE=false
 
 case "${1:-}" in
@@ -123,6 +124,19 @@ if /usr/bin/defaults read "$CACHE_DOMAIN" lastUpdated >/dev/null 2>&1; then
   pass "Last-updated timestamp exists."
 else
   warn "No last-updated timestamp yet."
+fi
+
+refresh_interval="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" refreshIntervalSeconds 2>/dev/null || true; } | /usr/bin/head -1)"
+placement="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" placement 2>/dev/null || true; } | /usr/bin/head -1)"
+if [[ -n "$refresh_interval" && "$refresh_interval" =~ ^[0-9]+$ ]]; then
+  pass "Refresh interval setting: $((refresh_interval / 60))m"
+else
+  pass "Refresh interval setting: default 5m"
+fi
+if [[ -n "$placement" ]]; then
+  pass "Overlay position setting: $placement"
+else
+  pass "Overlay position setting: default center"
 fi
 
 printf '\nSafe next steps:\n'

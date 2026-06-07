@@ -12,6 +12,13 @@ Preferred setup path:
 
 The setup window stores a restricted read-only Stripe key in macOS Keychain and can test Stripe access without printing the key.
 
+The same setup window also lets you choose:
+
+- Refresh interval.
+- Vertical overlay position.
+
+Settings are stored locally and apply the next time the overlay starts.
+
 Compatibility alias:
 
 ```sh

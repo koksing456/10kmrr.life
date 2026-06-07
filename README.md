@@ -102,6 +102,8 @@ Preview without locking your Mac:
 
 The preview follows the screen containing the mouse cursor. It does not unload the installed LaunchAgent.
 
+The setup window also lets you choose the local refresh interval and vertical overlay position. These settings are stored locally and apply the next time the overlay starts.
+
 ## Install
 
 Alpha installs are gated. If you are approved for alpha testing, run:
@@ -156,6 +158,7 @@ The overlay computes MRR locally from Stripe subscriptions:
 - Excludes trialing, canceled, unpaid, free, and metered-only items.
 - Displays separate totals per currency instead of converting currencies.
 - Uses the last cached value when Stripe refresh fails.
+- Default refresh interval is 5 minutes and can be changed in setup.
 
 ## Alpha Feedback
 

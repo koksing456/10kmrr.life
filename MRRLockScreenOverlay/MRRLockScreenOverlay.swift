@@ -11,6 +11,7 @@ private let keychainAccount = "stripe_api_key"
 private let appSubsystem = "life.10kmrr.MRRLockScreenOverlay"
 private let usePrivateGlassComponent = CommandLine.arguments.contains("--private-glass")
 private let setupMode = CommandLine.arguments.contains("--setup")
+private let overlayPanelSize = NSSize(width: 432, height: 176)
 
 private enum OverlayError: LocalizedError {
     case missingAPIKey
@@ -42,6 +43,64 @@ private struct MRRResult: Codable, Equatable {
 
     var isEmpty: Bool {
         minorUnitsByCurrency.isEmpty
+    }
+}
+
+private enum OverlayPlacement: String, CaseIterable, Identifiable {
+    case high
+    case center
+    case low
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .high:
+            return "Higher"
+        case .center:
+            return "Center"
+        case .low:
+            return "Lower"
+        }
+    }
+}
+
+private enum OverlaySettingsStore {
+    private static let defaults = UserDefaults(suiteName: "life.10kmrr.MRRLockScreenOverlay.Settings") ?? .standard
+    private static let refreshIntervalKey = "refreshIntervalSeconds"
+    private static let placementKey = "placement"
+
+    static var refreshIntervalSeconds: TimeInterval {
+        let stored = defaults.integer(forKey: refreshIntervalKey)
+        guard stored >= 60 else { return 300 }
+        return TimeInterval(stored)
+    }
+
+    static var refreshIntervalMinutes: Int {
+        get { Int(refreshIntervalSeconds / 60) }
+        set {
+            let bounded = max(1, min(newValue, 60))
+            defaults.set(bounded * 60, forKey: refreshIntervalKey)
+        }
+    }
+
+    static var placement: OverlayPlacement {
+        get {
+            guard let rawValue = defaults.string(forKey: placementKey),
+                  let placement = OverlayPlacement(rawValue: rawValue)
+            else {
+                return .center
+            }
+            return placement
+        }
+        set {
+            defaults.set(newValue.rawValue, forKey: placementKey)
+        }
+    }
+
+    static func reset() {
+        defaults.removeObject(forKey: refreshIntervalKey)
+        defaults.removeObject(forKey: placementKey)
     }
 }
 
@@ -145,8 +204,6 @@ private struct MRRLockOverlayView: View {
     @ObservedObject var model: MRRDisplayModel
     @State private var pulse = false
 
-    private let panelWidth: CGFloat = 432
-    private let panelHeight: CGFloat = 176
     private let cornerRadius: CGFloat = 34
 
     @ViewBuilder
@@ -156,12 +213,12 @@ private struct MRRLockOverlayView: View {
                 PrivateGlassBackground(variant: 11, cornerRadius: cornerRadius) {
                     panelContent
                 }
-                .frame(width: panelWidth, height: panelHeight)
+                .frame(width: overlayPanelSize.width, height: overlayPanelSize.height)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             } else {
                 panelContent
                     .background(stableFrostedBackground)
-                    .frame(width: panelWidth, height: panelHeight)
+                    .frame(width: overlayPanelSize.width, height: overlayPanelSize.height)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             }
         }
@@ -207,7 +264,7 @@ private struct MRRLockOverlayView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 22)
-        .frame(width: panelWidth, height: panelHeight)
+        .frame(width: overlayPanelSize.width, height: overlayPanelSize.height)
         .background(Color.white.opacity(usePrivateGlassComponent ? 0.00 : 0.035))
     }
 
@@ -503,7 +560,7 @@ private final class LockScreenOverlayController {
             object: nil
         )
 
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: OverlaySettingsStore.refreshIntervalSeconds, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 await self?.model.refresh()
             }
@@ -611,9 +668,17 @@ private final class LockScreenOverlayController {
     }
 
     private func frame(for screen: NSScreen) -> NSRect {
-        let size = NSSize(width: 350, height: 180)
+        let size = overlayPanelSize
         let frame = screen.frame
-        let originY = frame.minY + (frame.height / 2) - size.height - 60
+        let originY: CGFloat
+        switch OverlaySettingsStore.placement {
+        case .high:
+            originY = frame.minY + (frame.height / 2) + 28
+        case .center:
+            originY = frame.minY + (frame.height / 2) - size.height - 60
+        case .low:
+            originY = frame.minY + (frame.height / 2) - size.height - 180
+        }
         return NSRect(
             x: frame.midX - size.width / 2,
             y: originY,
@@ -652,19 +717,42 @@ private final class LockScreenOverlayController {
 
 @MainActor
 private final class SetupModel: ObservableObject {
+    let refreshIntervalOptions = [1, 5, 10, 15, 30]
+
     @Published var keyInput = ""
     @Published var statusText = ""
     @Published var testText = ""
     @Published var isConfigured = false
     @Published var isTesting = false
+    @Published var refreshIntervalMinutes = 5
+    @Published var placement = OverlayPlacement.center
 
     init() {
         refreshStatus()
+        loadSettings()
     }
 
     func refreshStatus() {
         isConfigured = KeychainStore.stripeAPIKeyExists()
         statusText = isConfigured ? "Keychain key configured" : "Keychain key not configured"
+    }
+
+    func loadSettings() {
+        let storedRefreshInterval = OverlaySettingsStore.refreshIntervalMinutes
+        refreshIntervalMinutes = refreshIntervalOptions.contains(storedRefreshInterval) ? storedRefreshInterval : 5
+        placement = OverlaySettingsStore.placement
+    }
+
+    func saveSettings() {
+        OverlaySettingsStore.refreshIntervalMinutes = refreshIntervalMinutes
+        OverlaySettingsStore.placement = placement
+        testText = "Saved display settings. Restart installed overlay to apply them."
+    }
+
+    func resetSettings() {
+        OverlaySettingsStore.reset()
+        loadSettings()
+        testText = "Reset display settings"
     }
 
     func saveKey() {
@@ -780,6 +868,39 @@ private struct SetupWindowView: View {
                 }
             }
 
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Overlay settings")
+                    .font(.system(size: 13, weight: .semibold))
+                HStack(spacing: 18) {
+                    Picker("Refresh", selection: $model.refreshIntervalMinutes) {
+                        ForEach(model.refreshIntervalOptions, id: \.self) { minutes in
+                            Text("\(minutes)m").tag(minutes)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 236)
+
+                    Picker("Position", selection: $model.placement) {
+                        ForEach(OverlayPlacement.allCases) { placement in
+                            Text(placement.label).tag(placement)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 222)
+                }
+                HStack(spacing: 10) {
+                    Button("Save Settings") {
+                        model.saveSettings()
+                    }
+                    Button("Reset Settings") {
+                        model.resetSettings()
+                    }
+                }
+                Text("Settings are stored locally and apply the next time the overlay starts.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+            }
+
             if !model.testText.isEmpty {
                 Text(model.testText)
                     .font(.system(size: 13, weight: .medium))
@@ -798,7 +919,7 @@ private struct SetupWindowView: View {
             }
         }
         .padding(26)
-        .frame(width: 520)
+        .frame(width: 560)
     }
 }
 
@@ -1122,7 +1243,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     private func showSetupWindow() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 410),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 520),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
