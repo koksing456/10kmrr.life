@@ -92,8 +92,10 @@ test -s PRIVACY.md
 test -s CONTRIBUTING.md
 test -s CHANGELOG.md
 test -s LICENSE
+test -s .github/PULL_REQUEST_TEMPLATE.md
 test -s .github/ISSUE_TEMPLATE/alpha_request.yml
 test -s docs/alpha/free-pro-boundary.md
+test -s docs/alpha/alpha-invite-template.md
 test -s docs/alpha/alpha-ops-checklist.md
 test -s docs/alpha/private-alpha-workflow.md
 test -s docs/alpha/install-smoke-checklist.md

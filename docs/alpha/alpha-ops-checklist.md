@@ -11,6 +11,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Confirm they understand this is source alpha, not a notarized public installer.
 - Confirm they are comfortable creating a restricted read-only Stripe key.
 - Send SECURITY.md before any setup conversation.
+- Send [alpha-invite-template.md](./alpha-invite-template.md) after approval.
 
 ## During Setup
 
@@ -20,6 +21,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Ask them to configure through `./script/build_lock_overlay.sh --setup`.
 - Ask them to run `./script/build_lock_overlay.sh --preview-private-glass`.
 - Ask them to install only after preview/setup are understood.
+- If anything fails, ask for `./script/support_report.sh`, not raw logs.
 
 ## Never Collect
 

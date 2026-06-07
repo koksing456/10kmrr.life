@@ -20,6 +20,7 @@ This project is in gated public alpha. There is no public notarized installer ye
 - Explicit private beta package dry run script for unnotarized internal zip artifacts.
 - Support report redaction self-test in the public verification gate.
 - Stripe key validation self-test in the public verification gate.
+- GitHub PR and support templates that default to sanitized reports and no-secret confirmations.
 - Structured local logs without keys, exact MRR, raw Stripe responses, or customer/payment data.
 - Sanitized landing, social, GitHub preview, and short demo video assets.
 - Static alpha landing page with story, before/after demo, local-first security model, and gated alpha CTA.

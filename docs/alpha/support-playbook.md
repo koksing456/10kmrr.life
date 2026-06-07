@@ -29,13 +29,13 @@ Never ask for:
 Ask the tester to run:
 
 ```sh
-./script/diagnose.sh
+./script/support_report.sh
 ```
 
-For a shareable local summary, ask them to run:
+If they cannot generate the support report, ask them to run:
 
 ```sh
-./script/support_report.sh
+./script/diagnose.sh
 ```
 
 The support report redacts local paths, Stripe-key-like strings, webhook secrets, and obvious money amounts. It does not include raw log contents unless `--include-logs` is used.

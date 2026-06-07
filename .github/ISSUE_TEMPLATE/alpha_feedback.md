@@ -31,4 +31,4 @@ What felt good, confusing, or unnecessary?
 
 If blocked, what was the first step that failed?
 
-If a local script failed, paste only the command name and non-sensitive pass/warn/fail summary. Do not paste raw logs unless they have been reviewed and sanitized.
+If a local script failed, run `./script/support_report.sh` and paste only the sanitized sections relevant to the issue. Do not use `--include-logs` unless they have been reviewed and sanitized.
