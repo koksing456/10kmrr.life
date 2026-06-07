@@ -72,8 +72,8 @@ Suggested workflow:
 
 1. Start with ./script/alpha_next_action.sh for the single recommended safe action.
 2. Write a local readiness report with ./script/alpha_readiness_report.sh when you need a shareable private status packet.
-3. Approve testers and print their safe invite path with ./script/approve_alpha_tester.sh.
-4. Generate the approved tester invite with ./script/generate_alpha_invite.sh.
+3. Prepare the approved tester invite packet with ./script/prepare_alpha_invite_packet.sh.
+4. Send the generated invite body from build/alpha-invites/tester_001.md.
 5. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
 6. Ask for ./script/support_report.sh only if something fails.
 7. Record common support issues with ./script/record_alpha_support_issue.sh.
@@ -94,14 +94,12 @@ Example approved tester and install evidence rows:
 
 ./script/alpha_readiness_report.sh
 
-./script/approve_alpha_tester.sh \\
+./script/prepare_alpha_invite_packet.sh \\
   --tester-id tester_001 \\
   --uses-stripe-subscriptions yes \\
   --macos-version 15.5 \\
   --cpu apple_silicon \\
   --display-setup built_in
-
-./script/generate_alpha_invite.sh --tester-id tester_001
 
 ./script/record_alpha_support_issue.sh \\
   --tester-id tester_001 \\
@@ -231,7 +229,7 @@ validate_tracker_readme() {
   test -s "$output_dir/README.md"
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
-  /usr/bin/grep -q './script/generate_alpha_invite.sh' "$output_dir/README.md"
+  /usr/bin/grep -q './script/prepare_alpha_invite_packet.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/alpha_next_action.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/alpha_readiness_report.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/record_alpha_support_issue.sh' "$output_dir/README.md"

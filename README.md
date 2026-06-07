@@ -12,11 +12,11 @@ The current app is `MRRLockScreenOverlay`: a macOS background app that reads Str
 
 I wanted my MRR to feel present, not buried inside another dashboard.
 
-Stripe Dashboard is useful, and subscription analytics tools are powerful, but they are places I have to go check. I wanted the opposite: a quiet signal that is already there when I open my Mac. Something that reminds me what I am building toward before I start the day.
+Stripe Dashboard is useful, and subscription analytics tools are powerful, but they are destinations. I have to decide to open them. I wanted the opposite: a quiet signal that is already there when I open my Mac, before Slack, email, or another tab gets my attention.
 
-I first explored simpler ideas like a screen saver, wallpaper, and widgets. They were close, but they did not show up in the moment I actually cared about: the Mac Lock Screen. So this became a small personal Mac tool for one specific job: make MRR visible as a daily founder operating signal.
+I first tried the obvious Mac surfaces: a screen saver, wallpaper, and widgets. They were close, but they missed the moment I cared about most. The Lock Screen is the reset point. It is where I see the machine before I start the day, and it felt like the right place for the one number I want to stay honest about.
 
-The goal is not to build a bigger analytics product. The goal is to make the number that matters feel closer.
+So 10kmrr.life became a small personal Mac tool with one job: make MRR visible as a daily founder operating signal. Not a bigger dashboard. Not another place to check. Just the number that keeps the work pointed at revenue.
 
 ## Alpha Status
 
@@ -359,8 +359,7 @@ Refresh only the local tracker instructions with `./script/prepare_alpha_tracker
 Use `./script/alpha_next_action.sh` as the daily operator entrypoint; it prints one safe recommended next action from aggregate tracker state.
 Write a local private readiness report with `./script/alpha_readiness_report.sh`; it writes `build/alpha-readiness-report.md`, which is ignored by git.
 Audit manually edited private tracker rows with `./script/audit_alpha_tracker.sh`; it reports only file, line, and issue type, not row contents.
-Approve a tester and print their safe invite path with `./script/approve_alpha_tester.sh --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in`.
-Generate the approved tester invite with `./script/generate_alpha_invite.sh --tester-id tester_001`.
+Prepare the approved tester invite packet with `./script/prepare_alpha_invite_packet.sh --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in`; it approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`.
 Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_day7.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, and obvious money amounts where relevant.
 For common setup/support failures, use `./script/record_alpha_support_issue.sh --tester-id tester_001 --issue-type lock_screen --result fail` instead of manually composing install and compatibility rows.
 For the common success case after a tester installs, sees MRR, confirms Lock Screen visibility, and confirms the overlay hides after unlock, use the shorter evidence packet:

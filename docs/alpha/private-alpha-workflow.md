@@ -54,10 +54,10 @@ Use one of these exact stage values:
 
 Only advance a tester when the previous stage is confirmed by their non-sensitive report or a safe diagnostic summary.
 
-Approve testers and print their safe invite path with:
+Prepare the approved tester invite packet with:
 
 ```sh
-./script/approve_alpha_tester.sh \
+./script/prepare_alpha_invite_packet.sh \
   --tester-id tester_001 \
   --uses-stripe-subscriptions yes \
   --macos-version 15.5 \
@@ -65,11 +65,7 @@ Approve testers and print their safe invite path with:
   --display-setup built_in
 ```
 
-Generate the full safe invite message with:
-
-```sh
-./script/generate_alpha_invite.sh --tester-id tester_001
-```
+This approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`. Use `./script/approve_alpha_tester.sh` and `./script/generate_alpha_invite.sh` directly only when you intentionally need the lower-level split flow.
 
 Use `./script/record_alpha_user.sh` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.
 

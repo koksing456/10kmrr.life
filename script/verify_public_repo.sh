@@ -104,6 +104,9 @@ section "Alpha invite generator"
 section "Alpha tester approval wrapper"
 ./script/approve_alpha_tester.sh --self-test
 
+section "Alpha invite packet wrapper"
+./script/prepare_alpha_invite_packet.sh --self-test
+
 section "Alpha install evidence recorder"
 ./script/record_alpha_install.sh --self-test
 

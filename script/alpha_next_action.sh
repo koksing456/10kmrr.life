@@ -351,17 +351,17 @@ recommend() {
 
   if [[ "$approved_users" -eq 0 && "$install_rows" -eq 0 ]]; then
     emit_action \
-      "approve the first alpha tester" \
-      "private beta evidence cannot move until at least one tester is approved" \
-      "./script/approve_alpha_tester.sh --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in"
+      "prepare the first alpha invite packet" \
+      "private beta evidence cannot move until at least one tester is approved and invited" \
+      "./script/prepare_alpha_invite_packet.sh --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in"
     return
   fi
 
   if [[ "$approved_users" -gt 0 && "$install_rows" -lt "$approved_users" ]]; then
     emit_action \
-      "generate invite and start approved tester" \
+      "start approved tester and collect install evidence" \
       "there are approved testers without install evidence rows" \
-      "./script/generate_alpha_invite.sh --tester-id tester_001"
+      "./script/start_alpha.sh --tester-id tester_001"
     return
   fi
 
@@ -428,7 +428,7 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'approve the first alpha tester'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'prepare the first alpha invite packet'
 
   "$ROOT_DIR/script/approve_alpha_tester.sh" \
     --tracker-dir "$temp_dir/tracker" \
@@ -437,7 +437,7 @@ self_test() {
     --cpu apple_silicon \
     --display-setup built_in >/dev/null
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'generate invite and start approved tester'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'start approved tester and collect install evidence'
 
   "$ROOT_DIR/script/record_alpha_support_issue.sh" \
     --tracker-dir "$temp_dir/tracker" \
