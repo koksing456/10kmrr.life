@@ -90,6 +90,10 @@ case "${1:-}" in
     build_app
     preview_app "--private-glass" "--mock-mrr"
     ;;
+  --preview-debug)
+    build_app
+    preview_app "--private-glass" "--debug"
+    ;;
   --logs)
     logs
     ;;
@@ -97,7 +101,7 @@ case "${1:-}" in
     build_app
     ;;
   *)
-    printf 'Usage: %s [--verify|--setup|--preview|--preview-private-glass|--preview-mock|--logs]\n' "$0" >&2
+    printf 'Usage: %s [--verify|--setup|--preview|--preview-private-glass|--preview-mock|--preview-debug|--logs]\n' "$0" >&2
     exit 64
     ;;
 esac

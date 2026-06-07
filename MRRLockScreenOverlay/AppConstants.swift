@@ -7,3 +7,4 @@ let appSubsystem = "life.10kmrr.MRRLockScreenOverlay"
 let usePrivateGlassComponent = CommandLine.arguments.contains("--private-glass")
 let setupMode = CommandLine.arguments.contains("--setup")
 let mockMRRMode = CommandLine.arguments.contains("--mock-mrr")
+let debugMode = CommandLine.arguments.contains("--debug")

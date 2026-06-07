@@ -46,8 +46,8 @@ These reduce maintenance risk.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases. Done: sanitized fixture now covers 8 focused calculator cases.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
 - Add CI checks for shell syntax, app build, public repo scan, and MRR calculator tests.
-- Add structured log events with no secrets and no MRR values by default.
-- Add a debug mode that explains which private API path failed without dumping sensitive runtime data.
+- Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
+- Add a debug mode that explains which private API path failed without dumping sensitive runtime data. Done: `--debug` / `--preview-debug` exposes safe private API failure labels.
 
 ## P2: Alpha Ops
 

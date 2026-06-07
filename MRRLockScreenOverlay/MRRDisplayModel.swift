@@ -61,11 +61,13 @@ final class MRRDisplayModel: ObservableObject {
         guard !isRefreshing else { return }
         guard !mockMRRMode else {
             loadMockMRR()
+            AppLogger.log("mrr_refresh_mock")
             return
         }
         isRefreshing = true
         errorText = nil
         statusText = "Refreshing"
+        AppLogger.log("mrr_refresh_started")
 
         do {
             let apiKey = try KeychainStore.readStripeAPIKey()
@@ -76,10 +78,19 @@ final class MRRDisplayModel: ObservableObject {
             staleSince = nil
             statusText = "Live"
             saveCache(fetched, lastUpdated: lastUpdated)
+            AppLogger.log("mrr_refresh_succeeded", fields: [
+                "currency_count": "\(fetched.minorUnitsByCurrency.count)",
+                "excluded_metered": "\(fetched.excludedMeteredItems)",
+                "excluded_free": "\(fetched.excludedFreeItems)"
+            ])
         } catch {
             staleSince = Date()
             statusText = result == nil ? Self.safeStatusText(for: error) : "Stale"
             errorText = error.localizedDescription
+            AppLogger.log("mrr_refresh_failed", fields: [
+                "error": AppLogger.errorKind(error),
+                "has_cache": result == nil ? "false" : "true"
+            ])
         }
 
         isRefreshing = false

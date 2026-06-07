@@ -129,6 +129,12 @@ Preview with mock MRR before configuring a Stripe key:
 ./script/build_lock_overlay.sh --preview-mock
 ```
 
+Preview with private API debug labels:
+
+```sh
+./script/build_lock_overlay.sh --preview-debug
+```
+
 The preview uses the selected display mode from setup. It does not unload the installed LaunchAgent.
 
 The setup window also lets you preview a mock overlay before adding a Stripe key, refresh MRR now, confirm when the last-good cache was updated, and choose the local refresh interval, vertical position, horizontal position, panel size, display mode, visual style, and optional MRR goal. These settings are stored locally and apply the next time the overlay starts.
@@ -176,6 +182,8 @@ If the overlay does not appear or the MRR does not refresh, run:
 ```
 
 The diagnostic checks build status, install status, LaunchAgent state, Keychain presence, and local cache presence without printing the Stripe key or cached MRR value.
+
+The app logs structured local events such as refresh start/success/failure, overlay show/hide, and private API fallback. Logs do not include Stripe keys, exact MRR values, raw Stripe responses, or customer/payment data by default.
 
 ## Uninstall
 

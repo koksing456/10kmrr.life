@@ -116,7 +116,13 @@ final class LockScreenOverlayController {
                     state.hasDelegatedWindow = true
                 } catch {
                     model.statusText = "Overlay fallback"
-                    model.errorText = error.localizedDescription
+                    model.errorText = debugMode
+                        ? "Private API path failed: \(AppLogger.errorKind(error))"
+                        : "Private glass fallback active"
+                    AppLogger.log("skylight_delegate_failed", fields: [
+                        "error": AppLogger.errorKind(error),
+                        "debug": debugMode ? "true" : "false"
+                    ])
                 }
             }
 
@@ -126,7 +132,11 @@ final class LockScreenOverlayController {
             }
         }
 
-        NSLog("%@: overlay shown: %@", appSubsystem, reason)
+        AppLogger.log("overlay_shown", fields: [
+            "reason": reason,
+            "screens": "\(screens.count)",
+            "style": OverlaySettingsStore.visualStyle.rawValue
+        ])
     }
 
     private func makeOverlayWindow(frame: NSRect, reason: String) -> NSWindow {
@@ -171,7 +181,7 @@ final class LockScreenOverlayController {
         for state in windowsByScreenID.values {
             state.window.orderOut(nil)
         }
-        NSLog("%@: overlay hidden", appSubsystem)
+        AppLogger.log("overlay_hidden")
     }
 
     private func screenID(for screen: NSScreen) -> String {
