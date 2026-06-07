@@ -78,6 +78,13 @@ validate_choice() {
   fi
 }
 
+validate_write_values() {
+  if printf '%s\n%s\n' "$TESTER_ID" "$MACOS_VERSION" | /usr/bin/grep -Eiq '(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)'; then
+    printf 'Invite write mode needs real evidence values. Replace tester_XXX and 15.x placeholders, or use --dry-run to preview without writing.\n' >&2
+    exit 64
+  fi
+}
+
 ensure_tracker() {
   if [[ ! -s "$TRACKER_DIR/alpha-users.csv" ]]; then
     printf 'Alpha users tracker missing. Run ./script/prepare_alpha_tracker.sh first.\n' >&2
@@ -204,6 +211,7 @@ prepare_packet() {
     return
   fi
 
+  validate_write_values
   ensure_tracker
 
   output_file="$OUTPUT_DIR/$TESTER_ID.md"
@@ -280,6 +288,38 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/invites" --tester-id 'founder@example.com' >/dev/null 2>&1; then
     printf 'prepare_alpha_invite_packet self-test failed: email-like tester id was accepted.\n' >&2
+    exit 1
+  fi
+
+  output="$("$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --output-dir "$temp_dir/placeholder-dry-run" \
+    --tester-id tester_XXX \
+    --macos-version 15.x \
+    --cpu apple_silicon \
+    --display-setup built_in \
+    --dry-run)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'DRY RUN: no tracker row or invite file was written'
+
+  if "$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --output-dir "$temp_dir/invites" \
+    --tester-id tester_XXX \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup built_in >/dev/null 2>&1; then
+    printf 'prepare_alpha_invite_packet self-test failed: placeholder tester id was accepted in write mode.\n' >&2
+    exit 1
+  fi
+
+  if "$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --output-dir "$temp_dir/invites" \
+    --tester-id tester_005 \
+    --macos-version 15.x \
+    --cpu apple_silicon \
+    --display-setup built_in >/dev/null 2>&1; then
+    printf 'prepare_alpha_invite_packet self-test failed: placeholder macOS version was accepted in write mode.\n' >&2
     exit 1
   fi
 

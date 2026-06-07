@@ -43,6 +43,13 @@ shell_quote() {
   printf "'%s'" "${value//\'/\'\\\'\'}"
 }
 
+validate_write_values() {
+  if printf '%s\n%s\n' "$TESTER_ID" "$MACOS_VERSION" | /usr/bin/grep -Eiq '(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)'; then
+    printf 'Approved tester write mode needs real evidence values. Replace tester_XXX and 15.x placeholders before writing tracker rows.\n' >&2
+    exit 64
+  fi
+}
+
 record_approved_tester() {
   "$ROOT_DIR/script/record_alpha_user.sh" \
     --tracker-dir "$TRACKER_DIR" \
@@ -92,6 +99,7 @@ approve_tester() {
     exit 64
   fi
 
+  validate_write_values
   record_approved_tester
   print_invite
 }
@@ -122,6 +130,16 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id "rk_${live_env}_1234567890abcdef" >/dev/null 2>&1; then
     printf 'approve_alpha_tester self-test failed: secret-like tester id was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_XXX --macos-version 15.5 >/dev/null 2>&1; then
+    printf 'approve_alpha_tester self-test failed: placeholder tester id was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_005 --macos-version 15.x >/dev/null 2>&1; then
+    printf 'approve_alpha_tester self-test failed: placeholder macOS version was accepted.\n' >&2
     exit 1
   fi
 
