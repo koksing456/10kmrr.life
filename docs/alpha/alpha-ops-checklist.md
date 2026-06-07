@@ -2,6 +2,8 @@
 
 Use this checklist before inviting each alpha tester.
 
+For the full private tracker workflow, use [private-alpha-workflow.md](./private-alpha-workflow.md).
+
 ## Before Invite
 
 - Confirm they use Stripe subscriptions.
@@ -49,6 +51,8 @@ Ask:
 - Did it become noise?
 - What would make it worth paying for?
 - What would make you uninstall it?
+
+Record the outcome in the private `pro-interest` and `alpha-users` trackers. Keep Pro pull separate from general feedback.
 
 ## Kill Criteria
 

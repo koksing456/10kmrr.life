@@ -1,0 +1,2 @@
+tester_id,attempt_date,stage,build_verify,configured_key,previewed,installed,saw_mrr,diagnose_summary,blocker,next_action
+example,2026-06-07,requested,not_run,no,no,no,no,not_collected,,send setup path
