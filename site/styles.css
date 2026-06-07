@@ -295,7 +295,8 @@ h2 {
 }
 
 .feature-grid,
-.boundary-grid {
+.boundary-grid,
+.contrast-grid {
   display: grid;
   gap: 16px;
 }
@@ -353,6 +354,138 @@ h3 {
   color: rgba(200, 246, 218, 0.88);
   font-size: 13px;
   font-weight: 720;
+}
+
+.contrast-section {
+  background: #111a23;
+  color: var(--ink);
+}
+
+.contrast-section > :first-child {
+  max-width: 820px;
+}
+
+.contrast-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 46px;
+}
+
+.contrast-grid article {
+  min-height: 360px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.before-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    #0b121a;
+}
+
+.after-panel {
+  background:
+    radial-gradient(circle at 72% 18%, rgba(143, 227, 193, 0.22), transparent 32%),
+    linear-gradient(135deg, rgba(20, 55, 89, 0.92), rgba(9, 18, 30, 0.96));
+}
+
+.contrast-kicker {
+  display: inline-flex;
+  margin-bottom: 18px;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contrast-grid h3 {
+  max-width: 430px;
+  font-size: 28px;
+  line-height: 1.08;
+}
+
+.abstract-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 44px;
+}
+
+.abstract-dashboard span {
+  min-height: 74px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.10) 22%, transparent 22%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.abstract-dashboard span:nth-child(3),
+.abstract-dashboard span:nth-child(4) {
+  opacity: 0.52;
+}
+
+.mini-lockscreen {
+  position: relative;
+  min-height: 218px;
+  margin-top: 24px;
+  overflow: hidden;
+  border-radius: 8px;
+  background:
+    linear-gradient(140deg, rgba(16, 39, 68, 0.24), rgba(255, 255, 255, 0.20)),
+    linear-gradient(28deg, #071524, #385f8d 54%, #d8e2dd);
+}
+
+.mini-lockscreen::before {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  top: 48%;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.36);
+  filter: blur(20px);
+  transform: rotate(-8deg);
+}
+
+.mini-time {
+  position: relative;
+  padding-top: 26px;
+  text-align: center;
+  font-size: 54px;
+  line-height: 1;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-mrr {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  width: min(82%, 330px);
+  transform: translateX(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(22px) saturate(1.25);
+}
+
+.mini-mrr span,
+.mini-mrr small {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.mini-mrr strong {
+  display: block;
+  margin: 6px 0 3px;
+  font-size: 34px;
+  line-height: 1;
 }
 
 .security-band {
@@ -475,6 +608,10 @@ h3 {
   }
 
   .security-list {
+    grid-template-columns: 1fr;
+  }
+
+  .contrast-grid {
     grid-template-columns: 1fr;
   }
 

@@ -68,7 +68,7 @@ These improve conversion without changing the app.
 - Add social-sized sanitized assets: square, wide, vertical, and GitHub social preview. Done: `./script/capture_demo_assets.sh` writes all four mock-only social assets.
 - Make the landing page CTA point to the real gated intake once it exists. Done: the static page points to the public GitHub alpha request issue form.
 - Add a concise "why I built this" section to the landing page, not only the README. Done.
-- Add a stronger before/after demo: Stripe Dashboard requires checking; lock screen makes MRR ambient.
+- Add a stronger before/after demo: Stripe Dashboard requires checking; lock screen makes MRR ambient. Done: the static landing page includes a mock before/after section without real Stripe dashboard data.
 - Add testimonials only after alpha users explicitly approve public quotes.
 
 ## P2: Repo And Community
