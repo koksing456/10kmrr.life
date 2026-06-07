@@ -63,8 +63,41 @@ sanitize_stream() {
   '
 }
 
+diagnose_output() {
+  "$ROOT_DIR/script/diagnose.sh" 2>&1 | sanitize_stream
+}
+
+print_next_steps() {
+  local diagnostic="$1"
+
+  printf '\n## Suggested Next Steps\n\n'
+
+  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'Stripe key missing'; then
+    printf -- '- Open setup and save a restricted read-only Stripe key: `./script/build_lock_overlay.sh --setup`.\n'
+  fi
+
+  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'legacy Keychain service'; then
+    printf -- '- A legacy Stripe key exists. Open setup or restart the overlay after repair so the app can migrate it to the current Keychain service.\n'
+  fi
+
+  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'LaunchAgent is not loaded|LaunchAgent executable mismatch|missing --private-glass|log paths are unexpected|LaunchAgent plist missing|Installed app missing'; then
+    printf -- '- Repair app and LaunchAgent while preserving Keychain/cache/settings: `./script/repair_lock_overlay_agent.sh`.\n'
+  fi
+
+  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'Build artifact missing'; then
+    printf -- '- Rebuild and verify the local app: `./script/build_lock_overlay.sh --verify`.\n'
+  fi
+
+  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'No last-good MRR cache yet|No last-updated timestamp yet'; then
+    printf -- '- After configuring a key, refresh MRR from setup to create the local last-good cache.\n'
+  fi
+
+  printf -- '- For source/build issues, run the full local readiness check: `./script/check.sh`.\n'
+  printf -- '- Share only this sanitized report or pass/warn/fail summaries. Do not add Stripe keys, exact MRR, raw Stripe responses, customer data, or unsanitized revenue screenshots.\n'
+}
+
 self_test() {
-  local output
+  local output next_steps
   output="$(
     {
       printf 'home=%s\n' "$HOME"
@@ -106,6 +139,22 @@ self_test() {
     exit 1
   fi
 
+  next_steps="$(print_next_steps 'WARN  LaunchAgent is not loaded.
+WARN  Stripe key missing.
+WARN  No last-good MRR cache yet.' | sanitize_stream)"
+  if ! printf '%s\n' "$next_steps" | /usr/bin/grep -q './script/repair_lock_overlay_agent.sh'; then
+    printf 'Support report self-test failed: repair next step missing.\n' >&2
+    exit 1
+  fi
+  if ! printf '%s\n' "$next_steps" | /usr/bin/grep -q './script/check.sh'; then
+    printf 'Support report self-test failed: check next step missing.\n' >&2
+    exit 1
+  fi
+  if printf '%s\n' "$next_steps" | /usr/bin/grep -Eq '[rs]k_(live|test)_[A-Za-z0-9_]+|US\$[0-9]'; then
+    printf 'Support report self-test failed: next steps contained sensitive-looking output.\n' >&2
+    exit 1
+  fi
+
   printf 'Support report redaction self-test passed.\n'
 }
 
@@ -113,6 +162,8 @@ if [[ "$SELF_TEST" == "true" ]]; then
   self_test
   exit 0
 fi
+
+DIAGNOSTIC_OUTPUT="$(diagnose_output)"
 
 run_section() {
   local title="$1"
@@ -145,7 +196,12 @@ run_section() {
     /usr/bin/git status --short 2>/dev/null || true
   ' sh "$ROOT_DIR"
 
-  run_section "Diagnostic" "$ROOT_DIR/script/diagnose.sh"
+  {
+    printf '\n## Diagnostic\n\n'
+    printf '%s\n' "$DIAGNOSTIC_OUTPUT"
+  } | sanitize_stream
+
+  print_next_steps "$DIAGNOSTIC_OUTPUT" | sanitize_stream
 
   run_section "Installed Log Metadata" /bin/sh -c '
     for log_path in "$1" "$2"; do

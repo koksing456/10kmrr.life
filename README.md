@@ -246,6 +246,8 @@ For alpha support, generate a sanitized local report:
 ./script/support_report.sh
 ```
 
+The report includes sanitized diagnostics, log metadata, and suggested next steps such as setup, repair, or full readiness checks. It does not include raw logs unless requested.
+
 Only use `./script/support_report.sh --include-logs` after confirming the local logs do not contain sensitive output.
 
 The public verification gate also runs `./script/support_report.sh --self-test` to prevent redaction regressions.
