@@ -35,23 +35,23 @@ Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md)
 Summarize the private beta evidence gate with:
 
 ```sh
-./script/private_beta_readiness.sh
+./script/alpha.sh beta-ready
 ```
 
 Use strict mode before any private package dry run:
 
 ```sh
-./script/private_beta_readiness.sh --require-ready
+./script/alpha.sh beta-ready --require-ready
 ```
 
 ## Release Checklist
 
-- `./script/check.sh` passes.
+- `./script/alpha.sh check` passes.
 - `./script/build_lock_overlay.sh --verify` passes.
 - `./script/test_mrr_calculator.sh` passes.
 - `./script/install_lock_overlay_agent.sh` works from a clean checkout.
 - `./script/diagnose.sh` gives safe, actionable output.
-- `./script/support_report.sh` gives a sanitized report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
+- `./script/alpha.sh support-report` gives a sanitized report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
 - No Stripe keys, real MRR screenshots, local-only paths, or generated artifacts are committed.
 - README and SECURITY docs clearly mention private macOS API risk.
 - Release notes state whether the build is Apple Silicon-only or universal.
@@ -63,7 +63,7 @@ Use strict mode before any private package dry run:
 Run this before pushing release-readiness changes:
 
 ```sh
-./script/check.sh
+./script/alpha.sh check
 ```
 
 The gate checks shell syntax, focused MRR calculator/cache/settings tests, Stripe client tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, required public docs, and signing readiness preflight.
@@ -71,10 +71,10 @@ The gate checks shell syntax, focused MRR calculator/cache/settings tests, Strip
 For a quick non-build status summary during alpha operations:
 
 ```sh
-./script/alpha_status.sh
+./script/alpha.sh status
 ```
 
-This summarizes source state, private tracker presence, signing readiness, latest GitHub Actions status when available, and safe next actions. It is not a replacement for `./script/check.sh` before release or repo changes.
+This summarizes source state, private tracker presence, signing readiness, latest GitHub Actions status when available, and safe next actions. It is not a replacement for `./script/alpha.sh check` before release or repo changes.
 
 It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
 
@@ -86,13 +86,13 @@ It also validates the GitHub label manifest and label sync parser. To apply labe
 It does not install the LaunchAgent. Install/reinstall remains a separate local smoke test because it mutates the user's machine state. Preview that sequence with:
 
 ```sh
-./script/run_local_smoke.sh
+./script/alpha.sh smoke
 ```
 
 Record full local smoke only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
+./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record
 ```
 
 For a private signed/notarized package after evidence and signing are ready:
@@ -110,7 +110,7 @@ For an explicit internal unnotarized package dry run only:
 ```
 
 This creates an unnotarized private zip under `build/private-beta`. It is not a public installer and should not be used as the default private beta package once Developer ID signing is ready.
-The packaging script refuses to continue unless `./script/private_beta_readiness.sh --require-ready` passes first.
+The packaging script refuses to continue unless the private beta readiness gate passes first.
 
 For Developer ID readiness:
 

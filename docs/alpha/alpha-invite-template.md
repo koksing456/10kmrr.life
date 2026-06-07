@@ -31,7 +31,7 @@ Replace `tester_001` with the private stable tester id assigned outside this pub
 If something fails:
 
 ```sh
-./script/support_report.sh
+./script/alpha.sh support-report
 ```
 
 Share only the sanitized support report summary or the failing section name. Use `--include-logs` only after checking the redacted excerpts do not contain sensitive output.

@@ -11,27 +11,27 @@ Do not publish a public installer until signing, notarization, support, rollback
 - If Intel is not included, run readiness and packaging with `--exclude-intel` and make the Intel exclusion explicit in release notes.
 - No repeated private macOS API failure on common supported macOS versions.
 - Install failure rate below 30 percent for the same reason.
-- `./script/check.sh` passes on a clean checkout.
+- `./script/alpha.sh check` passes on a clean checkout.
 - `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
-- The local smoke result is recorded with `./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record`.
-- `./script/support_report.sh` produces a safe report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
+- The local smoke result is recorded with `./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record`.
+- `./script/alpha.sh support-report` produces a safe report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
 
 Summarize evidence readiness:
 
 ```sh
-./script/private_beta_readiness.sh
+./script/alpha.sh beta-ready
 ```
 
 Use strict mode before any private package dry run:
 
 ```sh
-./script/private_beta_readiness.sh --require-ready
+./script/alpha.sh beta-ready --require-ready
 ```
 
 For an Apple Silicon-only private beta gate, exclude Intel explicitly:
 
 ```sh
-./script/private_beta_readiness.sh --exclude-intel --require-ready
+./script/alpha.sh beta-ready --exclude-intel --require-ready
 ```
 
 ## Signing Inputs
@@ -82,7 +82,7 @@ Private signed/notarized package:
 ./script/alpha.sh package --signed
 ```
 
-This first runs `./script/private_beta_readiness.sh --require-ready`, then re-signs the staged app with Developer ID, notarizes a zip with the private notary keychain profile, staples the app, validates the ticket, and writes a private beta zip under `build/private-beta`.
+This first runs the private beta readiness gate, then re-signs the staged app with Developer ID, notarizes a zip with the private notary keychain profile, staples the app, validates the ticket, and writes a private beta zip under `build/private-beta`.
 
 Source-generated unnotarized dry run:
 
@@ -111,7 +111,7 @@ The generated manifest must say Intel Lock Screen behavior is excluded/unverifie
 Preview the local source smoke plan first:
 
 ```sh
-./script/run_local_smoke.sh
+./script/alpha.sh smoke
 ```
 
 For each private beta package:
@@ -124,13 +124,13 @@ For each private beta package:
 - Lock screen and confirm overlay visibility.
 - Run `./script/diagnose.sh`.
 - Run `./script/repair_lock_overlay_agent.sh` and confirm Keychain, cache, and display settings are preserved.
-- Run `./script/support_report.sh` and confirm the generated report passes the local smoke safety scan.
+- Run `./script/alpha.sh support-report` and confirm the generated report passes the local smoke safety scan.
 - Uninstall with `./script/uninstall_lock_overlay_agent.sh --all`.
 
 For the source-based local smoke gate, run and record only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
+./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record
 ```
 
 `--full-reset` removes local cache, display settings, and the stored Stripe key at the end of the smoke.

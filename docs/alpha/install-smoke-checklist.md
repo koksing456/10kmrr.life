@@ -129,7 +129,7 @@ Record only pass/warn/fail lines and non-sensitive summaries:
 Run:
 
 ```sh
-./script/support_report.sh
+./script/alpha.sh support-report
 ```
 
 Record:

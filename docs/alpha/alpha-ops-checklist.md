@@ -37,8 +37,8 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 ## Before Private Beta Packaging
 
 - Preview the local smoke sequence with `./script/alpha.sh smoke`.
-- On a clean smoke machine, run and record with `./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record`.
-- Re-run `./script/private_beta_readiness.sh`.
+- On a clean smoke machine, run and record with `./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record`.
+- Re-run `./script/alpha.sh beta-ready`.
 - Do not continue to package dry runs until local smoke has a pass row and the remaining blocker is only signing/notarization.
 
 ## Never Collect

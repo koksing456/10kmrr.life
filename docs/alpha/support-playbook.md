@@ -35,7 +35,7 @@ If the setup window opens, ask the tester to use the Install & support card:
 Ask the tester to run:
 
 ```sh
-./script/support_report.sh
+./script/alpha.sh support-report
 ```
 
 If they cannot generate the support report, ask them to run:
@@ -49,7 +49,7 @@ The support report redacts local paths, Stripe-key-like strings, Stripe object I
 If the issue is source/build related, ask for:
 
 ```sh
-./script/check.sh
+./script/alpha.sh check
 ```
 
 They should paste only the pass/warn/fail summary and the failing section name.

@@ -119,13 +119,13 @@ Run diagnostic and uninstall safety self-tests without changing your local insta
 Preview the local private-beta smoke sequence without changing local state:
 
 ```sh
-./script/run_local_smoke.sh
+./script/alpha.sh smoke
 ```
 
 Before pushing public-alpha repo changes:
 
 ```sh
-./script/check.sh
+./script/alpha.sh check
 ```
 
 The public readiness gate checks shell syntax, focused MRR tests, MRR cache tests, Stripe request tests, overlay settings tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, the universal macOS build, and signing/notarization preflight.
@@ -133,7 +133,7 @@ The public readiness gate checks shell syntax, focused MRR tests, MRR cache test
 For a lightweight status summary that does not run the full build gate:
 
 ```sh
-./script/alpha_status.sh
+./script/alpha.sh status
 ```
 
 This summarizes the current git state, private alpha tracker presence, signing readiness, latest GitHub Actions status when available, and the next safe command to run. It does not print Stripe keys or cached MRR values.
@@ -141,7 +141,7 @@ This summarizes the current git state, private alpha tracker presence, signing r
 For private beta package readiness after alpha evidence is collected:
 
 ```sh
-./script/private_beta_readiness.sh
+./script/alpha.sh beta-ready
 ```
 
 This checks install evidence, Lock Screen compatibility, local install/repair/uninstall smoke evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
@@ -293,12 +293,12 @@ The app logs structured local events such as refresh start/success/failure, over
 For alpha support, generate a sanitized local report:
 
 ```sh
-./script/support_report.sh
+./script/alpha.sh support-report
 ```
 
 The report includes sanitized diagnostics, log metadata, and suggested next steps such as setup, repair, or full readiness checks. It redacts local paths, Stripe-key-like strings, Stripe object IDs, raw Stripe field names, email-like contact data, webhook secrets, and obvious money amounts. It does not include log excerpts by default.
 
-Only use `./script/support_report.sh --include-logs` after confirming the local logs do not contain sensitive output; the included excerpts are still passed through the redactor.
+Only use `./script/alpha.sh support-report --include-logs` after confirming the local logs do not contain sensitive output; the included excerpts are still passed through the redactor.
 
 The public verification gate also runs `./script/support_report.sh --self-test` to prevent redaction regressions.
 
@@ -368,7 +368,7 @@ For support diagnostics, use `./script/alpha.sh support-report`; for private bet
 For the common success case after a tester installs, sees MRR, confirms Lock Screen visibility, and confirms the overlay hides after unlock, use the shorter evidence packet:
 
 ```sh
-./script/record_alpha_success.sh \
+./script/alpha.sh success \
   --tester-id tester_001 \
   --macos-version 15.5 \
   --cpu apple_silicon \
@@ -376,9 +376,9 @@ For the common success case after a tester installs, sees MRR, confirms Lock Scr
 ```
 
 Use the separate install and compatibility recorders only when a stage is partial, warns, or fails.
-After Day 7, record retention and Pro signal with `./script/record_alpha_day7.sh --tester-id tester_001 --retained-day-7 yes --overall-pro-signal medium`.
-Before the weekly review row, run `./script/alpha_weekly_summary.sh` to print safe aggregate counts and a suggested weekly recorder command.
-Run `./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record` only on a clean private-beta smoke machine when you are ready to record local install/repair/uninstall evidence. The default run is a dry run and does not change local state.
+After Day 7, record retention and Pro signal with `./script/alpha.sh day7 --tester-id tester_001 --retained-day-7 yes --overall-pro-signal medium`.
+Before the weekly review row, run `./script/alpha.sh weekly` to print safe aggregate counts and a suggested weekly recorder command.
+Run `./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record` only on a clean private-beta smoke machine when you are ready to record local install/repair/uninstall evidence. The default run is a dry run and does not change local state.
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).
@@ -388,7 +388,7 @@ Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
 Community behavior rules live at [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 The changelog lives at [CHANGELOG.md](./CHANGELOG.md).
 Private beta packaging criteria live at [docs/release/private-beta-packaging-checklist.md](./docs/release/private-beta-packaging-checklist.md).
-Check private beta evidence readiness with `./script/private_beta_readiness.sh` before creating any private package dry run.
+Check private beta evidence readiness with `./script/alpha.sh beta-ready` before creating any private package dry run.
 The same operator flow is available through `./script/alpha.sh beta-ready`, `./script/alpha.sh signing`, and `./script/alpha.sh package --signed`.
 
 ## Open Source Boundary
@@ -402,15 +402,15 @@ No public installer is linked until signing, notarization, and support expectati
 For private signed builds after evidence, Developer ID signing, and notary credentials are ready:
 
 ```sh
-./script/package_private_beta.sh --signed
+./script/alpha.sh package --signed
 ```
 
-This re-signs the staged app with Developer ID, notarizes it, staples the app, and writes a private beta zip under `build/private-beta`. It refuses to run until `./script/private_beta_readiness.sh --require-ready` passes. Do not publish it as a public installer.
+This re-signs the staged app with Developer ID, notarizes it, staples the app, and writes a private beta zip under `build/private-beta`. It refuses to run until the private beta readiness gate passes. Do not publish it as a public installer.
 
-For explicit internal package dry runs only, `./script/package_private_beta.sh --adhoc` creates an unnotarized zip under `build/private-beta`.
+For explicit internal package dry runs only, `./script/alpha.sh package --adhoc` creates an unnotarized zip under `build/private-beta`.
 
-Run `./script/private_beta_readiness.sh` to see the missing alpha evidence or Developer ID signing prerequisites.
+Run `./script/alpha.sh beta-ready` to see the missing alpha evidence or Developer ID signing prerequisites.
 
-To check whether the machine is ready for Developer ID signing and notarization setup, run `./script/signing_preflight.sh`. It does not print notary credentials.
+To check whether the machine is ready for Developer ID signing and notarization setup, run `./script/alpha.sh signing`. It does not print notary credentials.
 
-For strict notarization readiness, store credentials privately with `xcrun notarytool store-credentials <profile-name>`, set `TENKMRR_NOTARY_PROFILE` in your shell, then run `./script/signing_preflight.sh --require-ready`. Do not commit the notary profile name if it identifies a private Apple account or team.
+For strict notarization readiness, store credentials privately with `xcrun notarytool store-credentials <profile-name>`, set `TENKMRR_NOTARY_PROFILE` in your shell, then run `./script/alpha.sh signing --require-ready`. Do not commit the notary profile name if it identifies a private Apple account or team.

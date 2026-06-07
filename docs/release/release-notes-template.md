@@ -41,19 +41,19 @@ Short description of what changed.
 Required:
 
 ```sh
-./script/check.sh
+./script/alpha.sh check
 ```
 
 Optional local install smoke preview:
 
 ```sh
-./script/run_local_smoke.sh
+./script/alpha.sh smoke
 ```
 
 Private beta local smoke record, only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
+./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record
 ```
 
 ## Known Issues

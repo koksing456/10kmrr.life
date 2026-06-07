@@ -151,7 +151,7 @@ Before any private beta package dry run, preview the local smoke sequence:
 Run and record the full local smoke only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
+./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record
 ```
 
 This records only pass/warn/fail evidence. `--full-reset` removes local cache, display settings, and the stored Stripe key at the end of the smoke, so do not run it on a machine where you want to preserve the alpha setup.
