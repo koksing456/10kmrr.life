@@ -13,6 +13,7 @@ section "Shell syntax"
 bash -n \
   script/build_lock_overlay.sh \
   script/capture_demo_assets.sh \
+  script/capture_demo_video.sh \
   script/configure_stripe_key.sh \
   script/diagnose.sh \
   script/install_lock_overlay_agent.sh \
@@ -36,6 +37,8 @@ test -s docs/demo/assets/social-square.png
 test -s docs/demo/assets/social-wide.png
 test -s docs/demo/assets/social-vertical.png
 test -s docs/demo/assets/github-social-preview.png
+test -s docs/demo/assets/demo-loop.mp4
+test -s docs/demo/assets/demo-poster.png
 
 section "Secret scan"
 if rg -n \

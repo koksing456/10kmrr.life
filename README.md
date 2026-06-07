@@ -107,6 +107,8 @@ Then open `http://127.0.0.1:4173`.
 
 The page uses mock MRR only. Do not use real revenue or unsanitized screenshots in demo assets.
 
+Sanitized mock-only demo assets live under [docs/demo/assets](./docs/demo/assets), including a short MP4 demo loop for public-alpha previews.
+
 ## Preview
 
 Configure your Stripe restricted key first:

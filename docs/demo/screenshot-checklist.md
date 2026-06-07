@@ -19,9 +19,10 @@ Run:
 
 ```sh
 ./script/capture_demo_assets.sh
+./script/capture_demo_video.sh
 ```
 
-This captures the static landing page with mock MRR only:
+This captures the static landing page images and short demo video with mock MRR only:
 
 - `docs/demo/assets/landing-hero.png`
 - `docs/demo/assets/landing-desktop.png`
@@ -30,8 +31,10 @@ This captures the static landing page with mock MRR only:
 - `docs/demo/assets/social-wide.png`
 - `docs/demo/assets/social-vertical.png`
 - `docs/demo/assets/github-social-preview.png`
+- `docs/demo/assets/demo-loop.mp4`
+- `docs/demo/assets/demo-poster.png`
 
-The script checks for horizontal overflow on mobile and verifies the mock demo label is present.
+The scripts check for horizontal overflow on mobile, verify the mock demo label is present, and reject obvious Stripe-key-like or raw dashboard text in the video capture.
 
 ## Recommended Mock Values
 
