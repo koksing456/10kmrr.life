@@ -12,7 +12,7 @@ Do not publish a public installer until signing, notarization, support, rollback
 - Install failure rate below 30 percent for the same reason.
 - `./script/check.sh` passes on a clean checkout.
 - `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
-- The local smoke result is recorded with `./script/record_alpha_local_smoke.sh`.
+- The local smoke result is recorded with `./script/run_local_smoke.sh --apply --full-reset --record`.
 - `./script/support_report.sh` produces a safe report without raw secrets or exact MRR.
 
 Summarize evidence readiness:
