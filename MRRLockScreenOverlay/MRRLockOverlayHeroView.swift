@@ -5,7 +5,7 @@ extension MRRLockOverlayView {
         ZStack {
             heroAtmosphere
 
-            VStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .center, spacing: 10) {
                 HStack(spacing: 8) {
                     statusDot
                     Text(heroEyebrowText)
@@ -14,13 +14,18 @@ extension MRRLockOverlayView {
                         .lineLimit(1)
                 }
 
+                Capsule(style: .continuous)
+                    .fill(heroHairlineStyle)
+                    .frame(width: min(panelSize.width * 0.30, 96), height: 1)
+                    .opacity(0.72)
+
                 Text(model.primaryValue)
-                    .font(.system(size: valueFontSize, weight: .semibold, design: .rounded))
+                    .font(.system(size: valueFontSize, weight: .medium, design: .rounded))
                     .foregroundStyle(heroValueStyle)
                     .lineLimit(1)
                     .minimumScaleFactor(0.42)
                     .monospacedDigit()
-                    .shadow(color: .black.opacity(0.36), radius: 22, x: 0, y: 13)
+                    .shadow(color: .black.opacity(0.38), radius: 24, x: 0, y: 14)
 
                 Text(heroCaptionText)
                     .font(.system(size: footerFontSize, weight: .semibold, design: .rounded))
@@ -38,31 +43,72 @@ extension MRRLockOverlayView {
 
     var heroAtmosphere: some View {
         ZStack {
-            Circle()
-                .fill(Color(red: 0.62, green: 0.94, blue: 0.82).opacity(0.18))
-                .blur(radius: 28)
-                .frame(width: panelSize.width * 0.56, height: panelSize.width * 0.56)
-                .offset(x: -panelSize.width * 0.24, y: -panelSize.height * 0.28)
-            Circle()
-                .fill(Color(red: 0.45, green: 0.68, blue: 1.00).opacity(0.13))
-                .blur(radius: 34)
-                .frame(width: panelSize.width * 0.58, height: panelSize.width * 0.58)
-                .offset(x: panelSize.width * 0.30, y: panelSize.height * 0.22)
             Rectangle()
                 .fill(
                     LinearGradient(
                         colors: [
-                            .white.opacity(0.12),
-                            .white.opacity(0.01),
-                            .black.opacity(0.12)
+                            Color(red: 0.96, green: 1.00, blue: 0.98).opacity(0.16),
+                            Color(red: 0.73, green: 0.91, blue: 1.00).opacity(0.06),
+                            .black.opacity(0.16)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(0.20),
+                            .white.opacity(0.02),
+                            .clear
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(height: panelSize.height * 0.42)
+                .frame(maxHeight: .infinity, alignment: .top)
+            heroLightBand
+                .offset(x: -panelSize.width * 0.08, y: -panelSize.height * 0.04)
+            heroLightBand
+                .opacity(0.52)
+                .offset(x: panelSize.width * 0.18, y: panelSize.height * 0.18)
         }
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
         .allowsHitTesting(false)
+    }
+
+    var heroLightBand: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    colors: [
+                        .clear,
+                        .white.opacity(0.22),
+                        .white.opacity(0.04),
+                        .clear
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .frame(width: panelSize.width * 0.78, height: 18)
+            .rotationEffect(.degrees(-18))
+            .blur(radius: 6)
+    }
+
+    var heroHairlineStyle: LinearGradient {
+        LinearGradient(
+            colors: [
+                .clear,
+                .white.opacity(0.78),
+                Color(red: 0.72, green: 0.96, blue: 0.88).opacity(0.72),
+                .clear
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
     }
 
     var heroValueStyle: LinearGradient {
