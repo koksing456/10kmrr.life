@@ -17,8 +17,9 @@ Usage: $0 [--include-logs] [--self-test] [--help]
 Writes a sanitized local support report to:
   build/support/10kmrr-support-report.txt
 
-The report redacts local HOME/repo paths, Stripe-key-like strings, and obvious
-money amounts. By default it does not include raw log contents.
+The report redacts local HOME/repo paths, Stripe-key-like strings, Stripe object
+IDs, email-like contact data, and obvious money amounts. By default it does not
+include raw log contents.
 
 Options:
   --include-logs  Include the last safe-redacted stdout/stderr log lines.
@@ -58,6 +59,8 @@ sanitize_stream() {
     s/$home/<home>/g if $home ne "";
     s/\b[rs]k_(?:live|test)_[A-Za-z0-9_]+\b/<redacted-stripe-key>/g;
     s/\bwhsec_[A-Za-z0-9_]+\b/<redacted-webhook-secret>/g;
+    s/\b(?:cus|sub|si|price|prod|in|pi|pm|cs)_[A-Za-z0-9_]+\b/<redacted-stripe-object-id>/g;
+    s/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/<redacted-email>/gi;
     s/\b[A-Z]{2,4}\$[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/g;
     s/\b[A-Z]{3}\s+[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/g;
   '
@@ -105,6 +108,9 @@ self_test() {
       printf 'stripe=rk_%s_%s\n' 'live' '1234567890abcdef'
       printf 'stripe=sk_%s_%s\n' 'test' '1234567890abcdef'
       printf 'webhook=whsec_%s\n' '1234567890abcdef'
+      printf 'customer=cus_%s\n' '1234567890abcdef'
+      printf 'subscription=sub_%s\n' '1234567890abcdef'
+      printf 'email=founder@example.com\n'
       printf 'mrr=US$10,248.00\n'
       printf 'mrr=USD 10248.00\n'
     } | sanitize_stream
@@ -126,6 +132,14 @@ self_test() {
     printf 'Support report self-test failed: webhook secret-like value was not redacted.\n' >&2
     exit 1
   fi
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq '\b(cus|sub|si|price|prod|in|pi|pm|cs)_[A-Za-z0-9_]+'; then
+    printf 'Support report self-test failed: Stripe object id was not redacted.\n' >&2
+    exit 1
+  fi
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq 'founder@example\.com'; then
+    printf 'Support report self-test failed: email-like value was not redacted.\n' >&2
+    exit 1
+  fi
   if printf '%s\n' "$output" | /usr/bin/grep -Eq '(US\$10,248\.00|USD 10248\.00)'; then
     printf 'Support report self-test failed: obvious money amount was not redacted.\n' >&2
     exit 1
@@ -136,6 +150,14 @@ self_test() {
   fi
   if ! printf '%s\n' "$output" | /usr/bin/grep -q '<redacted-money>'; then
     printf 'Support report self-test failed: money redaction marker missing.\n' >&2
+    exit 1
+  fi
+  if ! printf '%s\n' "$output" | /usr/bin/grep -q '<redacted-stripe-object-id>'; then
+    printf 'Support report self-test failed: Stripe object id redaction marker missing.\n' >&2
+    exit 1
+  fi
+  if ! printf '%s\n' "$output" | /usr/bin/grep -q '<redacted-email>'; then
+    printf 'Support report self-test failed: email redaction marker missing.\n' >&2
     exit 1
   fi
 
@@ -177,7 +199,7 @@ run_section() {
 {
   printf '# 10kmrr.life Sanitized Support Report\n'
   printf '\nGenerated: %s\n' "$(/bin/date -u '+%Y-%m-%dT%H:%M:%SZ')"
-  printf 'Report safety: paths, Stripe-key-like strings, webhook secrets, and obvious money amounts are redacted.\n'
+  printf 'Report safety: paths, Stripe-key-like strings, Stripe object IDs, email-like contact data, webhook secrets, and obvious money amounts are redacted.\n'
   printf 'Raw Stripe keys, exact private MRR, raw Stripe responses, customer data, and payment data should never be added manually.\n'
 
   run_section "System" /bin/sh -c '

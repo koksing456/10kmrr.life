@@ -52,6 +52,7 @@ Safe to share:
 - App build date or commit.
 - Whether `./script/build_lock_overlay.sh --verify` passes.
 - Whether `./script/diagnose.sh` reports pass, warn, or fail for each check.
+- The sanitized output from `./script/support_report.sh`.
 - Non-sensitive app error summaries.
 - Whether the generated LaunchAgent exists.
 
@@ -63,6 +64,8 @@ Do not share:
 - Raw logs that may contain secrets or private revenue data.
 - Raw Stripe API responses.
 - Unsanitized screenshots with real MRR unless you explicitly intend to disclose it.
+
+`./script/support_report.sh` redacts local paths, Stripe-key-like strings, Stripe object IDs, email-like contact data, webhook secrets, and obvious money amounts. It does not include raw logs unless you pass `--include-logs`; only use that after reviewing the logs for sensitive output.
 
 ## Compatibility Caveat
 
