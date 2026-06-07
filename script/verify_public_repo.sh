@@ -129,6 +129,9 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 node --check site/main.js
 
+section "Static site server"
+./script/serve_site.sh --self-test
+
 section "Static site boundary"
 test -s site/index.html
 test -s site/styles.css
