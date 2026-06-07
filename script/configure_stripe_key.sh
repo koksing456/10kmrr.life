@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
+KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
+LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
 
 usage() {
@@ -22,7 +23,11 @@ key_exists() {
   /usr/bin/security find-generic-password \
     -s "$KEYCHAIN_SERVICE" \
     -a "$KEYCHAIN_ACCOUNT" \
-    >/dev/null 2>&1
+    >/dev/null 2>&1 || \
+    /usr/bin/security find-generic-password \
+      -s "$LEGACY_KEYCHAIN_SERVICE" \
+      -a "$KEYCHAIN_ACCOUNT" \
+      >/dev/null 2>&1
 }
 
 case "${1:-}" in
@@ -44,7 +49,11 @@ case "${1:-}" in
       /usr/bin/security delete-generic-password \
         -s "$KEYCHAIN_SERVICE" \
         -a "$KEYCHAIN_ACCOUNT" \
-        >/dev/null
+        >/dev/null 2>&1 || true
+      /usr/bin/security delete-generic-password \
+        -s "$LEGACY_KEYCHAIN_SERVICE" \
+        -a "$KEYCHAIN_ACCOUNT" \
+        >/dev/null 2>&1 || true
       printf 'Removed Stripe key from Keychain.\n'
     else
       printf 'No Stripe key was configured.\n'

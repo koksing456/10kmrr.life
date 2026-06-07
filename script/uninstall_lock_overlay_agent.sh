@@ -4,7 +4,8 @@ set -euo pipefail
 TARGET_PLIST="$HOME/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
 APP_SUPPORT="$HOME/Library/Application Support/10kmrr.life"
 TARGET_APP="$APP_SUPPORT/MRRLockScreenOverlay.app"
-KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
+KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
+LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
 CACHE_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Cache"
 SETTINGS_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Settings"
@@ -64,6 +65,10 @@ fi
 if [[ "$REMOVE_KEYCHAIN" == "true" ]]; then
   /usr/bin/security delete-generic-password \
     -s "$KEYCHAIN_SERVICE" \
+    -a "$KEYCHAIN_ACCOUNT" \
+    >/dev/null 2>&1 || true
+  /usr/bin/security delete-generic-password \
+    -s "$LEGACY_KEYCHAIN_SERVICE" \
     -a "$KEYCHAIN_ACCOUNT" \
     >/dev/null 2>&1 || true
   printf 'Removed Stripe key from macOS Keychain if it existed.\n'

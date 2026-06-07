@@ -9,7 +9,8 @@ INSTALLED_APP="$APP_SUPPORT/MRRLockScreenOverlay.app"
 INSTALLED_EXECUTABLE="$INSTALLED_APP/Contents/MacOS/MRRLockScreenOverlay"
 TARGET_PLIST="$HOME/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
 LABEL="life.10kmrr.mrr-lock-overlay"
-KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
+KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
+LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
 CACHE_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Cache"
 SETTINGS_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Settings"
@@ -135,6 +136,11 @@ if /usr/bin/security find-generic-password \
   -a "$KEYCHAIN_ACCOUNT" \
   >/dev/null 2>&1; then
   pass "Stripe key exists in Keychain. Key value was not printed."
+elif /usr/bin/security find-generic-password \
+  -s "$LEGACY_KEYCHAIN_SERVICE" \
+  -a "$KEYCHAIN_ACCOUNT" \
+  >/dev/null 2>&1; then
+  warn "Stripe key exists under legacy Keychain service. The app will migrate it on next successful read."
 else
   warn "Stripe key missing. Run ./script/build_lock_overlay.sh --setup"
 fi

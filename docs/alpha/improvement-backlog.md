@@ -33,7 +33,7 @@ These reduce friction and make the source alpha easier to trust.
 - Build a universal binary or document Apple Silicon-only support clearly.
 - Add signed and notarized private beta packaging after compatibility data is stronger.
 - Add an uninstall option that can optionally remove local cache and settings, not only the app and LaunchAgent. Done: `./script/uninstall_lock_overlay_agent.sh --local-data` and `--all`.
-- Migrate the old Keychain service name to a cleaner `life.10kmrr.MRRLockScreenOverlay` service while preserving compatibility.
+- Migrate the old Keychain service name to a cleaner `life.10kmrr.MRRLockScreenOverlay` service while preserving compatibility. Done: app and scripts prefer the current service and keep legacy fallback/delete coverage.
 - Add release versioning and a visible app version/build commit in setup and diagnostics. Done: setup and `./script/diagnose.sh` show version and commit.
 - Add a public privacy page that mirrors README and SECURITY in plain product language.
 

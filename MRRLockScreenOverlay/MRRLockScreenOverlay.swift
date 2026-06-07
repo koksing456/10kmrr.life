@@ -6,7 +6,8 @@ import ObjectiveC.runtime
 import Security
 import SwiftUI
 
-private let keychainService = "life.10kmrr.StripeMRRScreenSaver"
+private let keychainService = "life.10kmrr.MRRLockScreenOverlay"
+private let legacyKeychainService = "life.10kmrr.StripeMRRScreenSaver"
 private let keychainAccount = "stripe_api_key"
 private let appSubsystem = "life.10kmrr.MRRLockScreenOverlay"
 private let usePrivateGlassComponent = CommandLine.arguments.contains("--private-glass")
@@ -921,19 +922,46 @@ private struct SetupWindowView: View {
 
 private enum KeychainStore {
     static func stripeAPIKeyExists() -> Bool {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: keychainService,
-            kSecAttrAccount as String: keychainAccount,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        return SecItemCopyMatching(query as CFDictionary, nil) == errSecSuccess
+        findStripeAPIKey(in: keychainService) != nil || findStripeAPIKey(in: legacyKeychainService) != nil
     }
 
     static func readStripeAPIKey() throws -> String {
+        if let key = findStripeAPIKey(in: keychainService) {
+            return key
+        }
+        if let legacyKey = findStripeAPIKey(in: legacyKeychainService) {
+            try? saveStripeAPIKey(legacyKey)
+            return legacyKey
+        }
+        throw OverlayError.missingAPIKey
+    }
+
+    static func saveStripeAPIKey(_ key: String) throws {
+        try saveStripeAPIKey(key, service: keychainService)
+    }
+
+    static func deleteStripeAPIKey() throws {
+        var firstError: NSError?
+        for service in [keychainService, legacyKeychainService] {
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrService as String: service,
+                kSecAttrAccount as String: keychainAccount
+            ]
+            let status = SecItemDelete(query as CFDictionary)
+            if status != errSecSuccess && status != errSecItemNotFound && firstError == nil {
+                firstError = NSError(domain: NSOSStatusErrorDomain, code: Int(status))
+            }
+        }
+        if let firstError {
+            throw firstError
+        }
+    }
+
+    private static func findStripeAPIKey(in service: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: keychainService,
+            kSecAttrService as String: service,
             kSecAttrAccount as String: keychainAccount,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
@@ -946,16 +974,16 @@ private enum KeychainStore {
               let key = String(data: data, encoding: .utf8),
               !key.isEmpty
         else {
-            throw OverlayError.missingAPIKey
+            return nil
         }
         return key
     }
 
-    static func saveStripeAPIKey(_ key: String) throws {
+    private static func saveStripeAPIKey(_ key: String, service: String) throws {
         let data = Data(key.utf8)
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: keychainService,
+            kSecAttrService as String: service,
             kSecAttrAccount as String: keychainAccount
         ]
         let attributes: [String: Any] = [
@@ -977,18 +1005,6 @@ private enum KeychainStore {
         let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
         guard addStatus == errSecSuccess else {
             throw NSError(domain: NSOSStatusErrorDomain, code: Int(addStatus))
-        }
-    }
-
-    static func deleteStripeAPIKey() throws {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: keychainService,
-            kSecAttrAccount as String: keychainAccount
-        ]
-        let status = SecItemDelete(query as CFDictionary)
-        guard status == errSecSuccess || status == errSecItemNotFound else {
-            throw NSError(domain: NSOSStatusErrorDomain, code: Int(status))
         }
     }
 }

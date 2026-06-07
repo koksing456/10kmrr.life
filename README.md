@@ -49,10 +49,11 @@ Use a restricted read-only Stripe API key with only the permissions needed to re
 
 Keychain lookup currently uses:
 
-- service: `life.10kmrr.StripeMRRScreenSaver`
+- current service: `life.10kmrr.MRRLockScreenOverlay`
+- legacy fallback service: `life.10kmrr.StripeMRRScreenSaver`
 - account: `stripe_api_key`
 
-The service name is retained for compatibility with the earlier prototype.
+The legacy service is read for compatibility with the earlier prototype and is migrated to the current service on successful app read.
 
 See [SECURITY.md](./SECURITY.md) for support and disclosure boundaries.
 

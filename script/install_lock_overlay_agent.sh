@@ -9,6 +9,9 @@ TARGET_PLIST="$HOME/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
 EXECUTABLE="$TARGET_APP/Contents/MacOS/MRRLockScreenOverlay"
 OUT_LOG="$APP_SUPPORT/logs/mrr-lock-overlay.out.log"
 ERR_LOG="$APP_SUPPORT/logs/mrr-lock-overlay.err.log"
+KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
+LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
+KEYCHAIN_ACCOUNT="stripe_api_key"
 
 "$ROOT_DIR/script/build_lock_overlay.sh" --verify
 
@@ -63,9 +66,13 @@ fi
 rm -f "$launchctl_output"
 
 if ! /usr/bin/security find-generic-password \
-  -s "life.10kmrr.StripeMRRScreenSaver" \
-  -a "stripe_api_key" \
-  >/dev/null 2>&1; then
+  -s "$KEYCHAIN_SERVICE" \
+  -a "$KEYCHAIN_ACCOUNT" \
+  >/dev/null 2>&1 && \
+  ! /usr/bin/security find-generic-password \
+    -s "$LEGACY_KEYCHAIN_SERVICE" \
+    -a "$KEYCHAIN_ACCOUNT" \
+    >/dev/null 2>&1; then
   printf 'Warning: Stripe key is not configured. Opening setup window.\n' >&2
   /usr/bin/open -n "$TARGET_APP" --args --setup
 fi

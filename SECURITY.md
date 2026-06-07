@@ -38,10 +38,11 @@ Current alpha storage:
 
 Current Keychain lookup:
 
-- service: `life.10kmrr.StripeMRRScreenSaver`
+- current service: `life.10kmrr.MRRLockScreenOverlay`
+- legacy fallback service: `life.10kmrr.StripeMRRScreenSaver`
 - account: `stripe_api_key`
 
-The service name is retained for compatibility with an earlier prototype.
+The legacy service is read for compatibility with an earlier prototype and is migrated to the current service on successful app read. Delete helpers remove both current and legacy entries.
 
 ## Safe Debugging Information
 

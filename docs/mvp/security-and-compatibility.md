@@ -6,10 +6,11 @@
 
 The app reads a restricted Stripe API key from macOS Keychain:
 
-- service: `life.10kmrr.StripeMRRScreenSaver`
+- current service: `life.10kmrr.MRRLockScreenOverlay`
+- legacy fallback service: `life.10kmrr.StripeMRRScreenSaver`
 - account: `stripe_api_key`
 
-The service name is retained for compatibility with the earlier prototype.
+The legacy service is retained only as a fallback for compatibility with the earlier prototype.
 
 ## Stripe Key Requirements
 
