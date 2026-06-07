@@ -3,20 +3,34 @@ import Foundation
 final class StripeMRRClient {
     private let apiKey: String
     private let session: URLSession
-    private let maxPagesPerStatus = 100
-    private let maxRequestAttempts = 3
+    private let maxPagesPerStatus: Int
+    private let maxRequestAttempts: Int
+    private let retryBaseDelayNanoseconds: UInt64
 
     private struct StripeSubscriptionPage {
         var subscriptions: [[String: Any]]
         var hasMore: Bool
     }
 
-    init(apiKey: String) {
+    init(
+        apiKey: String,
+        session: URLSession? = nil,
+        maxPagesPerStatus: Int = 100,
+        maxRequestAttempts: Int = 3,
+        retryBaseDelayNanoseconds: UInt64 = 250_000_000
+    ) {
         self.apiKey = apiKey
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.timeoutIntervalForRequest = 30
-        configuration.timeoutIntervalForResource = 60
-        self.session = URLSession(configuration: configuration)
+        self.maxPagesPerStatus = maxPagesPerStatus
+        self.maxRequestAttempts = maxRequestAttempts
+        self.retryBaseDelayNanoseconds = retryBaseDelayNanoseconds
+        if let session {
+            self.session = session
+        } else {
+            let configuration = URLSessionConfiguration.ephemeral
+            configuration.timeoutIntervalForRequest = 30
+            configuration.timeoutIntervalForResource = 60
+            self.session = URLSession(configuration: configuration)
+        }
     }
 
     func fetchMRR() async throws -> MRRResult {
@@ -113,8 +127,7 @@ final class StripeMRRClient {
     }
 
     private func retryDelayNanoseconds(forAttempt attempt: Int) -> UInt64 {
-        let milliseconds = min(250 * (1 << max(0, attempt - 1)), 1_000)
-        return UInt64(milliseconds) * 1_000_000
+        min(retryBaseDelayNanoseconds * UInt64(1 << max(0, attempt - 1)), 1_000_000_000)
     }
 
     private static func safeStripeErrorMessage(from data: Data) -> String {

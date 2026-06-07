@@ -25,6 +25,9 @@ done < <(find script -maxdepth 1 -type f -name '*.sh' | sort)
 section "MRR calculator tests"
 ./script/test_mrr_calculator.sh
 
+section "Stripe client tests"
+./script/test_stripe_client.sh
+
 section "Support report redaction"
 ./script/support_report.sh --self-test
 
