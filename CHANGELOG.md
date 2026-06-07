@@ -11,7 +11,15 @@ This project is in gated public alpha. There is no public notarized installer ye
 - Restricted Stripe key setup through macOS Keychain.
 - Sanitized MRR calculator fixtures and verification gate.
 - Gated alpha request issue form.
-- Safe diagnostics, install smoke checklist, compatibility matrix, and support playbook.
+- Safe diagnostics, sanitized support report, install smoke checklist, compatibility matrix, and support playbook.
+- Mock-first preview path before a real Stripe key is configured.
+- Menu bar controls for setup, refresh, preview, diagnostics, restart, and uninstall guidance.
+- Overlay settings for refresh interval, vertical and horizontal placement, size, display targeting, visual style, and local MRR goal.
+- Visual presets: full, compact, number-only, goal, and focus.
+- Structured local logs without keys, exact MRR, raw Stripe responses, or customer/payment data.
+- Sanitized landing, social, GitHub preview, and short demo video assets.
+- Static alpha landing page with story, before/after demo, local-first security model, and gated alpha CTA.
+- Private alpha workflow templates for install funnel, 7-day retention, Pro interest, and weekly review.
 
 ## Release Notes Boundary
 
