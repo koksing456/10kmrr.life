@@ -34,7 +34,7 @@ Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md)
 
 ## Release Checklist
 
-- `./script/verify_public_repo.sh` passes.
+- `./script/check.sh` passes.
 - `./script/build_lock_overlay.sh --verify` passes.
 - `./script/test_mrr_calculator.sh` passes.
 - `./script/install_lock_overlay_agent.sh` works from a clean checkout.
@@ -51,10 +51,10 @@ Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md)
 Run this before pushing release-readiness changes:
 
 ```sh
-./script/verify_public_repo.sh
+./script/check.sh
 ```
 
-The gate checks shell syntax, focused MRR calculator tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, and required public docs.
+The gate checks shell syntax, focused MRR calculator/cache/settings tests, Stripe client tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, required public docs, and signing readiness preflight.
 
 It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
 

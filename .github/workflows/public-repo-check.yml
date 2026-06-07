@@ -21,5 +21,5 @@ jobs:
       - name: Install ripgrep
         run: brew install ripgrep
 
-      - name: Verify public repo
-        run: ./script/verify_public_repo.sh
+      - name: Run public alpha readiness check
+        run: ./script/check.sh
