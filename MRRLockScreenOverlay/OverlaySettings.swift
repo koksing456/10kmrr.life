@@ -89,6 +89,7 @@ enum OverlayDisplayMode: String, CaseIterable, Identifiable {
 }
 
 enum OverlayVisualStyle: String, CaseIterable, Identifiable {
+    case hero
     case full
     case compact
     case number
@@ -99,6 +100,8 @@ enum OverlayVisualStyle: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
+        case .hero:
+            return "Hero"
         case .full:
             return "Full"
         case .compact:
@@ -199,7 +202,7 @@ enum OverlaySettingsStore {
             guard let rawValue = defaults.string(forKey: visualStyleKey),
                   let visualStyle = OverlayVisualStyle(rawValue: rawValue)
             else {
-                return .full
+                return .hero
             }
             return visualStyle
         }
@@ -238,6 +241,8 @@ enum OverlaySettingsStore {
     static var panelSize: NSSize {
         let baseSize = sizePreset.size
         switch visualStyle {
+        case .hero:
+            return NSSize(width: baseSize.width + 24, height: baseSize.height + 10)
         case .full, .goal, .focus:
             return baseSize
         case .compact:

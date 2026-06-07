@@ -15,7 +15,7 @@ final class SetupModel: ObservableObject {
     @Published var horizontalPlacement = OverlayHorizontalPlacement.center
     @Published var sizePreset = OverlaySizePreset.medium
     @Published var displayMode = OverlayDisplayMode.main
-    @Published var visualStyle = OverlayVisualStyle.full
+    @Published var visualStyle = OverlayVisualStyle.hero
     @Published var goalCurrencyInput = "USD"
     @Published var goalAmountInput = ""
     @Published var lastRefreshText = "No cached MRR refresh yet"

@@ -16,6 +16,8 @@ struct MRRLockOverlayView: View {
     }
     private var contentSpacing: CGFloat {
         switch visualStyle {
+        case .hero:
+            return 12
         case .full, .goal:
             return 18
         case .compact:
@@ -53,7 +55,9 @@ struct MRRLockOverlayView: View {
 
     @ViewBuilder
     private var panelContent: some View {
-        if visualStyle == .focus {
+        if visualStyle == .hero {
+            heroContent
+        } else if visualStyle == .focus {
             focusContent
         } else {
             VStack(alignment: .leading, spacing: contentSpacing) {
@@ -64,6 +68,8 @@ struct MRRLockOverlayView: View {
                 valueText
 
                 switch visualStyle {
+                case .hero:
+                    EmptyView()
                 case .goal:
                     goalContent
                 case .full:
@@ -79,6 +85,41 @@ struct MRRLockOverlayView: View {
             .frame(width: panelSize.width, height: panelSize.height)
             .background(Color.white.opacity(usePrivateGlassComponent ? 0.00 : 0.035))
         }
+    }
+
+    private var heroContent: some View {
+        ZStack {
+            heroAtmosphere
+
+            VStack(alignment: .center, spacing: 12) {
+                HStack(spacing: 8) {
+                    statusDot
+                    Text(heroEyebrowText)
+                        .font(.system(size: labelFontSize, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.76))
+                        .lineLimit(1)
+                }
+
+                Text(model.primaryValue)
+                    .font(.system(size: valueFontSize, weight: .semibold, design: .rounded))
+                    .foregroundStyle(heroValueStyle)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.42)
+                    .monospacedDigit()
+                    .shadow(color: .black.opacity(0.36), radius: 22, x: 0, y: 13)
+
+                Text(heroCaptionText)
+                    .font(.system(size: footerFontSize, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.62))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .monospacedDigit()
+            }
+            .padding(.horizontal, contentHorizontalPadding)
+            .padding(.vertical, contentVerticalPadding)
+        }
+        .frame(width: panelSize.width, height: panelSize.height)
+        .background(Color.white.opacity(usePrivateGlassComponent ? 0.00 : 0.035))
     }
 
     private var focusContent: some View {
@@ -190,6 +231,46 @@ struct MRRLockOverlayView: View {
             .lineLimit(1)
     }
 
+    private var heroAtmosphere: some View {
+        ZStack {
+            Circle()
+                .fill(Color(red: 0.62, green: 0.94, blue: 0.82).opacity(0.18))
+                .blur(radius: 28)
+                .frame(width: panelSize.width * 0.56, height: panelSize.width * 0.56)
+                .offset(x: -panelSize.width * 0.24, y: -panelSize.height * 0.28)
+            Circle()
+                .fill(Color(red: 0.45, green: 0.68, blue: 1.00).opacity(0.13))
+                .blur(radius: 34)
+                .frame(width: panelSize.width * 0.58, height: panelSize.width * 0.58)
+                .offset(x: panelSize.width * 0.30, y: panelSize.height * 0.22)
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(0.12),
+                            .white.opacity(0.01),
+                            .black.opacity(0.12)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .allowsHitTesting(false)
+    }
+
+    private var heroValueStyle: LinearGradient {
+        LinearGradient(
+            colors: [
+                .white.opacity(1.00),
+                Color(red: 0.88, green: 1.00, blue: 0.95).opacity(0.96)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
     private var stableFrostedBackground: some View {
         ZStack {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -268,7 +349,7 @@ struct MRRLockOverlayView: View {
 
     private var labelFontSize: CGFloat {
         if visualStyle == .number { return 0 }
-        if visualStyle == .focus { return 14 }
+        if visualStyle == .focus || visualStyle == .hero { return 14 }
         switch sizePreset {
         case .small:
             return 13
@@ -280,6 +361,16 @@ struct MRRLockOverlayView: View {
     }
 
     private var valueFontSize: CGFloat {
+        if visualStyle == .hero {
+            switch sizePreset {
+            case .small:
+                return 50
+            case .medium:
+                return 62
+            case .large:
+                return 70
+            }
+        }
         if visualStyle == .focus {
             switch sizePreset {
             case .small:
@@ -321,7 +412,7 @@ struct MRRLockOverlayView: View {
     }
 
     private var footerFontSize: CGFloat {
-        if visualStyle == .compact || visualStyle == .number || visualStyle == .focus {
+        if visualStyle == .compact || visualStyle == .number || visualStyle == .focus || visualStyle == .hero {
             return 11
         }
         switch sizePreset {
@@ -342,6 +433,8 @@ struct MRRLockOverlayView: View {
 
     private var contentHorizontalPadding: CGFloat {
         switch visualStyle {
+        case .hero:
+            return 28
         case .full, .goal:
             return 24
         case .compact:
@@ -355,6 +448,8 @@ struct MRRLockOverlayView: View {
 
     private var contentVerticalPadding: CGFloat {
         switch visualStyle {
+        case .hero:
+            return 20
         case .full, .goal:
             return 22
         case .compact:
@@ -408,6 +503,21 @@ struct MRRLockOverlayView: View {
         if model.statusText == "Mock" { return "Mock Stripe MRR" }
         if model.statusText == "Cached" { return "Stripe MRR cached" }
         return "Stripe MRR"
+    }
+
+    private var heroEyebrowText: String {
+        if model.isRefreshing { return "Syncing Stripe MRR" }
+        if model.errorText != nil { return model.result == nil ? model.statusText : "Cached Stripe MRR" }
+        if model.statusText == "Mock" { return "Mock Stripe MRR" }
+        if model.statusText == "Cached" { return "Cached Stripe MRR" }
+        return "Stripe MRR"
+    }
+
+    private var heroCaptionText: String {
+        if model.statusText == "Mock" { return "Mock preview" }
+        if model.errorText != nil, model.result != nil { return "Cached - \(model.timestampText)" }
+        if let footerStatusText { return footerStatusText }
+        return model.timestampText
     }
 
     private var footerStatusText: String? {

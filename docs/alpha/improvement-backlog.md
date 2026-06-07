@@ -21,7 +21,7 @@ These make the app feel more like something founders will keep installed.
 - Add manual refresh and visible "last refreshed" confidence inside setup. Done: setup can refresh MRR, update the local last-good cache, and show cache freshness without printing private values.
 - Add size and horizontal position controls, not only vertical position. Done: setup exposes small/default/large panel sizes and left/center/right horizontal placement.
 - Add multi-display preference: main display, cursor display, or all displays. Done: setup can target main display, cursor display, or every connected display.
-- Add visual style presets: compact pill, full MRR panel, goal panel, focus panel, and ultra-minimal number-only style. Done: setup exposes full, compact, number-only, goal, and focus styles.
+- Add visual style presets: hero panel, compact pill, full MRR panel, goal panel, focus panel, and ultra-minimal number-only style. Done: setup exposes hero, full, compact, number-only, goal, and focus styles, with hero as the first-run default.
 - Add MRR goal or milestone display as a Pro-signal experiment. Done: setup stores a local goal currency and amount for the goal panel.
 - Add stale/error state copy that is useful on the lock screen without becoming noisy. Done: overlay shows setup/key/refresh/cached states without raw Stripe details.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key. Done: setup and `./script/build_lock_overlay.sh --preview-mock` can launch a mock overlay before any Stripe key is configured.
