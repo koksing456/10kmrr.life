@@ -80,7 +80,8 @@ tracker_readme_current() {
   local readme="$TRACKER_DIR/README.md"
   [[ -f "$readme" ]] || return 1
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$readme" &&
-    /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$readme"
+    /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$readme" &&
+    /usr/bin/grep -q 'Stripe object IDs' "$readme"
 }
 
 print_git_status() {
@@ -147,7 +148,7 @@ print_tracker_status() {
     status_line "NEXT" "run: ./script/prepare_alpha_tracker.sh"
   fi
 
-  status_line "RULE" "do not collect Stripe keys, exact private MRR, raw logs, raw Stripe responses, customer/payment data, or unsanitized screenshots"
+  status_line "RULE" "do not collect Stripe keys, Stripe object IDs, exact private MRR, raw logs, raw Stripe responses, customer/payment data, or unsanitized screenshots"
 }
 
 print_signing_status() {

@@ -335,6 +335,34 @@ print_readiness() {
     status_line "INFO" "install rows reviewed: $install_rows"
     status_line "INFO" "compatibility rows reviewed: $compatibility_rows"
     status_line "INFO" "local smoke rows reviewed: $smoke_rows"
+
+    if [[ "$ready" -ne 0 ]]; then
+      local missing_installs=$(( 5 - install_success ))
+      local missing_compatibility=$(( 5 - compatibility_success ))
+      local missing_intel=$(( 2 - intel_success ))
+      if [[ "$missing_installs" -lt 0 ]]; then missing_installs=0; fi
+      if [[ "$missing_compatibility" -lt 0 ]]; then missing_compatibility=0; fi
+      if [[ "$missing_intel" -lt 0 ]]; then missing_intel=0; fi
+
+      section "Next evidence packet"
+      if [[ "$missing_installs" -gt 0 ]]; then
+        status_line "NEXT" "missing successful installs with MRR seen: $missing_installs"
+        status_line "NEXT" "record install: ./script/record_alpha_install.sh --tester-id tester_XXX --stage saw_mrr --build-verify pass --configured-key yes --previewed yes --installed yes --saw-mrr yes --diagnose-summary \"PASS summary only\""
+      fi
+      if [[ "$missing_compatibility" -gt 0 ]]; then
+        status_line "NEXT" "missing Lock Screen compatibility passes: $missing_compatibility"
+        status_line "NEXT" "record compatibility: ./script/record_alpha_compatibility.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass"
+      fi
+      if [[ "$missing_intel" -gt 0 ]]; then
+        status_line "NEXT" "missing Intel compatibility passes if Intel is included: $missing_intel"
+        status_line "NEXT" "otherwise keep Intel out of private beta notes"
+      fi
+      if [[ "$smoke_success" -lt 1 ]]; then
+        status_line "NEXT" "missing local smoke pass: 1"
+        status_line "NEXT" "preview first: ./script/run_local_smoke.sh"
+        status_line "NEXT" "record on clean smoke machine only: ./script/run_local_smoke.sh --apply --full-reset --record"
+      fi
+    fi
   fi
 
   section "Signing"
@@ -425,6 +453,9 @@ self_test() {
   /bin/rm -f /tmp/10kmrr-beta-ready-self-test.$$
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'private beta packaging evidence is not ready'
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'repeated private API failure detected'
+  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'Next evidence packet'
+  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'missing successful installs with MRR seen: 5'
+  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q './script/record_alpha_install.sh --tester-id tester_XXX'
 
   if printf '%s\n%s\n' "$ready_output" "$not_ready_output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'private_beta_readiness self-test failed: output contained a secret-like token.\n' >&2
