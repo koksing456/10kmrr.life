@@ -10,7 +10,13 @@ The key should only have the permissions needed to read Billing subscriptions an
 
 Never send your Stripe key in chat, email, screenshots, support tickets, logs, or pull requests.
 
-The helper script stores the key without printing it:
+The setup window stores the key in Keychain without printing it:
+
+```sh
+./script/build_lock_overlay.sh --setup
+```
+
+The terminal helper can also store the key without printing it:
 
 ```sh
 ./script/configure_stripe_key.sh

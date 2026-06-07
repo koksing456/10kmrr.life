@@ -10,6 +10,7 @@ private let keychainService = "life.10kmrr.StripeMRRScreenSaver"
 private let keychainAccount = "stripe_api_key"
 private let appSubsystem = "life.10kmrr.MRRLockScreenOverlay"
 private let usePrivateGlassComponent = CommandLine.arguments.contains("--private-glass")
+private let setupMode = CommandLine.arguments.contains("--setup")
 
 private enum OverlayError: LocalizedError {
     case missingAPIKey
@@ -92,7 +93,7 @@ private final class MRRDisplayModel: ObservableObject {
         statusText = "Refreshing"
 
         do {
-            let apiKey = try KeychainReader.readStripeAPIKey()
+            let apiKey = try KeychainStore.readStripeAPIKey()
             let client = StripeMRRClient(apiKey: apiKey)
             let fetched = try await client.fetchMRR()
             result = fetched
@@ -646,7 +647,169 @@ private final class LockScreenOverlayController {
     }
 }
 
-private enum KeychainReader {
+@MainActor
+private final class SetupModel: ObservableObject {
+    @Published var keyInput = ""
+    @Published var statusText = ""
+    @Published var testText = ""
+    @Published var isConfigured = false
+    @Published var isTesting = false
+
+    init() {
+        refreshStatus()
+    }
+
+    func refreshStatus() {
+        isConfigured = KeychainStore.stripeAPIKeyExists()
+        statusText = isConfigured ? "Keychain key configured" : "Keychain key not configured"
+    }
+
+    func saveKey() {
+        let trimmed = keyInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        testText = ""
+
+        guard !trimmed.isEmpty else {
+            statusText = "Enter a restricted Stripe key before saving"
+            return
+        }
+
+        guard !trimmed.hasPrefix("sk_") else {
+            statusText = "Refused full-access Stripe secret key"
+            return
+        }
+
+        do {
+            try KeychainStore.saveStripeAPIKey(trimmed)
+            keyInput = ""
+            refreshStatus()
+            testText = trimmed.hasPrefix("rk_")
+                ? "Saved restricted key"
+                : "Saved key. Prefix was not rk_, so verify it is restricted in Stripe."
+        } catch {
+            statusText = "Keychain save failed"
+            testText = error.localizedDescription
+        }
+    }
+
+    func deleteKey() {
+        do {
+            try KeychainStore.deleteStripeAPIKey()
+            keyInput = ""
+            refreshStatus()
+            testText = "Removed Keychain key"
+        } catch {
+            statusText = "Keychain delete failed"
+            testText = error.localizedDescription
+        }
+    }
+
+    func testStripe() async {
+        guard !isTesting else { return }
+        isTesting = true
+        testText = "Testing Stripe access"
+
+        do {
+            let apiKey = try KeychainStore.readStripeAPIKey()
+            let result = try await StripeMRRClient(apiKey: apiKey).fetchMRR()
+            let currencyCount = result.minorUnitsByCurrency.count
+            testText = currencyCount == 1
+                ? "Stripe test passed for 1 currency"
+                : "Stripe test passed for \(currencyCount) currencies"
+            refreshStatus()
+        } catch {
+            testText = error.localizedDescription
+            refreshStatus()
+        }
+
+        isTesting = false
+    }
+}
+
+private struct SetupWindowView: View {
+    @StateObject private var model = SetupModel()
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("10kmrr.life Setup")
+                    .font(.system(size: 30, weight: .semibold, design: .rounded))
+                Text("Store a restricted read-only Stripe key in macOS Keychain.")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            VStack(alignment: .leading, spacing: 9) {
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(model.isConfigured ? Color.green : Color.orange)
+                        .frame(width: 9, height: 9)
+                    Text(model.statusText)
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                Text("Use a restricted key with read access to Stripe Billing subscriptions and prices. Full-access sk_ keys are refused.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Stripe restricted key")
+                    .font(.system(size: 13, weight: .semibold))
+                SecureField("rk_live_...", text: $model.keyInput)
+                    .textFieldStyle(.roundedBorder)
+                HStack(spacing: 10) {
+                    Button("Save Key") {
+                        model.saveKey()
+                    }
+                    .keyboardShortcut(.defaultAction)
+
+                    Button(model.isTesting ? "Testing..." : "Test Stripe") {
+                        Task {
+                            await model.testStripe()
+                        }
+                    }
+                    .disabled(model.isTesting || !model.isConfigured)
+
+                    Button("Delete Key", role: .destructive) {
+                        model.deleteKey()
+                    }
+                    .disabled(!model.isConfigured)
+                }
+            }
+
+            if !model.testText.isEmpty {
+                Text(model.testText)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Quit") {
+                    NSApp.terminate(nil)
+                }
+                .keyboardShortcut("q")
+            }
+        }
+        .padding(26)
+        .frame(width: 520)
+    }
+}
+
+private enum KeychainStore {
+    static func stripeAPIKeyExists() -> Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainService,
+            kSecAttrAccount as String: keychainAccount,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        return SecItemCopyMatching(query as CFDictionary, nil) == errSecSuccess
+    }
+
     static func readStripeAPIKey() throws -> String {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -666,6 +829,47 @@ private enum KeychainReader {
             throw OverlayError.missingAPIKey
         }
         return key
+    }
+
+    static func saveStripeAPIKey(_ key: String) throws {
+        let data = Data(key.utf8)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainService,
+            kSecAttrAccount as String: keychainAccount
+        ]
+        let attributes: [String: Any] = [
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+
+        let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        if updateStatus == errSecSuccess {
+            return
+        }
+        guard updateStatus == errSecItemNotFound else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(updateStatus))
+        }
+
+        var addQuery = query
+        addQuery[kSecValueData as String] = data
+        addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+        guard addStatus == errSecSuccess else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(addStatus))
+        }
+    }
+
+    static func deleteStripeAPIKey() throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainService,
+            kSecAttrAccount as String: keychainAccount
+        ]
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(status))
+        }
     }
 }
 
@@ -866,17 +1070,40 @@ private final class SkyLightOperator {
 
 private final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor private var overlayController: LockScreenOverlayController?
+    @MainActor private var setupWindow: NSWindow?
 
     @MainActor
     func applicationDidFinishLaunching(_ notification: Notification) {
         let previewMode = CommandLine.arguments.contains("--preview")
-        NSApp.setActivationPolicy(previewMode ? .regular : .accessory)
-        if previewMode {
+        NSApp.setActivationPolicy(previewMode || setupMode ? .regular : .accessory)
+        if previewMode || setupMode {
             NSApp.activate(ignoringOtherApps: true)
         }
+
+        if setupMode {
+            showSetupWindow()
+            return
+        }
+
         let controller = LockScreenOverlayController()
         overlayController = controller
         controller.start(previewMode: previewMode)
+    }
+
+    @MainActor
+    private func showSetupWindow() {
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 520, height: 410),
+            styleMask: [.titled, .closable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "10kmrr.life Setup"
+        window.center()
+        window.isReleasedWhenClosed = false
+        window.contentView = NSHostingView(rootView: SetupWindowView())
+        window.makeKeyAndOrderFront(nil)
+        setupWindow = window
     }
 }
 

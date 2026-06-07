@@ -2,6 +2,28 @@
 
 This guide is for gated private alpha testers.
 
+## Configure Stripe Key
+
+Preferred setup path:
+
+```sh
+./script/build_lock_overlay.sh --setup
+```
+
+The setup window stores a restricted read-only Stripe key in macOS Keychain and can test Stripe access without printing the key.
+
+Compatibility alias:
+
+```sh
+./script/open_setup.sh
+```
+
+Terminal setup path:
+
+```sh
+./script/configure_stripe_key.sh
+```
+
 ## Before You Start
 
 You need:

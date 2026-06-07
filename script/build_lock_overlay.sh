@@ -55,10 +55,20 @@ logs() {
   /usr/bin/log stream --info --style compact --predicate 'process == "MRRLockScreenOverlay"'
 }
 
+open_setup() {
+  build_app
+  verify_app
+  /usr/bin/open -n "$APP_BUNDLE" --args --setup
+  printf 'Opened 10kmrr.life setup window.\n'
+}
+
 case "${1:-}" in
   --verify)
     build_app
     verify_app
+    ;;
+  --setup)
+    open_setup
     ;;
   --preview)
     build_app
@@ -75,7 +85,7 @@ case "${1:-}" in
     build_app
     ;;
   *)
-    printf 'Usage: %s [--verify|--preview|--logs]\n' "$0" >&2
+    printf 'Usage: %s [--verify|--setup|--preview|--preview-private-glass|--logs]\n' "$0" >&2
     exit 64
     ;;
 esac

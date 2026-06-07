@@ -89,8 +89,10 @@ The page uses mock MRR only. Do not use real revenue or unsanitized screenshots 
 Configure your Stripe restricted key first:
 
 ```sh
-./script/configure_stripe_key.sh
+./script/build_lock_overlay.sh --setup
 ```
+
+You can also use `./script/open_setup.sh`, or configure the key from the terminal with `./script/configure_stripe_key.sh`.
 
 Preview without locking your Mac:
 
