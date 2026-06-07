@@ -83,7 +83,17 @@ It also validates the GitHub label manifest and label sync parser. To apply labe
 ./script/sync_github_labels.sh --apply
 ```
 
-It does not install the LaunchAgent. Install/reinstall remains a separate local manual test because it mutates the user's machine state.
+It does not install the LaunchAgent. Install/reinstall remains a separate local smoke test because it mutates the user's machine state. Preview that sequence with:
+
+```sh
+./script/run_local_smoke.sh
+```
+
+Record full local smoke only on a clean smoke machine:
+
+```sh
+./script/run_local_smoke.sh --apply --full-reset --record
+```
 
 For an internal package dry run only:
 

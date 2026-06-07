@@ -43,12 +43,16 @@ Required:
 ./script/check.sh
 ```
 
-Optional local install smoke:
+Optional local install smoke preview:
 
 ```sh
-./script/install_lock_overlay_agent.sh
-./script/diagnose.sh
-./script/uninstall_lock_overlay_agent.sh
+./script/run_local_smoke.sh
+```
+
+Private beta local smoke record, only on a clean smoke machine:
+
+```sh
+./script/run_local_smoke.sh --apply --full-reset --record
 ```
 
 ## Known Issues

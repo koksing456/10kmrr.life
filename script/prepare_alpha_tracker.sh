@@ -63,10 +63,11 @@ Suggested workflow:
 4. Ask for ./script/support_report.sh only if something fails.
 5. Record install attempts with ./script/record_alpha_install.sh.
 6. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
-7. Record private beta local smoke with ./script/record_alpha_local_smoke.sh.
-8. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
-9. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
-10. Record only pass/warn/fail summaries and non-sensitive blockers.
+7. Preview private beta local smoke with ./script/run_local_smoke.sh.
+8. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --record.
+9. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
+10. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
+11. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example install evidence row:
 
@@ -104,15 +105,9 @@ Example install evidence row:
   --result pass \\
   --next-action "day 7 follow-up"
 
-./script/record_alpha_local_smoke.sh \\
-  --build-verify pass \\
-  --install-agent pass \\
-  --diagnose-after-install pass \\
-  --repair-preserves-data pass \\
-  --support-report-safe pass \\
-  --uninstall-all pass \\
-  --result pass \\
-  --next-action "ready for beta gate"
+./script/run_local_smoke.sh
+
+./script/run_local_smoke.sh --apply --full-reset --record
 
 ./script/record_alpha_pro_followup.sh \\
   --tester-id tester_001 \\
@@ -167,6 +162,7 @@ validate_generated_tracker() {
   /usr/bin/head -1 "$output_dir/pro-interest.csv" | /usr/bin/grep -q 'tester_id,follow_up_date,retained_day_7'
   /usr/bin/head -1 "$output_dir/weekly-review.csv" | /usr/bin/grep -q 'week_start,support_load,setup_failure_rate'
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
+  /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$output_dir/README.md"
 
   if /usr/bin/grep -R -E '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)' "$output_dir" >/dev/null; then
     printf 'Generated alpha tracker contained a secret-like token.\n' >&2
