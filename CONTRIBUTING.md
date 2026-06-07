@@ -47,6 +47,12 @@ Run focused MRR tests:
 ./script/test_mrr_calculator.sh
 ```
 
+Run focused cache tests:
+
+```sh
+./script/test_mrr_cache.sh
+```
+
 Run focused settings tests:
 
 ```sh

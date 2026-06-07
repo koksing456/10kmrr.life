@@ -47,6 +47,9 @@ fi
 section "MRR calculator tests"
 ./script/test_mrr_calculator.sh
 
+section "MRR cache tests"
+./script/test_mrr_cache.sh
+
 section "Stripe client tests"
 ./script/test_stripe_client.sh
 

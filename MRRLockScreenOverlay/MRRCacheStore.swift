@@ -6,7 +6,9 @@ struct MRRCacheSnapshot {
 }
 
 enum MRRCacheStore {
-    private static let defaults = UserDefaults(suiteName: "life.10kmrr.MRRLockScreenOverlay.Cache") ?? .standard
+    private static let suiteName = ProcessInfo.processInfo.environment["TENKMRR_CACHE_SUITE"]
+        ?? "life.10kmrr.MRRLockScreenOverlay.Cache"
+    private static let defaults = UserDefaults(suiteName: suiteName) ?? .standard
     private static let resultKey = "lastGoodMRR"
     private static let lastUpdatedKey = "lastUpdated"
 

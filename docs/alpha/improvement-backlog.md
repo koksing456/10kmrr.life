@@ -45,6 +45,7 @@ These reduce maintenance risk.
 - Convert Stripe pagination from recursion to an iterative loop with an explicit page cap. Done: `StripeMRRClient` caps each subscription status at 100 pages.
 - Add timeout, retry, and backoff policy for Stripe requests. Done: Stripe requests have request/resource timeouts plus capped retries for transient network errors, 429, and 5xx responses.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases. Done: sanitized fixture now covers 8 focused calculator cases.
+- Add focused MRR cache tests for missing, saved, timestamp-missing, and corrupt-cache states. Done: `./script/test_mrr_cache.sh` uses an isolated UserDefaults suite.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
 - Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/verify_public_repo.sh`.
 - Add focused settings persistence tests for defaults, bounds, fallbacks, goal settings, and panel sizes. Done: `./script/test_overlay_settings.sh` uses an isolated UserDefaults suite.
