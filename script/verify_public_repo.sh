@@ -28,6 +28,9 @@ bash -n \
 section "MRR calculator tests"
 ./script/test_mrr_calculator.sh
 
+section "Support report redaction"
+./script/support_report.sh --self-test
+
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify
 /usr/bin/lipo build/LockScreenOverlay/MRRLockScreenOverlay.app/Contents/MacOS/MRRLockScreenOverlay -verify_arch arm64 x86_64

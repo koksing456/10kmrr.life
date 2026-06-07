@@ -8,10 +8,11 @@ ERR_LOG="$APP_SUPPORT/logs/mrr-lock-overlay.err.log"
 REPORT_DIR="$ROOT_DIR/build/support"
 REPORT_PATH="$REPORT_DIR/10kmrr-support-report.txt"
 INCLUDE_LOGS=false
+SELF_TEST=false
 
 usage() {
   cat <<EOF
-Usage: $0 [--include-logs] [--help]
+Usage: $0 [--include-logs] [--self-test] [--help]
 
 Writes a sanitized local support report to:
   build/support/10kmrr-support-report.txt
@@ -21,6 +22,7 @@ money amounts. By default it does not include raw log contents.
 
 Options:
   --include-logs  Include the last safe-redacted stdout/stderr log lines.
+  --self-test     Verify redaction rules with synthetic sensitive samples.
   --help          Show this help.
 EOF
 }
@@ -29,6 +31,9 @@ for arg in "$@"; do
   case "$arg" in
     --include-logs)
       INCLUDE_LOGS=true
+      ;;
+    --self-test)
+      SELF_TEST=true
       ;;
     --help|-h)
       usage
@@ -57,6 +62,57 @@ sanitize_stream() {
     s/\b[A-Z]{3}\s+[0-9][0-9,]*(?:\.[0-9]{2})?\b/<redacted-money>/g;
   '
 }
+
+self_test() {
+  local output
+  output="$(
+    {
+      printf 'home=%s\n' "$HOME"
+      printf 'repo=%s\n' "$ROOT_DIR"
+      printf 'stripe=rk_%s_%s\n' 'live' '1234567890abcdef'
+      printf 'stripe=sk_%s_%s\n' 'test' '1234567890abcdef'
+      printf 'webhook=whsec_%s\n' '1234567890abcdef'
+      printf 'mrr=US$10,248.00\n'
+      printf 'mrr=USD 10248.00\n'
+    } | sanitize_stream
+  )"
+
+  if printf '%s\n' "$output" | /usr/bin/grep -F "$HOME" >/dev/null; then
+    printf 'Support report self-test failed: HOME path was not redacted.\n' >&2
+    exit 1
+  fi
+  if printf '%s\n' "$output" | /usr/bin/grep -F "$ROOT_DIR" >/dev/null; then
+    printf 'Support report self-test failed: repo path was not redacted.\n' >&2
+    exit 1
+  fi
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq '[rs]k_(live|test)_[A-Za-z0-9_]+'; then
+    printf 'Support report self-test failed: Stripe-key-like value was not redacted.\n' >&2
+    exit 1
+  fi
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq 'whsec_[A-Za-z0-9_]+'; then
+    printf 'Support report self-test failed: webhook secret-like value was not redacted.\n' >&2
+    exit 1
+  fi
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq '(US\$10,248\.00|USD 10248\.00)'; then
+    printf 'Support report self-test failed: obvious money amount was not redacted.\n' >&2
+    exit 1
+  fi
+  if ! printf '%s\n' "$output" | /usr/bin/grep -q '<redacted-stripe-key>'; then
+    printf 'Support report self-test failed: Stripe redaction marker missing.\n' >&2
+    exit 1
+  fi
+  if ! printf '%s\n' "$output" | /usr/bin/grep -q '<redacted-money>'; then
+    printf 'Support report self-test failed: money redaction marker missing.\n' >&2
+    exit 1
+  fi
+
+  printf 'Support report redaction self-test passed.\n'
+}
+
+if [[ "$SELF_TEST" == "true" ]]; then
+  self_test
+  exit 0
+fi
 
 run_section() {
   local title="$1"
