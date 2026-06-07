@@ -17,12 +17,10 @@ Before setup:
 Setup path:
 
 ```sh
-./script/build_lock_overlay.sh --verify
-./script/build_lock_overlay.sh --setup
-./script/build_lock_overlay.sh --preview-mock
-./script/build_lock_overlay.sh --preview-private-glass
-./script/install_lock_overlay_agent.sh
+./script/start_alpha.sh
 ```
+
+This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
 
 If something fails:
 

@@ -27,6 +27,14 @@ Record:
 
 ## Build
 
+Preferred guided run:
+
+```sh
+./script/start_alpha.sh
+```
+
+Use the detailed steps below when you need to isolate which stage failed.
+
 Run:
 
 ```sh

@@ -192,7 +192,7 @@ Preview with private API debug labels:
 
 The preview uses the selected display mode from setup. It does not unload the installed LaunchAgent.
 
-The setup window also lets you preview a mock overlay before adding a Stripe key, refresh MRR now, confirm when the last-good cache was updated, and choose the local refresh interval, vertical position, horizontal position, panel size, display mode, visual style, and optional MRR goal. These settings are stored locally and apply the next time the overlay starts.
+The setup window is organized as a first-run flow: preview mock MRR, save a restricted Stripe key in Keychain, refresh MRR, then use advanced settings only if you want to tune placement, size, display mode, visual style, refresh interval, or an optional MRR goal.
 
 Visual styles include hero panel, full panel, compact panel, number-only, goal panel, and focus panel. Hero is the default first-run style. Goal settings are local-only and are used only to render progress on the Lock Screen.
 
@@ -202,7 +202,21 @@ When the overlay app is running, the 10kmrr.life menu bar item can open setup, r
 
 ## Install
 
-Alpha installs are gated. If you are approved for alpha testing, run:
+Alpha installs are gated. If you are approved for alpha testing, use the guided first-run flow:
+
+```sh
+./script/start_alpha.sh
+```
+
+The guided flow builds the app, opens setup, launches a mock preview, waits for you to save a restricted key in the macOS setup window, then installs the LaunchAgent and runs diagnose.
+
+To preview the steps without changing local state:
+
+```sh
+./script/start_alpha.sh --dry-run
+```
+
+To install directly after setup is ready:
 
 ```sh
 ./script/install_lock_overlay_agent.sh

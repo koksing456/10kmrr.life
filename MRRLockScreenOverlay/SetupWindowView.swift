@@ -2,30 +2,58 @@ import AppKit
 import SwiftUI
 
 struct SetupWindowView: View {
-    @StateObject private var model = SetupModel()
+    @StateObject var model = SetupModel()
     @State private var didPreviewMock = false
+    @State var showsAdvancedSettings = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 22) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                header
+                firstRunCard
+                keyCard
+                cacheCard
+                advancedSettings
+                statusMessage
+                footer
+            }
+            .padding(26)
+        }
+        .frame(width: 640, height: 720)
+    }
+
+    private var header: some View {
+        HStack(alignment: .top, spacing: 18) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("10kmrr.life Setup")
+                Text("Set up your Lock Screen MRR")
                     .font(.system(size: 30, weight: .semibold, design: .rounded))
-                Text("Store a restricted read-only Stripe key in macOS Keychain.")
+                Text("Preview first, save a restricted Stripe key in Keychain, then install the local overlay.")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
                 Text(AppBuildInfo.displayText)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(.tertiary)
             }
+            Spacer(minLength: 0)
+            SetupStatusBadge(text: model.isConfigured ? "Key ready" : "Needs key", isReady: model.isConfigured)
+        }
+    }
 
+    private var firstRunCard: some View {
+        SetupCard {
             SetupProgressView(
                 didPreviewMock: didPreviewMock,
                 isConfigured: model.isConfigured,
                 hasCache: !model.lastRefreshText.hasPrefix("No cached"),
                 openMockPreview: openMockPreview
             )
+        }
+    }
 
-            VStack(alignment: .leading, spacing: 9) {
+    private var keyCard: some View {
+        SetupCard {
+            VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 8) {
                     Circle()
                         .fill(model.isConfigured ? Color.green : Color.orange)
@@ -37,15 +65,11 @@ struct SetupWindowView: View {
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-            }
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Restricted Stripe key")
-                    .font(.system(size: 13, weight: .semibold))
                 SecureField("rk_live_...", text: $model.keyInput)
                     .textFieldStyle(.roundedBorder)
                 HStack(spacing: 10) {
-                    Button("Save Key") {
+                    Button("Save Restricted Key") {
                         model.saveKey()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -63,10 +87,13 @@ struct SetupWindowView: View {
                     .disabled(!model.isConfigured)
                 }
             }
+        }
+    }
 
+    private var cacheCard: some View {
+        SetupCard {
             VStack(alignment: .leading, spacing: 7) {
-                Text("MRR refresh")
-                    .font(.system(size: 13, weight: .semibold))
+                SetupSectionTitle("Local MRR cache")
                 Text(model.lastRefreshText)
                     .font(.system(size: 13, weight: .medium))
                 Text(model.cacheDetailText)
@@ -74,94 +101,29 @@ struct SetupWindowView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+        }
+    }
 
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Overlay settings")
-                    .font(.system(size: 13, weight: .semibold))
-                HStack(spacing: 18) {
-                    Picker("Refresh", selection: $model.refreshIntervalMinutes) {
-                        ForEach(model.refreshIntervalOptions, id: \.self) { minutes in
-                            Text("\(minutes)m").tag(minutes)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 236)
-
-                    Picker("Position", selection: $model.placement) {
-                        ForEach(OverlayPlacement.allCases) { placement in
-                            Text(placement.label).tag(placement)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 222)
-                }
-                HStack(spacing: 18) {
-                    Picker("Horizontal", selection: $model.horizontalPlacement) {
-                        ForEach(OverlayHorizontalPlacement.allCases) { placement in
-                            Text(placement.label).tag(placement)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 236)
-
-                    Picker("Size", selection: $model.sizePreset) {
-                        ForEach(OverlaySizePreset.allCases) { sizePreset in
-                            Text(sizePreset.label).tag(sizePreset)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 222)
-                }
-                Picker("Display", selection: $model.displayMode) {
-                    ForEach(OverlayDisplayMode.allCases) { displayMode in
-                        Text(displayMode.label).tag(displayMode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 236)
-                HStack(spacing: 18) {
-                    Picker("Style", selection: $model.visualStyle) {
-                        ForEach(OverlayVisualStyle.allCases) { visualStyle in
-                            Text(visualStyle.label).tag(visualStyle)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 500)
-                }
-                HStack(spacing: 10) {
-                    TextField("Goal currency", text: $model.goalCurrencyInput)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 116)
-                    TextField("Goal MRR amount", text: $model.goalAmountInput)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 166)
-                    Text("Used by Goal style")
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
-                HStack(spacing: 10) {
-                    Button("Save Settings") {
-                        model.saveSettings()
-                    }
-                    Button("Reset Settings") {
-                        model.resetSettings()
-                    }
-                }
-                Text("Settings are stored locally and apply the next time the overlay starts.")
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-            }
-
-            if !model.testText.isEmpty {
+    @ViewBuilder
+    private var statusMessage: some View {
+        if !model.testText.isEmpty {
+            SetupCard {
                 Text(model.testText)
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+        }
+    }
 
+    private var footer: some View {
+        VStack(spacing: 16) {
             Divider()
 
             HStack {
+                Text("After setup, use ./script/start_alpha.sh or ./script/install_lock_overlay_agent.sh to install.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
                 Spacer()
                 Button("Quit") {
                     NSApp.terminate(nil)
@@ -169,8 +131,6 @@ struct SetupWindowView: View {
                 .keyboardShortcut("q")
             }
         }
-        .padding(26)
-        .frame(width: 560)
     }
 
     private func openMockPreview() {
@@ -181,4 +141,5 @@ struct SetupWindowView: View {
         didPreviewMock = true
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
     }
+
 }

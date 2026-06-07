@@ -83,6 +83,9 @@ section "Private beta package manifest"
 section "GitHub label sync parser"
 ./script/sync_github_labels.sh --self-test
 
+section "Alpha start flow"
+./script/start_alpha.sh --self-test
+
 section "Markdown local links"
 ./script/verify_markdown_links.sh
 

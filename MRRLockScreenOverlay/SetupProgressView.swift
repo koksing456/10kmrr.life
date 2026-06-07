@@ -40,11 +40,6 @@ struct SetupProgressView: View {
                 }
             }
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.primary.opacity(0.055))
-        )
     }
 
     private func progressStep(number: String, title: String, detail: String, isComplete: Bool) -> some View {

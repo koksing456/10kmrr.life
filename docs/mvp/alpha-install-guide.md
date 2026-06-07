@@ -4,7 +4,15 @@ This guide is for gated private alpha testers.
 
 ## Configure Stripe Key
 
-Preferred setup path:
+Preferred guided path:
+
+```sh
+./script/start_alpha.sh
+```
+
+The guided flow builds the app, opens setup, launches a mock preview, waits for you to save a restricted key in the macOS setup window, then installs the LaunchAgent and runs diagnose.
+
+Manual setup path:
 
 ```sh
 ./script/build_lock_overlay.sh --setup
@@ -12,7 +20,7 @@ Preferred setup path:
 
 The setup window stores a restricted read-only Stripe key in macOS Keychain and can test Stripe access without printing the key.
 
-The same setup window also lets you choose:
+The same setup window keeps first-run setup focused and places advanced controls behind a disclosure:
 
 - Refresh interval.
 - Vertical overlay position.
@@ -62,7 +70,7 @@ From the project folder:
 ./script/install_lock_overlay_agent.sh
 ```
 
-If no Stripe key is configured yet, the installer opens the setup window automatically.
+Use this direct install command after setup is ready. If no Stripe key is configured yet, the installer opens the setup window automatically.
 
 This builds the app, installs it into:
 

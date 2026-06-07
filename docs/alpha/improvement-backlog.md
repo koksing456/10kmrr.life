@@ -25,6 +25,8 @@ These make the app feel more like something founders will keep installed.
 - Add MRR goal or milestone display as a Pro-signal experiment. Done: setup stores a local goal currency and amount for the goal panel.
 - Add stale/error state copy that is useful on the lock screen without becoming noisy. Done: overlay shows setup/key/refresh/cached states without raw Stripe details.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key. Done: setup and `./script/build_lock_overlay.sh --preview-mock` can launch a mock overlay before any Stripe key is configured.
+- Make alpha onboarding feel like a guided first-run flow instead of a dense settings form. Done: setup now prioritizes preview, Keychain, and refresh, with advanced overlay settings behind disclosure.
+- Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, installs, and diagnoses without asking for secrets in Terminal. Done: see `./script/start_alpha.sh`.
 
 ## P1: Distribution And Trust
 
