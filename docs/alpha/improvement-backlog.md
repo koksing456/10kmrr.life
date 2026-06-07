@@ -47,14 +47,14 @@ These reduce maintenance risk.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases. Done: sanitized fixture now covers 8 focused calculator cases.
 - Add focused MRR cache tests for missing, saved, timestamp-missing, and corrupt-cache states. Done: `./script/test_mrr_cache.sh` uses an isolated UserDefaults suite.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
-- Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/verify_public_repo.sh`.
+- Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/check.sh`.
 - Add focused settings persistence tests for defaults, bounds, fallbacks, goal settings, and panel sizes. Done: `./script/test_overlay_settings.sh` uses an isolated UserDefaults suite.
-- Add CI checks for shell syntax, app build, public repo scan, MRR calculator tests, and Stripe client tests. Done: `.github/workflows/public-repo-check.yml` runs `./script/verify_public_repo.sh` on macOS.
+- Add CI checks for shell syntax, app build, public repo scan, MRR calculator tests, and Stripe client tests. Done: `.github/workflows/public-repo-check.yml` runs `./script/check.sh` on macOS.
 - Add a single local readiness command that runs public verification and signing preflight. Done: `./script/check.sh`.
 - Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
 - Add a debug mode that explains which private API path failed without dumping sensitive runtime data. Done: `--debug` / `--preview-debug` exposes safe private API failure labels.
 - Add a sanitized support report for alpha testers. Done: `./script/support_report.sh` writes a redacted local report and keeps raw logs out by default.
-- Add safety self-tests for diagnose and uninstall flows, plus public-alpha wording gates. Done: `./script/verify_public_repo.sh` runs diagnostic redaction, uninstall dry-run, and trust-boundary wording checks.
+- Add safety self-tests for diagnose and uninstall flows, plus public-alpha wording gates. Done: `./script/check.sh` runs diagnostic redaction, uninstall dry-run, and trust-boundary wording checks.
 
 ## P2: Alpha Ops
 

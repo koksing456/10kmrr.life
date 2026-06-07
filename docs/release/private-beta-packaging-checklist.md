@@ -10,7 +10,7 @@ Do not publish a public installer until signing, notarization, support, rollback
 - If Intel is included in the private beta, at least 2 successful Intel installs with Lock Screen visibility verified.
 - No repeated private macOS API failure on common supported macOS versions.
 - Install failure rate below 30 percent for the same reason.
-- `./script/verify_public_repo.sh` passes on a clean checkout.
+- `./script/check.sh` passes on a clean checkout.
 - `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
 - `./script/support_report.sh` produces a safe report without raw secrets or exact MRR.
 

@@ -40,7 +40,7 @@ Short description of what changed.
 Required:
 
 ```sh
-./script/verify_public_repo.sh
+./script/check.sh
 ```
 
 Optional local install smoke:

@@ -48,7 +48,7 @@ Safety boundary:
 - Use ./script/uninstall_lock_overlay_agent.sh --all for a full local reset.
 
 Verification:
-- ./script/verify_public_repo.sh passed before packaging.
+- ./script/check.sh passed before packaging.
 - codesign --verify --deep --strict passed.
 - lipo verified arm64 and x86_64 slices.
 EOF
@@ -67,7 +67,7 @@ self_test_manifest() {
   /usr/bin/grep -q 'Do not publish this zip as a public installer' "$manifest_path"
   /usr/bin/grep -q 'Do not bundle Stripe keys' "$manifest_path"
   /usr/bin/grep -q 'unsanitized screenshots' "$manifest_path"
-  /usr/bin/grep -q 'verify_public_repo.sh passed before packaging' "$manifest_path"
+  /usr/bin/grep -q 'check.sh passed before packaging' "$manifest_path"
 
   rm -rf "$tmp_dir"
   printf 'Private beta package manifest self-test passed.\n'
@@ -102,7 +102,7 @@ if [[ "$ADHOC" != "true" ]]; then
   exit 64
 fi
 
-"$ROOT_DIR/script/verify_public_repo.sh"
+"$ROOT_DIR/script/check.sh"
 
 commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
 version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_BUNDLE/Contents/Info.plist" 2>/dev/null || printf '0.0.0')"

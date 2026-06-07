@@ -119,15 +119,15 @@ Run diagnostic and uninstall safety self-tests without changing your local insta
 Before pushing public-alpha repo changes:
 
 ```sh
-./script/verify_public_repo.sh
+./script/check.sh
 ```
 
-The public verification gate checks shell syntax, focused MRR tests, MRR cache tests, Stripe request tests, overlay settings tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, and the universal macOS build.
+The public readiness gate checks shell syntax, focused MRR tests, MRR cache tests, Stripe request tests, overlay settings tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, the universal macOS build, and signing/notarization preflight.
 
-For the full local readiness pass, including signing and notarization preflight:
+For the public repo sub-gate without signing preflight:
 
 ```sh
-./script/check.sh
+./script/verify_public_repo.sh
 ```
 
 Preview GitHub issue label setup before applying it:

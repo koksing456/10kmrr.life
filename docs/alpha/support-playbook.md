@@ -43,7 +43,7 @@ The support report redacts local paths, Stripe-key-like strings, webhook secrets
 If the issue is source/build related, ask for:
 
 ```sh
-./script/verify_public_repo.sh
+./script/check.sh
 ```
 
 They should paste only the pass/warn/fail summary and the failing section name.
