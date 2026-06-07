@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SetupProgressView: View {
+    let didPreviewMock: Bool
     let isConfigured: Bool
     let hasCache: Bool
     let openMockPreview: () -> Void
@@ -15,7 +16,7 @@ struct SetupProgressView: View {
                     number: "1",
                     title: "Preview",
                     detail: "Mock MRR",
-                    isComplete: true
+                    isComplete: didPreviewMock
                 )
 
                 progressStep(

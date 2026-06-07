@@ -3,6 +3,7 @@ import SwiftUI
 
 struct SetupWindowView: View {
     @StateObject private var model = SetupModel()
+    @State private var didPreviewMock = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
@@ -18,6 +19,7 @@ struct SetupWindowView: View {
             }
 
             SetupProgressView(
+                didPreviewMock: didPreviewMock,
                 isConfigured: model.isConfigured,
                 hasCache: !model.lastRefreshText.hasPrefix("No cached"),
                 openMockPreview: openMockPreview
@@ -47,10 +49,6 @@ struct SetupWindowView: View {
                         model.saveKey()
                     }
                     .keyboardShortcut(.defaultAction)
-
-                    Button("Preview Mock Overlay") {
-                        openMockPreview()
-                    }
 
                     Button(model.isRefreshingMRR ? "Refreshing..." : "Refresh MRR") {
                         Task {
@@ -180,6 +178,7 @@ struct SetupWindowView: View {
         configuration.arguments = ["--preview", "--private-glass", "--mock-mrr"]
         configuration.activates = true
         configuration.createsNewApplicationInstance = true
+        didPreviewMock = true
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
     }
 }
