@@ -91,6 +91,12 @@ Run focused MRR calculation tests with sanitized Stripe fixtures:
 ./script/test_mrr_calculator.sh
 ```
 
+Run local display/settings persistence tests:
+
+```sh
+./script/test_overlay_settings.sh
+```
+
 Run local Stripe key validation checks without touching Keychain:
 
 ```sh
@@ -110,7 +116,7 @@ Before pushing public-alpha repo changes:
 ./script/verify_public_repo.sh
 ```
 
-The public verification gate checks shell syntax, focused MRR tests, Stripe request tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, and the universal macOS build.
+The public verification gate checks shell syntax, focused MRR tests, Stripe request tests, overlay settings tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, and the universal macOS build.
 
 For the full local readiness pass, including signing and notarization preflight:
 

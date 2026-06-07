@@ -50,6 +50,9 @@ section "MRR calculator tests"
 section "Stripe client tests"
 ./script/test_stripe_client.sh
 
+section "Overlay settings tests"
+./script/test_overlay_settings.sh
+
 section "Support report redaction"
 ./script/support_report.sh --self-test
 

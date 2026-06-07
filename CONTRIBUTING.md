@@ -31,7 +31,7 @@ Run:
 ./script/check.sh
 ```
 
-This checks shell syntax, MRR calculator fixtures, Stripe client behavior, app build/signing, sanitized demo assets, obvious Stripe secret patterns, local-only paths, ignored private folders, required public docs, and local signing/notarization readiness.
+This checks shell syntax, MRR calculator fixtures, Stripe client behavior, overlay settings persistence, app build/signing, sanitized demo assets, obvious Stripe secret patterns, local-only paths, ignored private folders, required public docs, and local signing/notarization readiness.
 
 ## Useful Local Commands
 
@@ -45,6 +45,12 @@ Run focused MRR tests:
 
 ```sh
 ./script/test_mrr_calculator.sh
+```
+
+Run focused settings tests:
+
+```sh
+./script/test_overlay_settings.sh
 ```
 
 Run safe diagnostics:

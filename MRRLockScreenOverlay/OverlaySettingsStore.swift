@@ -2,7 +2,9 @@ import AppKit
 import Foundation
 
 enum OverlaySettingsStore {
-    private static let defaults = UserDefaults(suiteName: "life.10kmrr.MRRLockScreenOverlay.Settings") ?? .standard
+    private static let suiteName = ProcessInfo.processInfo.environment["TENKMRR_SETTINGS_SUITE"]
+        ?? "life.10kmrr.MRRLockScreenOverlay.Settings"
+    private static let defaults = UserDefaults(suiteName: suiteName) ?? .standard
     private static let refreshIntervalKey = "refreshIntervalSeconds"
     private static let placementKey = "placement"
     private static let horizontalPlacementKey = "horizontalPlacement"
