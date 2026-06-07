@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="10kmrr.life puts your Stripe MRR on your Mac Lock Screen as a local-first founder signal.">
+    <title>10kmrr.life - Stripe MRR on your Mac Lock Screen</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="topbar" aria-label="Product status">
+          <a class="brand" href="#top" aria-label="10kmrr.life home">10kmrr.life</a>
+          <div class="nav-actions">
+            <a href="#security">Security</a>
+            <a href="#alpha">Alpha</a>
+            <a class="github-link" href="https://github.com/koksing456/10kmrr.life">GitHub</a>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <p class="eyebrow">Gated macOS alpha</p>
+          <h1 id="hero-title">Your Stripe MRR, on your Mac Lock Screen.</h1>
+          <p class="lede">A quiet daily revenue signal for solo SaaS founders who want the number that matters to feel close without opening another dashboard.</p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="button primary" href="mailto:alpha@10kmrr.life?subject=10kmrr.life%20alpha%20request">Request alpha access</a>
+            <a class="button secondary" href="https://github.com/koksing456/10kmrr.life">Read the source</a>
+          </div>
+        </div>
+
+        <div class="lockscreen" aria-label="Mock macOS Lock Screen with 10kmrr.life overlay">
+          <div class="lock-date">Tue 09 Jun</div>
+          <div class="lock-time">08:42</div>
+          <div class="mrr-panel">
+            <div class="panel-header">
+              <span>Stripe MRR</span>
+              <span class="live-dot" aria-label="Live"></span>
+            </div>
+            <div class="mrr-value">US$10,248.00</div>
+            <div class="panel-footer">
+              <span>Updated 8:41 AM</span>
+              <span>Mock demo</span>
+            </div>
+          </div>
+          <div class="user-chip">
+            <div class="avatar" aria-hidden="true"></div>
+            <span>Founder Mac</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section split" id="alpha">
+        <div>
+          <p class="section-label">What it does</p>
+          <h2>One job: make MRR visible.</h2>
+        </div>
+        <div class="feature-grid">
+          <article>
+            <h3>Reads Stripe locally</h3>
+            <p>The app fetches subscription data from Stripe directly on your Mac and computes Stripe-like MRR locally.</p>
+          </article>
+          <article>
+            <h3>Lives on the Lock Screen</h3>
+            <p>The overlay appears as a glass panel in the place you already see before starting work.</p>
+          </article>
+          <article>
+            <h3>Stays intentionally narrow</h3>
+            <p>This is not a full analytics dashboard, finance tool, or Stripe Dashboard replacement.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section security-band" id="security">
+        <div>
+          <p class="section-label">Local-first security</p>
+          <h2>No alpha server stores your Stripe key or MRR.</h2>
+        </div>
+        <div class="security-list">
+          <div>
+            <strong>Restricted key</strong>
+            <span>Use a read-only Stripe restricted API key, not a full-access secret key.</span>
+          </div>
+          <div>
+            <strong>Keychain storage</strong>
+            <span>The Stripe key is stored in macOS Keychain under your user account.</span>
+          </div>
+          <div>
+            <strong>Local cache</strong>
+            <span>Only the last-good MRR value and timestamp are cached locally for stale/offline display.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alpha-form" aria-labelledby="request-title">
+        <div>
+          <p class="section-label">Request access</p>
+          <h2 id="request-title">Alpha is gated while compatibility is proven.</h2>
+          <p>Send a short request with your macOS version, whether you use Stripe subscriptions, and why you want MRR on the Lock Screen. Do not send Stripe keys, exact MRR, customer data, or screenshots with real revenue.</p>
+        </div>
+        <a class="button primary" href="mailto:alpha@10kmrr.life?subject=10kmrr.life%20alpha%20request&body=macOS%20version%3A%0AUses%20Stripe%20subscriptions%3A%0AWhy%20I%20want%20MRR%20on%20the%20Lock%20Screen%3A%0AComfortable%20using%20a%20restricted%20read-only%20Stripe%20key%3A">Request alpha access</a>
+      </section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>

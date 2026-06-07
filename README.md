@@ -72,6 +72,18 @@ There is no 10kmrr.life server in the current alpha path. The app reads Stripe d
 ./script/build_lock_overlay.sh --verify
 ```
 
+## Static Alpha Page
+
+Preview the public-alpha landing page locally:
+
+```sh
+./script/serve_site.sh
+```
+
+Then open `http://127.0.0.1:4173`.
+
+The page uses mock MRR only. Do not use real revenue or unsanitized screenshots in demo assets.
+
 ## Preview
 
 Configure your Stripe restricted key first:
@@ -151,6 +163,8 @@ The alpha is testing four things:
 - Which Pro upgrades have real pull.
 
 Useful alpha prep docs live under [docs/mvp](./docs/mvp), [docs/alpha](./docs/alpha), and [docs/demo](./docs/demo).
+
+The alpha request template lives at [docs/alpha/alpha-request-template.md](./docs/alpha/alpha-request-template.md).
 
 ## Open Source Boundary
 

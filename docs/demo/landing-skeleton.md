@@ -1,6 +1,14 @@
 # Landing Skeleton
 
-This is a structure for the public alpha page. It is not final marketing copy.
+This was the planning structure for the public alpha page. The current static page lives in [site](../../site).
+
+Run it locally:
+
+```sh
+./script/serve_site.sh
+```
+
+The page must continue to use mock or sanitized MRR only.
 
 ## Hero
 
