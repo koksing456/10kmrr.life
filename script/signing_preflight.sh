@@ -13,6 +13,8 @@ notary credentials.
 
 Default mode reports PASS/WARN and exits 0. Use --require-ready when you want
 the command to fail unless Developer ID signing and notary tooling appear ready.
+Set TENKMRR_NOTARY_PROFILE to the private notarytool keychain profile name when
+checking notarization readiness.
 
 Options:
   --require-ready  Exit non-zero if release signing prerequisites are missing.
@@ -44,6 +46,18 @@ has_developer_id_application() {
   /usr/bin/grep -q '"Developer ID Application:'
 }
 
+verify_notary_profile() {
+  local profile="$1"
+  local output_file="$2"
+
+  [[ -n "$profile" ]] || return 1
+  /usr/bin/xcrun notarytool history \
+    --keychain-profile "$profile" \
+    --output-format json \
+    --no-progress \
+    >"$output_file" 2>&1
+}
+
 self_test() {
   local sample_without sample_with missing_steps ready_steps
   sample_without='  1) ABCDEF "Apple Development: Example (TEAMID)"
@@ -62,12 +76,13 @@ self_test() {
     exit 1
   fi
 
-  missing_steps="$(suggested_steps "false" "false" "true")"
+  missing_steps="$(suggested_steps "false" "false" "true" "false")"
   printf '%s\n' "$missing_steps" | /usr/bin/grep -q 'Install Xcode'
   printf '%s\n' "$missing_steps" | /usr/bin/grep -q 'Developer ID Application certificate'
   printf '%s\n' "$missing_steps" | /usr/bin/grep -q 'Apple Development identity is not enough'
+  printf '%s\n' "$missing_steps" | /usr/bin/grep -q 'TENKMRR_NOTARY_PROFILE'
 
-  ready_steps="$(suggested_steps "true" "true" "false")"
+  ready_steps="$(suggested_steps "true" "true" "false" "true")"
   printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/signing_preflight.sh --require-ready'
   printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/package_private_beta.sh --adhoc'
 
@@ -78,6 +93,7 @@ suggested_steps() {
   local has_notarytool="$1"
   local has_developer_id="$2"
   local has_apple_development="$3"
+  local has_notary_profile="$4"
 
   printf '\nSuggested signing next steps:\n'
 
@@ -94,9 +110,12 @@ suggested_steps() {
     printf '  - Apple Development identity is not enough for Developer ID notarized distribution.\n'
   fi
 
-  printf '  - Store notary credentials privately with xcrun notarytool store-credentials.\n'
+  if [[ "$has_notary_profile" != "true" ]]; then
+    printf '  - Store notary credentials privately with xcrun notarytool store-credentials <profile-name>.\n'
+    printf '  - Set TENKMRR_NOTARY_PROFILE to that keychain profile name before strict signing checks.\n'
+  fi
 
-  if [[ "$has_notarytool" == "true" && "$has_developer_id" == "true" ]]; then
+  if [[ "$has_notarytool" == "true" && "$has_developer_id" == "true" && "$has_notary_profile" == "true" ]]; then
     printf '  - Re-run strict readiness: ./script/signing_preflight.sh --require-ready\n'
     printf '  - Then run an internal dry run only: ./script/package_private_beta.sh --adhoc\n'
   fi
@@ -111,6 +130,10 @@ missing=0
 has_notarytool=false
 has_developer_id=false
 has_apple_development=false
+has_notary_profile=false
+notary_profile="${TENKMRR_NOTARY_PROFILE:-}"
+notary_output="$(/usr/bin/mktemp -t 10kmrr-notary-profile.XXXXXX)"
+trap 'rm -f "$notary_output"' EXIT
 
 printf '10kmrr.life signing preflight\n'
 
@@ -136,8 +159,23 @@ if printf '%s\n' "$identity_output" | /usr/bin/grep -q '"Apple Development:'; th
   has_apple_development=true
 fi
 
-printf 'INFO  Notary credentials are not checked or printed by this script. Store them privately with xcrun notarytool store-credentials.\n'
-suggested_steps "$has_notarytool" "$has_developer_id" "$has_apple_development"
+if [[ "$has_notarytool" == "true" ]]; then
+  if [[ -z "$notary_profile" ]]; then
+    printf 'WARN  TENKMRR_NOTARY_PROFILE is not set. Notary keychain profile readiness is not verified.\n'
+    missing=1
+  elif verify_notary_profile "$notary_profile" "$notary_output"; then
+    printf 'PASS  Notary keychain profile is available: %s\n' "$notary_profile"
+    has_notary_profile=true
+  else
+    printf 'WARN  Notary keychain profile could not be verified: %s\n' "$notary_profile"
+    missing=1
+  fi
+else
+  missing=1
+fi
+
+printf 'INFO  Notary credentials are not printed by this script. Store them privately with xcrun notarytool store-credentials <profile-name>.\n'
+suggested_steps "$has_notarytool" "$has_developer_id" "$has_apple_development" "$has_notary_profile"
 
 if [[ "$REQUIRE_READY" == "true" && "$missing" -ne 0 ]]; then
   exit 1

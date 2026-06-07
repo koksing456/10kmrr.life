@@ -43,6 +43,16 @@ Check local signing readiness:
 ./script/signing_preflight.sh
 ```
 
+For strict private beta readiness, store notary credentials privately and set the profile name only in your shell environment:
+
+```sh
+xcrun notarytool store-credentials "your-private-profile-name"
+export TENKMRR_NOTARY_PROFILE="your-private-profile-name"
+./script/signing_preflight.sh --require-ready
+```
+
+Do not commit the profile name if it identifies a private Apple account or team.
+
 Use strict mode before attempting a private signed package:
 
 ```sh

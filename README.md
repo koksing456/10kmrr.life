@@ -374,3 +374,5 @@ For private package dry runs only, `./script/package_private_beta.sh --adhoc` cr
 Run `./script/private_beta_readiness.sh` to see the missing alpha evidence or Developer ID signing prerequisites.
 
 To check whether the machine is ready for Developer ID signing and notarization setup, run `./script/signing_preflight.sh`. It does not print notary credentials.
+
+For strict notarization readiness, store credentials privately with `xcrun notarytool store-credentials <profile-name>`, set `TENKMRR_NOTARY_PROFILE` in your shell, then run `./script/signing_preflight.sh --require-ready`. Do not commit the notary profile name if it identifies a private Apple account or team.

@@ -100,4 +100,4 @@ For Developer ID readiness:
 ./script/signing_preflight.sh
 ```
 
-This checks whether Developer ID signing appears available without printing notary credentials.
+This checks whether Developer ID signing and a notary keychain profile appear available without printing notary credentials. Set `TENKMRR_NOTARY_PROFILE` only in your private shell when you want strict notarization readiness checked.
