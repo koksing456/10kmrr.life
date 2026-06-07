@@ -72,11 +72,11 @@ Suggested workflow:
 
 1. Record approved testers with ./script/record_alpha_user.sh.
 2. Send docs/alpha/alpha-invite-template.md to approved testers.
-3. Ask them to run ./script/start_alpha.sh.
+3. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
 4. Ask for ./script/support_report.sh only if something fails.
 5. Record install attempts with ./script/record_alpha_install.sh.
 6. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
-   For a successful tester, use ./script/record_alpha_success.sh to record both rows.
+   For a successful tester, run the record_alpha_success.sh command printed by start_alpha.sh.
 7. Preview private beta local smoke with ./script/run_local_smoke.sh.
 8. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --record.
 9. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.

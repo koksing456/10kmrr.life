@@ -13,21 +13,26 @@ PREVIEW_MOCK=true
 CHECK_READINESS=true
 CACHE_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Cache"
 READINESS_TEST_MODE="${TENKMRR_START_ALPHA_READINESS_TEST_MODE:-}"
+TESTER_ID=""
 
 usage() {
   cat <<EOF
-Usage: $0 [--dry-run] [--no-install] [--no-setup] [--no-preview] [--skip-readiness-check] [--self-test] [--help]
+Usage: $0 [--tester-id ID] [--dry-run] [--no-install] [--no-setup] [--no-preview] [--skip-readiness-check] [--self-test] [--help]
 
 Guides a gated alpha tester through the safe local first-run path:
   1. Build and verify the app.
   2. Open setup for restricted Stripe key storage in Keychain.
   3. Launch a mock MRR preview.
   4. Optionally install the LaunchAgent and run diagnose.
+  5. Print the safe evidence-recording command after manual Lock Screen check.
 
 This script never asks for or prints a Stripe key. Enter the key only in the
 macOS setup window.
 
 Options:
+  --tester-id ID
+                Stable private tester id. If provided, the final output includes
+                a ready-to-run record_alpha_success.sh command.
   --dry-run     Print the steps without building, opening setup, previewing, or installing.
   --no-install Skip LaunchAgent install and final diagnose.
   --no-setup   Do not open the setup window.
@@ -53,10 +58,75 @@ Alpha start flow:
 5. Confirm Keychain key status and last-good MRR cache without printing values.
 6. ./script/install_lock_overlay_agent.sh
 7. ./script/diagnose.sh
+8. After manually confirming Lock Screen visibility and unlock behavior, record
+   success with ./script/record_alpha_success.sh.
 
 Sensitive-data rule: do not paste Stripe keys, exact private MRR, raw Stripe
 responses, customer/payment data, raw logs, or unsanitized screenshots into
 support channels.
+EOF
+}
+
+shell_quote() {
+  local value="$1"
+  printf "'%s'" "${value//\'/\'\\\'\'}"
+}
+
+detect_macos_version() {
+  /usr/bin/sw_vers -productVersion 2>/dev/null || printf 'unknown'
+}
+
+detect_cpu_family() {
+  case "$(/usr/bin/uname -m 2>/dev/null || true)" in
+    arm64) printf 'apple_silicon' ;;
+    x86_64) printf 'intel' ;;
+    *) printf 'unknown' ;;
+  esac
+}
+
+validate_tester_id() {
+  local value="$1"
+
+  if [[ -z "$value" ]]; then
+    printf 'Missing value for --tester-id.\n' >&2
+    exit 64
+  fi
+
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '[[:space:]]|[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+|([sr]k_(live|test)_|whsec_)|\b(cus|sub|price|prod|pi|ch|in|cs|pm|seti|si)_[A-Za-z0-9]{8,}\b|[Mm][Rr][Rr][[:space:]:=]+[0-9]'; then
+    printf 'Unsafe --tester-id. Use a stable private id like tester_001, not contact data, secrets, Stripe ids, or revenue values.\n' >&2
+    exit 64
+  fi
+}
+
+print_success_record_command() {
+  local macos_version cpu_family tester_arg
+  macos_version="$(detect_macos_version)"
+  cpu_family="$(detect_cpu_family)"
+
+  cat <<EOF
+
+After you manually confirm all three:
+- MRR is visible.
+- The overlay appears on the Lock Screen.
+- The overlay hides after unlock.
+EOF
+
+  if [[ -n "$TESTER_ID" ]]; then
+    tester_arg="$(shell_quote "$TESTER_ID")"
+  else
+    tester_arg="tester_XXX"
+  fi
+
+  cat <<EOF
+
+Record the safe success evidence:
+./script/record_alpha_success.sh \\
+  --tester-id $tester_arg \\
+  --macos-version $(shell_quote "$macos_version") \\
+  --cpu $(shell_quote "$cpu_family") \\
+  --display-setup built_in
+
+Change --display-setup to external, multiple, or clamshell when that matches the tester machine.
 EOF
 }
 
@@ -68,13 +138,25 @@ self_test_cache() {
 }
 
 self_test() {
-  local output
+  local output live_env
+  live_env="live"
   output="$("$0" --dry-run)"
   printf '%s\n' "$output" | /usr/bin/grep -q './script/build_lock_overlay.sh --verify'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/install_lock_overlay_agent.sh'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/diagnose.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/record_alpha_success.sh'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Confirm Keychain key status and last-good MRR cache'
   printf '%s\n' "$output" | /usr/bin/grep -q 'do not paste Stripe keys'
+  output="$("$0" --dry-run --tester-id tester_001)"
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/record_alpha_success.sh'
+  if "$0" --dry-run --tester-id 'founder@example.com' >/dev/null 2>&1; then
+    printf 'start_alpha self-test failed: email-like tester id was accepted.\n' >&2
+    exit 1
+  fi
+  if "$0" --dry-run --tester-id "rk_${live_env}_1234567890abcdef" >/dev/null 2>&1; then
+    printf 'start_alpha self-test failed: secret-like tester id was accepted.\n' >&2
+    exit 1
+  fi
   if printf '%s\n' "$output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'start_alpha self-test failed: dry-run output contained a secret-like token.\n' >&2
     exit 1
@@ -134,22 +216,36 @@ EOF
   fi
 }
 
-for arg in "$@"; do
-  case "$arg" in
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --tester-id)
+      if [[ $# -lt 2 || "${2:-}" == --* ]]; then
+        usage >&2
+        exit 64
+      fi
+      TESTER_ID="$2"
+      validate_tester_id "$TESTER_ID"
+      shift 2
+      ;;
     --dry-run)
       INTERACTIVE=false
+      shift
       ;;
     --no-install)
       INSTALL=false
+      shift
       ;;
     --no-setup)
       OPEN_SETUP=false
+      shift
       ;;
     --no-preview)
       PREVIEW_MOCK=false
+      shift
       ;;
     --skip-readiness-check)
       CHECK_READINESS=false
+      shift
       ;;
     --self-test)
       self_test
@@ -170,6 +266,7 @@ cd "$ROOT_DIR"
 
 if [[ "$INTERACTIVE" == "false" ]]; then
   dry_run_steps
+  print_success_record_command
   exit 0
 fi
 
@@ -227,3 +324,5 @@ Lock the Mac to verify the overlay on the Lock Screen.
 If anything looks wrong, run ./script/support_report.sh and share only the
 sanitized summary or failing section name.
 EOF
+
+print_success_record_command

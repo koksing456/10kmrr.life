@@ -19,9 +19,10 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 - Ask for macOS version.
 - Ask whether Apple Silicon or Intel.
-- Ask them to run `./script/start_alpha.sh`.
+- Ask them to run `./script/start_alpha.sh --tester-id tester_XXX` when the tester id is already assigned privately.
+- Use `./script/start_alpha.sh` without a tester id only when the tester will report evidence later through another private channel.
 - Use [install-smoke-checklist.md](./install-smoke-checklist.md) only when you need to isolate a specific failed stage.
-- If they install, see MRR, see the Lock Screen overlay, and confirm it hides after unlock, record the success packet with `./script/record_alpha_success.sh`.
+- If they install, see MRR, see the Lock Screen overlay, and confirm it hides after unlock, run the success packet command printed by `start_alpha.sh`.
 - Use `./script/record_alpha_install.sh` and `./script/record_alpha_compatibility.sh` separately when a stage is partial, warns, or fails.
 - If anything fails, ask for `./script/support_report.sh`, not raw logs.
 
