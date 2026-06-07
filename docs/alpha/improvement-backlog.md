@@ -9,7 +9,7 @@ These should happen before inviting more than a handful of testers.
 - Add focused MRR calculation tests with sanitized Stripe fixtures. Done: covered by `./script/test_mrr_calculator.sh`.
 - Add a clean install smoke checklist that covers build, setup, preview, install, diagnose, uninstall, and reinstall. Done: see [install-smoke-checklist.md](./install-smoke-checklist.md).
 - Add a compatibility matrix for macOS version, Apple Silicon vs Intel, external displays, and whether private glass works. Done: see [compatibility-matrix.md](./compatibility-matrix.md).
-- Split the 1200+ line Swift app into smaller files: model, Stripe client, MRR calculator, setup UI, overlay UI, SkyLight integration, and app delegate.
+- Split the 1200+ line Swift app into smaller files: model, Stripe client, MRR calculator, setup UI, overlay UI, SkyLight integration, and app delegate. Partially done: model, settings, Keychain, Stripe client, MRR calculator, setup UI, build info, constants, errors, and SkyLight are split out; overlay UI/controller/app delegate remain in the main file.
 - Add a safe support playbook for common failures: missing key, Stripe permission error, LaunchAgent not loaded, no lock-screen visibility, stale cache, and private API fallback. Done: see [support-playbook.md](./support-playbook.md).
 - Replace mailto-only alpha intake with a simple gated form or private issue flow that explicitly blocks secrets and raw revenue data. Done: public GitHub issue form at `.github/ISSUE_TEMPLATE/alpha_request.yml`.
 
