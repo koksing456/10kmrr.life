@@ -9,18 +9,37 @@ final class SetupModel: ObservableObject {
     @Published var statusText = ""
     @Published var testText = ""
     @Published var isConfigured = false
-    @Published var isTesting = false
+    @Published var isRefreshingMRR = false
     @Published var refreshIntervalMinutes = 5
     @Published var placement = OverlayPlacement.center
+    @Published var lastRefreshText = "No cached MRR refresh yet"
+    @Published var cacheDetailText = "No last-good MRR cache found"
 
     init() {
         refreshStatus()
         loadSettings()
+        refreshCacheStatus()
     }
 
     func refreshStatus() {
         isConfigured = KeychainStore.stripeAPIKeyExists()
         statusText = isConfigured ? "Keychain key configured" : "Keychain key not configured"
+    }
+
+    func refreshCacheStatus() {
+        guard let snapshot = MRRCacheStore.load() else {
+            lastRefreshText = "No cached MRR refresh yet"
+            cacheDetailText = "Refresh after saving a restricted key to create the local last-good cache."
+            return
+        }
+
+        if let lastUpdated = snapshot.lastUpdated {
+            lastRefreshText = "Last MRR refresh: \(Self.formatTimestamp(lastUpdated))"
+        } else {
+            lastRefreshText = "Last MRR refresh: timestamp unavailable"
+        }
+
+        cacheDetailText = cacheSummary(forCurrencyCount: snapshot.result.minorUnitsByCurrency.count)
     }
 
     func loadSettings() {
@@ -59,6 +78,7 @@ final class SetupModel: ObservableObject {
             try KeychainStore.saveStripeAPIKey(trimmed)
             keyInput = ""
             refreshStatus()
+            refreshCacheStatus()
             testText = trimmed.hasPrefix("rk_")
                 ? "Saved restricted key"
                 : "Saved key. Prefix was not rk_, so verify it is restricted in Stripe."
@@ -73,6 +93,7 @@ final class SetupModel: ObservableObject {
             try KeychainStore.deleteStripeAPIKey()
             keyInput = ""
             refreshStatus()
+            refreshCacheStatus()
             testText = "Removed Keychain key"
         } catch {
             statusText = "Keychain delete failed"
@@ -80,24 +101,46 @@ final class SetupModel: ObservableObject {
         }
     }
 
-    func testStripe() async {
-        guard !isTesting else { return }
-        isTesting = true
-        testText = "Testing Stripe access"
+    func refreshMRR() async {
+        guard !isRefreshingMRR else { return }
+        isRefreshingMRR = true
+        testText = "Refreshing MRR from Stripe"
 
         do {
             let apiKey = try KeychainStore.readStripeAPIKey()
             let result = try await StripeMRRClient(apiKey: apiKey).fetchMRR()
+            let lastUpdated = Date()
+            MRRCacheStore.save(result: result, lastUpdated: lastUpdated)
             let currencyCount = result.minorUnitsByCurrency.count
             testText = currencyCount == 1
-                ? "Stripe test passed for 1 currency"
-                : "Stripe test passed for \(currencyCount) currencies"
+                ? "Stripe refresh passed. Local cache updated for 1 currency."
+                : "Stripe refresh passed. Local cache updated for \(currencyCount) currencies."
             refreshStatus()
+            refreshCacheStatus()
         } catch {
             testText = error.localizedDescription
             refreshStatus()
+            refreshCacheStatus()
         }
 
-        isTesting = false
+        isRefreshingMRR = false
+    }
+
+    private static func formatTimestamp(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+
+    private func cacheSummary(forCurrencyCount currencyCount: Int) -> String {
+        switch currencyCount {
+        case 0:
+            return "Last-good cache is ready, but no included recurring MRR was found. Exact values are only shown on the overlay."
+        case 1:
+            return "Last-good cache is ready for 1 currency. The exact value is only shown on the overlay."
+        default:
+            return "Last-good cache is ready for \(currencyCount) currencies. Exact values are only shown on the overlay."
+        }
     }
 }

@@ -10,8 +10,6 @@ final class MRRDisplayModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var errorText: String?
 
-    private let defaults = UserDefaults(suiteName: "life.10kmrr.MRRLockScreenOverlay.Cache") ?? .standard
-
     init() {
         loadCache()
     }
@@ -59,7 +57,7 @@ final class MRRDisplayModel: ObservableObject {
             lastUpdated = Date()
             staleSince = nil
             statusText = "Live"
-            saveCache()
+            saveCache(fetched, lastUpdated: lastUpdated)
         } catch {
             staleSince = Date()
             statusText = result == nil ? "Needs attention" : "Stale"
@@ -80,19 +78,14 @@ final class MRRDisplayModel: ObservableObject {
     }
 
     private func loadCache() {
-        guard let data = defaults.data(forKey: "lastGoodMRR"),
-              let cached = try? JSONDecoder().decode(MRRResult.self, from: data)
-        else {
-            return
-        }
-        result = cached
-        lastUpdated = defaults.object(forKey: "lastUpdated") as? Date
+        guard let snapshot = MRRCacheStore.load() else { return }
+        result = snapshot.result
+        lastUpdated = snapshot.lastUpdated
         statusText = "Cached"
     }
 
-    private func saveCache() {
-        guard let result, let data = try? JSONEncoder().encode(result) else { return }
-        defaults.set(data, forKey: "lastGoodMRR")
-        defaults.set(lastUpdated, forKey: "lastUpdated")
+    private func saveCache(_ result: MRRResult, lastUpdated: Date?) {
+        guard let lastUpdated else { return }
+        MRRCacheStore.save(result: result, lastUpdated: lastUpdated)
     }
 }

@@ -42,18 +42,29 @@ struct SetupWindowView: View {
                     }
                     .keyboardShortcut(.defaultAction)
 
-                    Button(model.isTesting ? "Testing..." : "Test Stripe") {
+                    Button(model.isRefreshingMRR ? "Refreshing..." : "Refresh MRR") {
                         Task {
-                            await model.testStripe()
+                            await model.refreshMRR()
                         }
                     }
-                    .disabled(model.isTesting || !model.isConfigured)
+                    .disabled(model.isRefreshingMRR || !model.isConfigured)
 
                     Button("Delete Key", role: .destructive) {
                         model.deleteKey()
                     }
                     .disabled(!model.isConfigured)
                 }
+            }
+
+            VStack(alignment: .leading, spacing: 7) {
+                Text("Refresh status")
+                    .font(.system(size: 13, weight: .semibold))
+                Text(model.lastRefreshText)
+                    .font(.system(size: 13, weight: .medium))
+                Text(model.cacheDetailText)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             VStack(alignment: .leading, spacing: 12) {
