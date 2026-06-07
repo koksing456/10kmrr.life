@@ -368,7 +368,7 @@ For the common success case after a tester installs, sees MRR, confirms Lock Scr
 ```
 
 Use the separate install and compatibility recorders only when a stage is partial, warns, or fails.
-Run `./script/run_local_smoke.sh --apply --full-reset --record` only on a clean private-beta smoke machine when you are ready to record local install/repair/uninstall evidence. The default run is a dry run and does not change local state.
+Run `./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record` only on a clean private-beta smoke machine when you are ready to record local install/repair/uninstall evidence. The default run is a dry run and does not change local state.
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).

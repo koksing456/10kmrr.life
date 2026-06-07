@@ -92,7 +92,7 @@ It does not install the LaunchAgent. Install/reinstall remains a separate local 
 Record full local smoke only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --record
+./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
 ```
 
 For a private signed/notarized package after evidence and signing are ready:

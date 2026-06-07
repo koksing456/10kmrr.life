@@ -78,7 +78,7 @@ Suggested workflow:
 6. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
    For a successful tester, run the record_alpha_success.sh command printed by start_alpha.sh.
 7. Preview private beta local smoke with ./script/run_local_smoke.sh.
-8. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --record.
+8. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record.
 9. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
 10. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
 11. Record only pass/warn/fail summaries and non-sensitive blockers.
@@ -129,7 +129,7 @@ Successful tester shortcut:
 
 ./script/run_local_smoke.sh
 
-./script/run_local_smoke.sh --apply --full-reset --record
+./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
 
 ./script/record_alpha_pro_followup.sh \\
   --tester-id tester_001 \\
@@ -209,7 +209,7 @@ validate_tracker_readme() {
   test -s "$output_dir/README.md"
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
-  /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$output_dir/README.md"
+  /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"
 }
 
 validate_generated_tracker() {

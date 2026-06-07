@@ -42,7 +42,7 @@ These reduce friction and make the source alpha easier to trust.
 - Add a public privacy page that mirrors README and SECURITY in plain product language. Done: see [PRIVACY.md](../../PRIVACY.md).
 - Add a private beta evidence readiness gate before package dry runs. Done: `./script/private_beta_readiness.sh` checks install evidence, Lock Screen compatibility, Intel evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
 - Record private beta local smoke evidence separately from user alpha evidence. Done: `local-smoke.csv` and `./script/record_alpha_local_smoke.sh` track build/install/diagnose/repair/support-report/uninstall pass-warn-fail evidence before package dry runs.
-- Add an executable local smoke runner so private beta evidence is not assembled by memory. Done: `./script/run_local_smoke.sh` previews by default, requires `--apply` for local state changes, and requires `--full-reset --record` for a full local smoke pass row.
+- Add an executable local smoke runner so private beta evidence is not assembled by memory. Done: `./script/run_local_smoke.sh` previews by default, requires `--apply` for local state changes, and requires `--full-reset --confirm-full-reset --record` for a full local smoke pass row.
 
 ## P1: Engineering Quality
 

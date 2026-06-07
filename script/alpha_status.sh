@@ -80,7 +80,7 @@ tracker_readme_current() {
   local readme="$TRACKER_DIR/README.md"
   [[ -f "$readme" ]] || return 1
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$readme" &&
-    /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --record' "$readme" &&
+    /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$readme" &&
     /usr/bin/grep -q './script/record_alpha_success.sh' "$readme" &&
     /usr/bin/grep -q 'Stripe object IDs' "$readme"
 }

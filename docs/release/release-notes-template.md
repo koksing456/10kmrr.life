@@ -53,7 +53,7 @@ Optional local install smoke preview:
 Private beta local smoke record, only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --record
+./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
 ```
 
 ## Known Issues

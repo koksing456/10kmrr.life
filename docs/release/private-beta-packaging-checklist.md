@@ -13,7 +13,7 @@ Do not publish a public installer until signing, notarization, support, rollback
 - Install failure rate below 30 percent for the same reason.
 - `./script/check.sh` passes on a clean checkout.
 - `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
-- The local smoke result is recorded with `./script/run_local_smoke.sh --apply --full-reset --record`.
+- The local smoke result is recorded with `./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record`.
 - `./script/support_report.sh` produces a safe report without raw secrets, Stripe object IDs, raw Stripe fields, local paths, or exact MRR.
 
 Summarize evidence readiness:
@@ -130,7 +130,7 @@ For each private beta package:
 For the source-based local smoke gate, run and record only on a clean smoke machine:
 
 ```sh
-./script/run_local_smoke.sh --apply --full-reset --record
+./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record
 ```
 
 `--full-reset` removes local cache, display settings, and the stored Stripe key at the end of the smoke.

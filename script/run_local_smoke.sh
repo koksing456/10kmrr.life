@@ -6,6 +6,7 @@ TRACKER_DIR="$ROOT_DIR/build/alpha-tracker"
 SUPPORT_REPORT_PATH="$ROOT_DIR/build/support/10kmrr-support-report.txt"
 APPLY=false
 FULL_RESET=false
+CONFIRM_FULL_RESET=false
 RECORD=false
 SELF_TEST=false
 
@@ -21,18 +22,22 @@ NEXT_ACTION="review local smoke output"
 
 usage() {
   cat <<EOF
-Usage: $0 [--apply] [--full-reset] [--record] [--tracker-dir DIR] [--self-test] [--help]
+Usage: $0 [--apply] [--full-reset] [--confirm-full-reset] [--record] [--tracker-dir DIR] [--self-test] [--help]
 
 Runs or previews the local private-beta smoke sequence.
 
 Default mode prints the steps without changing local state. Use --apply to run
 the smoke sequence. Use --full-reset only on a clean/private-beta smoke machine;
 it runs uninstall with --all and removes local cache, display settings, and the
-stored Stripe key. Use --record to append a safe local-smoke row after the run.
+stored Stripe key. Applied full reset also requires --confirm-full-reset.
+Use --record to append a safe local-smoke row after the run.
 
 Options:
   --apply            Execute the smoke sequence.
   --full-reset       Final uninstall uses --all. Required for a full pass row.
+  --confirm-full-reset
+                     Required with --apply --full-reset because it removes
+                     local cache, display settings, and the stored Stripe key.
   --record           Record pass/warn/fail evidence after an applied run.
   --tracker-dir DIR  Tracker directory. Default: build/alpha-tracker.
   --self-test        Verify planning and option safety without changing state.
@@ -180,7 +185,7 @@ print_plan() {
 
   if [[ "$APPLY" != "true" ]]; then
     status_line "INFO" "no local state changed"
-    status_line "NEXT" "run with --apply to execute; add --full-reset only on a clean smoke machine"
+    status_line "NEXT" "run with --apply to execute; add --full-reset --confirm-full-reset only on a clean smoke machine"
   fi
 }
 
@@ -213,7 +218,7 @@ run_smoke() {
     "$ROOT_DIR/script/uninstall_lock_overlay_agent.sh" || true
     UNINSTALL_ALL="not_run"
     RESULT="warn"
-    NEXT_ACTION="rerun on clean smoke machine with --full-reset"
+    NEXT_ACTION="rerun on clean smoke machine with --full-reset --confirm-full-reset"
   fi
 }
 
@@ -264,7 +269,7 @@ record_summary() {
 }
 
 self_test() {
-  local output full_output record_error
+  local output full_output record_error reset_error
 
   output="$("$0")"
   printf '%s\n' "$output" | /usr/bin/grep -q 'DRY-RUN  .*/script/build_lock_overlay.sh --verify'
@@ -276,6 +281,15 @@ self_test() {
 
   full_output="$("$0" --full-reset)"
   printf '%s\n' "$full_output" | /usr/bin/grep -q 'DRY-RUN  .*/script/uninstall_lock_overlay_agent.sh --all'
+
+  if "$0" --apply --full-reset >/tmp/10kmrr-run-smoke-reset.$$ 2>&1; then
+    printf 'run_local_smoke self-test failed: --apply --full-reset without confirmation was accepted.\n' >&2
+    /bin/rm -f /tmp/10kmrr-run-smoke-reset.$$
+    exit 1
+  fi
+  reset_error="$(cat /tmp/10kmrr-run-smoke-reset.$$)"
+  /bin/rm -f /tmp/10kmrr-run-smoke-reset.$$
+  printf '%s\n' "$reset_error" | /usr/bin/grep -q 'Add --confirm-full-reset'
 
   if "$0" --record >/tmp/10kmrr-run-smoke-record.$$ 2>&1; then
     printf 'run_local_smoke self-test failed: --record without --apply was accepted.\n' >&2
@@ -335,6 +349,10 @@ while [[ $# -gt 0 ]]; do
       FULL_RESET=true
       shift
       ;;
+    --confirm-full-reset)
+      CONFIRM_FULL_RESET=true
+      shift
+      ;;
     --record)
       RECORD=true
       shift
@@ -371,6 +389,11 @@ fi
 
 if [[ "$RECORD" == "true" && "$APPLY" != "true" ]]; then
   printf 'Use --record only with --apply so evidence reflects a real run.\n' >&2
+  exit 64
+fi
+
+if [[ "$APPLY" == "true" && "$FULL_RESET" == "true" && "$CONFIRM_FULL_RESET" != "true" ]]; then
+  printf 'Add --confirm-full-reset to run an applied full reset. This removes local cache, display settings, and the stored Stripe key.\n' >&2
   exit 64
 fi
 

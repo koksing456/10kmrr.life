@@ -334,7 +334,7 @@ print_readiness() {
       status_line "PASS" "local install/repair/uninstall smoke pass recorded"
     else
       status_line "WARN" "local install/repair/uninstall smoke pass not recorded"
-      status_line "NEXT" "run: ./script/run_local_smoke.sh --apply --full-reset --record"
+      status_line "NEXT" "run: ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
       ready=1
     fi
 
@@ -369,7 +369,7 @@ print_readiness() {
       if [[ "$smoke_success" -lt 1 ]]; then
         status_line "NEXT" "missing local smoke pass: 1"
         status_line "NEXT" "preview first: ./script/run_local_smoke.sh"
-        status_line "NEXT" "record on clean smoke machine only: ./script/run_local_smoke.sh --apply --full-reset --record"
+        status_line "NEXT" "record on clean smoke machine only: ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
       fi
     fi
   fi
@@ -385,7 +385,7 @@ print_readiness() {
 
   section "Required local smoke"
   status_line "NEXT" "before packaging, run: ./script/check.sh"
-  status_line "NEXT" "smoke local install/repair/uninstall: ./script/run_local_smoke.sh --apply --full-reset --record"
+  status_line "NEXT" "smoke local install/repair/uninstall: ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record"
   status_line "NEXT" "generate sanitized support report: ./script/support_report.sh"
 
   if [[ "$ready" -eq 0 ]]; then
