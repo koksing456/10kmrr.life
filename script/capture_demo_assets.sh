@@ -71,6 +71,30 @@ fs.mkdirSync(outputDir, { recursive: true });
     fullPage: true
   });
 
+  const socialTargets = [
+    { name: "social-square.png", width: 1080, height: 1080 },
+    { name: "social-wide.png", width: 1200, height: 675 },
+    { name: "social-vertical.png", width: 1080, height: 1920 },
+    { name: "github-social-preview.png", width: 1280, height: 640 }
+  ];
+
+  for (const target of socialTargets) {
+    const page = await browser.newPage({
+      viewport: { width: target.width, height: target.height },
+      deviceScaleFactor: 1
+    });
+    await page.goto(`http://127.0.0.1:${port}`, { waitUntil: "networkidle" });
+    await page.locator(".hero").screenshot({
+      path: path.join(outputDir, target.name)
+    });
+    const hasMockLabel = await page.locator(".panel-footer").evaluate((node) => node.textContent.includes("Mock demo"));
+    await page.close();
+    if (!hasMockLabel) {
+      console.error(`${target.name} is missing the Mock demo label.`);
+      process.exit(1);
+    }
+  }
+
   const mobile = await browser.newPage({
     viewport: { width: 390, height: 900 },
     isMobile: true,
@@ -106,3 +130,7 @@ printf 'Wrote demo assets:\n'
 printf '  %s\n' "$ASSET_DIR/landing-hero.png"
 printf '  %s\n' "$ASSET_DIR/landing-desktop.png"
 printf '  %s\n' "$ASSET_DIR/landing-mobile.png"
+printf '  %s\n' "$ASSET_DIR/social-square.png"
+printf '  %s\n' "$ASSET_DIR/social-wide.png"
+printf '  %s\n' "$ASSET_DIR/social-vertical.png"
+printf '  %s\n' "$ASSET_DIR/github-social-preview.png"

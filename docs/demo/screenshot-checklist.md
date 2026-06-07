@@ -26,6 +26,10 @@ This captures the static landing page with mock MRR only:
 - `docs/demo/assets/landing-hero.png`
 - `docs/demo/assets/landing-desktop.png`
 - `docs/demo/assets/landing-mobile.png`
+- `docs/demo/assets/social-square.png`
+- `docs/demo/assets/social-wide.png`
+- `docs/demo/assets/social-vertical.png`
+- `docs/demo/assets/github-social-preview.png`
 
 The script checks for horizontal overflow on mobile and verifies the mock demo label is present.
 
@@ -43,6 +47,10 @@ Do not use a real current MRR unless it has been intentionally sanitized and app
 
 - Lock Screen close-up.
 - Full desktop / Lock Screen context.
+- Square social preview.
+- Wide social preview.
+- Vertical social preview.
+- GitHub social preview.
 - Before: Stripe Dashboard hidden behind clicks.
 - After: MRR visible on Lock Screen.
 
