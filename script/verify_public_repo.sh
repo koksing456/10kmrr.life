@@ -80,6 +80,9 @@ section "Signing preflight parser"
 section "Private beta package manifest"
 ./script/package_private_beta.sh --self-test
 
+section "GitHub label sync parser"
+./script/sync_github_labels.sh --self-test
+
 section "Markdown local links"
 ./script/verify_markdown_links.sh
 

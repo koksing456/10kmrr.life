@@ -130,6 +130,12 @@ For the full local readiness pass, including signing and notarization preflight:
 ./script/check.sh
 ```
 
+Preview GitHub issue label setup before applying it:
+
+```sh
+./script/sync_github_labels.sh --dry-run
+```
+
 If an installed alpha build gets into a bad LaunchAgent or app-bundle state, repair it without removing the Stripe key, local cache, or display settings:
 
 ```sh

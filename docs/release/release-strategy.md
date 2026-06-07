@@ -44,6 +44,7 @@ Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md)
 - README and SECURITY docs clearly mention private macOS API risk.
 - Release notes state whether the build is Apple Silicon-only or universal.
 - GitHub issue templates warn against posting sensitive data.
+- GitHub issue labels are synced from `.github/labels.yml` or at least dry-run with `./script/sync_github_labels.sh --dry-run`.
 
 ## Public Repo Gate
 
@@ -54,6 +55,13 @@ Run this before pushing release-readiness changes:
 ```
 
 The gate checks shell syntax, focused MRR calculator tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, and required public docs.
+
+It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
+
+```sh
+./script/sync_github_labels.sh --dry-run
+./script/sync_github_labels.sh --apply
+```
 
 It does not install the LaunchAgent. Install/reinstall remains a separate local manual test because it mutates the user's machine state.
 

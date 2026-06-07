@@ -71,6 +71,12 @@ Repair app and LaunchAgent drift without removing Keychain, cache, or settings:
 ./script/repair_lock_overlay_agent.sh
 ```
 
+Preview GitHub label setup:
+
+```sh
+./script/sync_github_labels.sh --dry-run
+```
+
 ## Private macOS API Caveat
 
 The Lock Screen overlay depends on private macOS behavior. Changes touching SkyLight, private glass, window levels, LaunchAgents, or lock-screen behavior should be tested carefully and documented in alpha compatibility notes.
