@@ -299,14 +299,23 @@ emit_action() {
   local priority="$1"
   local reason="$2"
   local command="$3"
+  local command_label="RUN"
+
+  if printf '%s\n' "$command" | /usr/bin/grep -Eq 'tester_XXX|15\.x' &&
+     ! printf '%s\n' "$command" | /usr/bin/grep -q -- '--dry-run'; then
+    command_label="TEMPLATE"
+  fi
 
   printf '10kmrr.life alpha next action\n'
   section "Recommendation"
   line "DO" "$priority"
   line "WHY" "$reason"
-  line "RUN" "$command"
+  line "$command_label" "$command"
   section "Boundary"
   line "RULE" "do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots"
+  if [[ "$command_label" == "TEMPLATE" ]]; then
+    line "RULE" "replace tester_XXX and 15.x before writing tracker evidence"
+  fi
 }
 
 recommend() {
@@ -448,6 +457,19 @@ self_test() {
     --blocker 'restricted key not configured yet' >/dev/null
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'resolve or record support blockers'
+
+  /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
+  "$ROOT_DIR/script/record_alpha_success.sh" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id tester_001 \
+    --evidence-date 2026-06-08 \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup built_in >/dev/null
+  output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'collect successful Apple Silicon tester evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q '^TEMPLATE'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'replace tester_XXX and 15.x before writing tracker evidence'
 
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
   for index in 1 2 3 4 5; do
