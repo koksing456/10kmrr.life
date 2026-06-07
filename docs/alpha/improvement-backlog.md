@@ -34,7 +34,7 @@ These make the app feel more like something founders will keep installed.
 These reduce friction and make the source alpha easier to trust.
 
 - Build a universal binary or document Apple Silicon-only support clearly. Done: `./script/build_lock_overlay.sh --verify` now builds a universal `arm64` and `x86_64` app; docs still mark Intel Lock Screen behavior as alpha-unverified.
-- Add signed and notarized private beta packaging after compatibility data is stronger.
+- Add signed and notarized private beta packaging after compatibility data is stronger. Done: `./script/package_private_beta.sh --signed` is implemented and remains gated by alpha evidence, local smoke, Developer ID signing, and notary readiness.
 - Add an uninstall option that can optionally remove local cache and settings, not only the app and LaunchAgent. Done: `./script/uninstall_lock_overlay_agent.sh --local-data` and `--all`.
 - Add a repair/reinstall helper that preserves Keychain, cache, and display settings. Done: `./script/repair_lock_overlay_agent.sh`.
 - Migrate the old Keychain service name to a cleaner `life.10kmrr.MRRLockScreenOverlay` service while preserving compatibility. Done: app and scripts prefer the current service and keep legacy fallback/delete coverage.

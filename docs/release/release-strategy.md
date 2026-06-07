@@ -95,13 +95,21 @@ Record full local smoke only on a clean smoke machine:
 ./script/run_local_smoke.sh --apply --full-reset --record
 ```
 
-For an internal package dry run only:
+For a private signed/notarized package after evidence and signing are ready:
+
+```sh
+./script/package_private_beta.sh --signed
+```
+
+This creates a private signed/notarized zip under `build/private-beta`. It is still not a public installer.
+
+For an explicit internal unnotarized package dry run only:
 
 ```sh
 ./script/package_private_beta.sh --adhoc
 ```
 
-This creates an unnotarized private zip under `build/private-beta`. It is not a public installer.
+This creates an unnotarized private zip under `build/private-beta`. It is not a public installer and should not be used as the default private beta package once Developer ID signing is ready.
 The packaging script refuses to continue unless `./script/private_beta_readiness.sh --require-ready` passes first.
 
 For Developer ID readiness:

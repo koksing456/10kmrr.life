@@ -8,20 +8,28 @@ EXECUTABLE="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 PACKAGE_DIR="$ROOT_DIR/build/private-beta"
 STAGE_DIR="$PACKAGE_DIR/stage"
 ADHOC=false
+SIGNED=false
 SELF_TEST=false
 EXCLUDE_INTEL=false
 
 usage() {
   cat <<EOF
 Usage: $0 --adhoc [--exclude-intel]
+       $0 --signed [--exclude-intel]
        $0 --self-test
 
-Builds a private, unnotarized beta zip under build/private-beta.
+Builds a private beta zip under build/private-beta.
 
 This does not create a public installer. The --adhoc flag is required so the
 caller explicitly accepts that the package is ad-hoc signed, unnotarized, and
-only suitable for internal/private alpha testing. Packaging also requires
-./script/private_beta_readiness.sh --require-ready to pass.
+only suitable for internal/private alpha testing.
+
+Use --signed only after Developer ID signing, notarytool credentials, alpha
+evidence, and local smoke are ready. The signed path re-signs the staged app
+with the first available Developer ID Application identity, notarizes a zip,
+staples the app, validates the ticket, and writes a private beta zip.
+
+Both modes require ./script/private_beta_readiness.sh --require-ready to pass.
 
 Use --exclude-intel only when Intel Lock Screen behavior is not part of this
 private beta support claim. The manifest will record that boundary.
@@ -34,6 +42,8 @@ write_manifest() {
   local version="$3"
   local commit="$4"
   local intel_support="$5"
+  local signing="$6"
+  local notarized="$7"
 
   cat >"$manifest_path" <<EOF
 10kmrr.life private beta package
@@ -43,8 +53,8 @@ Version: $version
 Commit: $commit
 Architecture: universal arm64 x86_64
 Intel support claim: $intel_support
-Signing: ad-hoc
-Notarized: no
+Signing: $signing
+Notarized: $notarized
 Distribution: private alpha testing only
 
 Safety boundary:
@@ -62,12 +72,37 @@ Verification:
 EOF
 }
 
+developer_id_identity() {
+  /usr/bin/security find-identity -v -p codesigning 2>/dev/null |
+    /usr/bin/sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' |
+    /usr/bin/head -1
+}
+
+notarize_and_staple_app() {
+  local app_path="$1"
+  local submit_zip="$2"
+  local profile="${TENKMRR_NOTARY_PROFILE:-}"
+
+  if [[ -z "$profile" ]]; then
+    printf 'TENKMRR_NOTARY_PROFILE is not set. Refusing signed package.\n' >&2
+    return 1
+  fi
+
+  /usr/bin/ditto -c -k --keepParent "$app_path" "$submit_zip"
+  /usr/bin/xcrun notarytool submit "$submit_zip" \
+    --keychain-profile "$profile" \
+    --wait \
+    --no-progress
+  /usr/bin/xcrun stapler staple "$app_path"
+  /usr/bin/xcrun stapler validate "$app_path"
+}
+
 self_test_manifest() {
   local tmp_dir
   tmp_dir="$(mktemp -d -t 10kmrr-package-self-test.XXXXXX)"
   local manifest_path="$tmp_dir/manifest.txt"
 
-  write_manifest "$manifest_path" "10kmrr-life-0.1.0-test-unnotarized-private-beta.zip" "0.1.0" "testcommit" "included only with recorded Intel compatibility evidence"
+  write_manifest "$manifest_path" "10kmrr-life-0.1.0-test-unnotarized-private-beta.zip" "0.1.0" "testcommit" "included only with recorded Intel compatibility evidence" "ad-hoc" "no"
 
   /usr/bin/grep -q '^Architecture: universal arm64 x86_64$' "$manifest_path"
   /usr/bin/grep -q '^Intel support claim: included only with recorded Intel compatibility evidence$' "$manifest_path"
@@ -80,6 +115,10 @@ self_test_manifest() {
   /usr/bin/grep -q 'private_beta_readiness.sh --require-ready passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'check.sh passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'env -u TENKMRR_SIGNING_READY_OVERRIDE' "$0"
+  /usr/bin/grep -q -- '--signed' "$0"
+  /usr/bin/grep -q 'notarytool submit' "$0"
+  /usr/bin/grep -q 'stapler staple' "$0"
+  /usr/bin/grep -q 'Developer ID Application' "$0"
 
   rm -rf "$tmp_dir"
   printf 'Private beta package manifest self-test passed.\n'
@@ -89,6 +128,9 @@ for arg in "$@"; do
   case "$arg" in
     --adhoc)
       ADHOC=true
+      ;;
+    --signed)
+      SIGNED=true
       ;;
     --exclude-intel)
       EXCLUDE_INTEL=true
@@ -112,7 +154,12 @@ if [[ "$SELF_TEST" == "true" ]]; then
   exit 0
 fi
 
-if [[ "$ADHOC" != "true" ]]; then
+if [[ "$ADHOC" == "true" && "$SIGNED" == "true" ]]; then
+  printf 'Choose exactly one package mode: --adhoc or --signed.\n' >&2
+  exit 64
+fi
+
+if [[ "$ADHOC" != "true" && "$SIGNED" != "true" ]]; then
   usage >&2
   exit 64
 fi
@@ -130,9 +177,17 @@ fi
 commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
 version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_BUNDLE/Contents/Info.plist" 2>/dev/null || printf '0.0.0')"
 package_name="10kmrr-life-$version-$commit-unnotarized-private-beta"
+signing_label="ad-hoc"
+notarized_label="no"
+if [[ "$SIGNED" == "true" ]]; then
+  package_name="10kmrr-life-$version-$commit-signed-notarized-private-beta"
+  signing_label="Developer ID Application"
+  notarized_label="yes"
+fi
 zip_path="$PACKAGE_DIR/$package_name.zip"
 manifest_path="$PACKAGE_DIR/$package_name-manifest.txt"
 sha_path="$PACKAGE_DIR/$package_name.sha256"
+notary_submit_zip="$PACKAGE_DIR/$package_name-notary-submit.zip"
 
 rm -rf "$PACKAGE_DIR"
 mkdir -p "$PACKAGE_DIR"
@@ -143,6 +198,18 @@ mkdir -p "$PACKAGE_DIR"
 mkdir -p "$STAGE_DIR"
 /usr/bin/ditto --norsrc --noextattr "$APP_BUNDLE" "$STAGE_DIR/$APP_NAME.app"
 /usr/bin/find "$STAGE_DIR" \( -name '._*' -o -name '.DS_Store' \) -delete
+
+if [[ "$SIGNED" == "true" ]]; then
+  signing_identity="$(developer_id_identity)"
+  if [[ -z "$signing_identity" ]]; then
+    printf 'Developer ID Application identity not found. Refusing signed package.\n' >&2
+    exit 1
+  fi
+  /usr/bin/codesign --force --deep --options runtime --timestamp --sign "$signing_identity" "$STAGE_DIR/$APP_NAME.app"
+  notarize_and_staple_app "$STAGE_DIR/$APP_NAME.app" "$notary_submit_zip"
+  /bin/rm -f "$notary_submit_zip"
+fi
+
 /usr/bin/codesign --verify --deep --strict "$STAGE_DIR/$APP_NAME.app"
 
 (
@@ -160,7 +227,7 @@ fi
   /usr/bin/shasum -a 256 "$(basename "$zip_path")" >"$sha_path"
 )
 
-write_manifest "$manifest_path" "$(basename "$zip_path")" "$version" "$commit" "$intel_support"
+write_manifest "$manifest_path" "$(basename "$zip_path")" "$version" "$commit" "$intel_support" "$signing_label" "$notarized_label"
 
 printf 'Wrote private beta package artifacts:\n'
 printf '  %s\n' "$zip_path"

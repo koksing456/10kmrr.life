@@ -76,15 +76,29 @@ Preferred private beta shape:
 - No installer that writes secrets.
 - Clear uninstall path in the release notes.
 
-Source-generated dry run:
+Private signed/notarized package:
+
+```sh
+./script/package_private_beta.sh --signed
+```
+
+This first runs `./script/private_beta_readiness.sh --require-ready`, then re-signs the staged app with Developer ID, notarizes a zip with the private notary keychain profile, staples the app, validates the ticket, and writes a private beta zip under `build/private-beta`.
+
+Source-generated unnotarized dry run:
 
 ```sh
 ./script/package_private_beta.sh --adhoc
 ```
 
-This first runs `./script/private_beta_readiness.sh --require-ready`, then writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
+This also runs the readiness gate, then writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
 
 For an Apple Silicon-only private beta package, run:
+
+```sh
+./script/package_private_beta.sh --signed --exclude-intel
+```
+
+For an Apple Silicon-only unnotarized dry run, run:
 
 ```sh
 ./script/package_private_beta.sh --adhoc --exclude-intel

@@ -156,7 +156,7 @@ print_signing_status() {
   section "Signing and notarization"
   if "$ROOT_DIR/script/signing_preflight.sh" --require-ready >/tmp/10kmrr-alpha-status-signing.$$ 2>&1; then
     status_line "PASS" "Developer ID signing prerequisites appear ready"
-    status_line "NEXT" "private dry run: ./script/package_private_beta.sh --adhoc"
+    status_line "NEXT" "private signed package: ./script/package_private_beta.sh --signed"
   else
     status_line "WARN" "Developer ID signed/notarized beta is not ready"
     status_line "NEXT" "details: ./script/signing_preflight.sh"

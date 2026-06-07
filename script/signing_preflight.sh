@@ -84,7 +84,7 @@ self_test() {
 
   ready_steps="$(suggested_steps "true" "true" "false" "true")"
   printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/signing_preflight.sh --require-ready'
-  printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/package_private_beta.sh --adhoc'
+  printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/package_private_beta.sh --signed'
 
   if TENKMRR_NOTARY_PROFILE='private-profile-name' "$0" 2>/dev/null | /usr/bin/grep -q 'private-profile-name'; then
     printf 'Signing preflight self-test failed: notary profile name was printed.\n' >&2
@@ -122,7 +122,7 @@ suggested_steps() {
 
   if [[ "$has_notarytool" == "true" && "$has_developer_id" == "true" && "$has_notary_profile" == "true" ]]; then
     printf '  - Re-run strict readiness: ./script/signing_preflight.sh --require-ready\n'
-    printf '  - Then run an internal dry run only: ./script/package_private_beta.sh --adhoc\n'
+    printf '  - Then run a private signed/notarized package: ./script/package_private_beta.sh --signed\n'
   fi
 }
 

@@ -391,7 +391,7 @@ print_readiness() {
   if [[ "$ready" -eq 0 ]]; then
     section "Decision"
     status_line "PASS" "private beta packaging evidence is ready"
-    status_line "NEXT" "run: ./script/package_private_beta.sh --adhoc"
+    status_line "NEXT" "run: ./script/package_private_beta.sh --signed"
   else
     section "Decision"
     status_line "WARN" "private beta packaging evidence is not ready"
