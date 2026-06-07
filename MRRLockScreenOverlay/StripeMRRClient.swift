@@ -4,6 +4,7 @@ final class StripeMRRClient {
     private let apiKey: String
     private let session: URLSession
     private let maxPagesPerStatus = 100
+    private let maxRequestAttempts = 3
 
     private struct StripeSubscriptionPage {
         var subscriptions: [[String: Any]]
@@ -43,6 +44,21 @@ final class StripeMRRClient {
     }
 
     private func fetchPage(status: String, startingAfter: String?) async throws -> StripeSubscriptionPage {
+        for attempt in 1...maxRequestAttempts {
+            do {
+                return try await fetchPageOnce(status: status, startingAfter: startingAfter)
+            } catch {
+                guard attempt < maxRequestAttempts, shouldRetry(error) else {
+                    throw error
+                }
+                try? await Task.sleep(nanoseconds: retryDelayNanoseconds(forAttempt: attempt))
+            }
+        }
+
+        throw OverlayError.invalidResponse
+    }
+
+    private func fetchPageOnce(status: String, startingAfter: String?) async throws -> StripeSubscriptionPage {
         var components = URLComponents(string: "https://api.stripe.com/v1/subscriptions")!
         var queryItems = [
             URLQueryItem(name: "status", value: status),
@@ -77,6 +93,28 @@ final class StripeMRRClient {
         let page = json["data"] as? [[String: Any]] ?? []
         let hasMore = (json["has_more"] as? NSNumber)?.boolValue ?? false
         return StripeSubscriptionPage(subscriptions: page, hasMore: hasMore)
+    }
+
+    private func shouldRetry(_ error: Error) -> Bool {
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .timedOut, .cannotFindHost, .cannotConnectToHost, .networkConnectionLost, .dnsLookupFailed, .notConnectedToInternet:
+                return true
+            default:
+                return false
+            }
+        }
+
+        if case let OverlayError.stripeHTTP(status, _) = error {
+            return status == 429 || (500...599).contains(status)
+        }
+
+        return false
+    }
+
+    private func retryDelayNanoseconds(forAttempt attempt: Int) -> UInt64 {
+        let milliseconds = min(250 * (1 << max(0, attempt - 1)), 1_000)
+        return UInt64(milliseconds) * 1_000_000
     }
 
     private static func safeStripeErrorMessage(from data: Data) -> String {

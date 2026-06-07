@@ -42,7 +42,7 @@ These reduce friction and make the source alpha easier to trust.
 These reduce maintenance risk.
 
 - Convert Stripe pagination from recursion to an iterative loop with an explicit page cap. Done: `StripeMRRClient` caps each subscription status at 100 pages.
-- Add timeout, retry, and backoff policy for Stripe requests.
+- Add timeout, retry, and backoff policy for Stripe requests. Done: Stripe requests have request/resource timeouts plus capped retries for transient network errors, 429, and 5xx responses.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases.
 - Add a fixture format for sanitized Stripe subscription responses.
 - Add CI checks for shell syntax, app build, public repo scan, and MRR calculator tests.
