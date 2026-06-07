@@ -20,6 +20,7 @@ bash -n \
   script/open_setup.sh \
   script/package_private_beta.sh \
   script/serve_site.sh \
+  script/signing_preflight.sh \
   script/support_report.sh \
   script/test_mrr_calculator.sh \
   script/uninstall_lock_overlay_agent.sh \
@@ -33,6 +34,9 @@ section "Support report redaction"
 
 section "Stripe key validation"
 ./script/configure_stripe_key.sh --self-test
+
+section "Signing preflight parser"
+./script/signing_preflight.sh --self-test
 
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify

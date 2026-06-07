@@ -24,6 +24,18 @@ Record these privately. Do not commit them.
 - Bundle identifier: `life.10kmrr.MRRLockScreenOverlay`.
 - App version and build commit.
 
+Check local signing readiness:
+
+```sh
+./script/signing_preflight.sh
+```
+
+Use strict mode before attempting a private signed package:
+
+```sh
+./script/signing_preflight.sh --require-ready
+```
+
 ## Package Shape
 
 Preferred private beta shape:

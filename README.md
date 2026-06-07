@@ -275,3 +275,5 @@ Paid convenience may later include signed/notarized installers, auto-update, pre
 No public installer is linked until signing, notarization, and support expectations are ready.
 
 For private package dry runs only, `./script/package_private_beta.sh --adhoc` creates an explicitly unnotarized zip under `build/private-beta`. Do not publish it as a public installer.
+
+To check whether the machine is ready for Developer ID signing and notarization setup, run `./script/signing_preflight.sh`. It does not print notary credentials.

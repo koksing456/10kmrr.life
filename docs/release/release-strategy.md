@@ -64,3 +64,11 @@ For an internal package dry run only:
 ```
 
 This creates an unnotarized private zip under `build/private-beta`. It is not a public installer.
+
+For Developer ID readiness:
+
+```sh
+./script/signing_preflight.sh
+```
+
+This checks whether Developer ID signing appears available without printing notary credentials.
