@@ -1,10 +1,9 @@
 import AppKit
-import CoreGraphics
 import SwiftUI
 
 @MainActor
 final class LockScreenOverlayController {
-    private final class OverlayWindowState {
+    final class OverlayWindowState {
         let window: NSWindow
         var hasDelegatedWindow = false
 
@@ -13,10 +12,10 @@ final class LockScreenOverlayController {
         }
     }
 
-    private let model = MRRDisplayModel()
-    private var windowsByScreenID: [String: OverlayWindowState] = [:]
-    private var isLocked = false
-    private var lockStateTask: Task<Void, Never>?
+    let model = MRRDisplayModel()
+    var windowsByScreenID: [String: OverlayWindowState] = [:]
+    var isLocked = false
+    var lockStateTask: Task<Void, Never>?
     private var refreshTimer: Timer?
 
     func start(previewMode: Bool) {
@@ -62,7 +61,7 @@ final class LockScreenOverlayController {
         }
     }
 
-    @objc private func screenLocked() {
+    @objc func screenLocked() {
         guard !isLocked else { return }
         isLocked = true
         showOverlay(reason: "screen-locked")
@@ -72,14 +71,14 @@ final class LockScreenOverlayController {
         }
     }
 
-    @objc private func screenUnlocked() {
+    @objc func screenUnlocked() {
         guard isLocked || windowsByScreenID.values.contains(where: { $0.window.isVisible }) else { return }
         isLocked = false
         stopLockStatePolling()
         hideOverlay()
     }
 
-    private func showOverlay(reason: String) {
+    func showOverlay(reason: String) {
         let screens = targetScreens()
         guard !screens.isEmpty else { return }
 
@@ -91,41 +90,18 @@ final class LockScreenOverlayController {
         for screen in screens {
             let screenID = screenID(for: screen)
             let targetFrame = frame(for: screen)
-            let state: OverlayWindowState
+            let state = windowsByScreenID[screenID] ?? {
+                let newState = OverlayWindowState(window: makeOverlayWindow(frame: targetFrame, reason: reason))
+                windowsByScreenID[screenID] = newState
+                return newState
+            }()
 
-            if let existingState = windowsByScreenID[screenID] {
-                state = existingState
-                state.window.setFrame(targetFrame, display: true)
-            } else {
-                let newWindow = makeOverlayWindow(frame: targetFrame, reason: reason)
-                state = OverlayWindowState(window: newWindow)
-                windowsByScreenID[screenID] = state
-            }
-
+            state.window.setFrame(targetFrame, display: true)
             state.window.level = reason == "preview"
                 ? .screenSaver
                 : NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
 
-            let shouldDelegateToSkyLight = reason != "preview"
-            if shouldDelegateToSkyLight, !state.hasDelegatedWindow {
-                do {
-                    guard let skyLight = SkyLightOperator.shared else {
-                        throw OverlayError.skylightUnavailable
-                    }
-                    try skyLight.delegateWindow(state.window)
-                    state.hasDelegatedWindow = true
-                } catch {
-                    model.statusText = "Overlay fallback"
-                    model.errorText = debugMode
-                        ? "Private API path failed: \(AppLogger.errorKind(error))"
-                        : "Private glass fallback active"
-                    AppLogger.log("skylight_delegate_failed", fields: [
-                        "error": AppLogger.errorKind(error),
-                        "debug": debugMode ? "true" : "false"
-                    ])
-                }
-            }
-
+            delegateToLockScreenIfNeeded(state: state, reason: reason)
             state.window.orderFrontRegardless()
             DispatchQueue.main.async {
                 state.window.orderFrontRegardless()
@@ -139,7 +115,14 @@ final class LockScreenOverlayController {
         ])
     }
 
-    private func makeOverlayWindow(frame: NSRect, reason: String) -> NSWindow {
+    func hideOverlay() {
+        for state in windowsByScreenID.values {
+            state.window.orderOut(nil)
+        }
+        AppLogger.log("overlay_hidden")
+    }
+
+    func makeOverlayWindow(frame: NSRect, reason: String) -> NSWindow {
         let newWindow = NSPanel(
             contentRect: frame,
             styleMask: [.borderless, .nonactivatingPanel],
@@ -162,90 +145,23 @@ final class LockScreenOverlayController {
         return newWindow
     }
 
-    private func targetScreens() -> [NSScreen] {
-        switch OverlaySettingsStore.displayMode {
-        case .all:
-            return NSScreen.screens
-        case .cursor:
-            let mouseLocation = NSEvent.mouseLocation
-            if let screen = NSScreen.screens.first(where: { $0.frame.contains(mouseLocation) }) {
-                return [screen]
+    private func delegateToLockScreenIfNeeded(state: OverlayWindowState, reason: String) {
+        guard reason != "preview", !state.hasDelegatedWindow else { return }
+        do {
+            guard let skyLight = SkyLightOperator.shared else {
+                throw OverlayError.skylightUnavailable
             }
-            return NSScreen.main.map { [$0] } ?? []
-        case .main:
-            return NSScreen.main.map { [$0] } ?? []
+            try skyLight.delegateWindow(state.window)
+            state.hasDelegatedWindow = true
+        } catch {
+            model.statusText = "Overlay fallback"
+            model.errorText = debugMode
+                ? "Private API path failed: \(AppLogger.errorKind(error))"
+                : "Private glass fallback active"
+            AppLogger.log("skylight_delegate_failed", fields: [
+                "error": AppLogger.errorKind(error),
+                "debug": debugMode ? "true" : "false"
+            ])
         }
-    }
-
-    private func hideOverlay() {
-        for state in windowsByScreenID.values {
-            state.window.orderOut(nil)
-        }
-        AppLogger.log("overlay_hidden")
-    }
-
-    private func screenID(for screen: NSScreen) -> String {
-        let key = NSDeviceDescriptionKey("NSScreenNumber")
-        if let number = screen.deviceDescription[key] as? NSNumber {
-            return "display-\(number.uint32Value)"
-        }
-        return "frame-\(Int(screen.frame.minX))-\(Int(screen.frame.minY))-\(Int(screen.frame.width))-\(Int(screen.frame.height))"
-    }
-
-    private func frame(for screen: NSScreen) -> NSRect {
-        let size = OverlaySettingsStore.panelSize
-        let frame = screen.frame
-        let sideMargin = min(max(frame.width * 0.08, 56), 160)
-        let originX: CGFloat
-        switch OverlaySettingsStore.horizontalPlacement {
-        case .left:
-            originX = frame.minX + sideMargin
-        case .center:
-            originX = frame.midX - size.width / 2
-        case .right:
-            originX = frame.maxX - sideMargin - size.width
-        }
-        let originY: CGFloat
-        switch OverlaySettingsStore.placement {
-        case .high:
-            originY = frame.minY + (frame.height / 2) + 28
-        case .center:
-            originY = frame.minY + (frame.height / 2) - size.height - 60
-        case .low:
-            originY = frame.minY + (frame.height / 2) - size.height - 180
-        }
-        return NSRect(
-            x: originX,
-            y: originY,
-            width: size.width,
-            height: size.height
-        )
-    }
-
-    private func startLockStatePolling() {
-        lockStateTask?.cancel()
-        lockStateTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                await MainActor.run {
-                    guard let self, self.isLocked else { return }
-                    if !Self.isSessionScreenLocked() {
-                        self.screenUnlocked()
-                    }
-                }
-            }
-        }
-    }
-
-    private func stopLockStatePolling() {
-        lockStateTask?.cancel()
-        lockStateTask = nil
-    }
-
-    private static func isSessionScreenLocked() -> Bool {
-        guard let session = CGSessionCopyCurrentDictionary() as? [String: Any] else {
-            return false
-        }
-        return session["CGSSessionScreenIsLocked"] as? Bool ?? false
     }
 }
