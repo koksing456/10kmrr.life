@@ -140,6 +140,9 @@ section "Alpha weekly summary"
 section "Alpha next action"
 ./script/alpha_next_action.sh --self-test
 
+section "Alpha readiness report"
+./script/alpha_readiness_report.sh --self-test
+
 section "Alpha status summary"
 ./script/alpha_status.sh --self-test
 

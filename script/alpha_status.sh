@@ -218,6 +218,7 @@ print_next_actions() {
   section "Default next actions"
   status_line "NEXT" "before repo changes: ./script/check.sh"
   status_line "NEXT" "single recommended action: ./script/alpha_next_action.sh"
+  status_line "NEXT" "write readiness report: ./script/alpha_readiness_report.sh"
   status_line "NEXT" "approve tester: ./script/approve_alpha_tester.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
   status_line "NEXT" "generate tester invite: ./script/generate_alpha_invite.sh --tester-id tester_XXX"
   status_line "NEXT" "start approved tester: ./script/start_alpha.sh"
