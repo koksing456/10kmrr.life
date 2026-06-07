@@ -72,6 +72,57 @@ run_applied_step() {
   return 1
 }
 
+set_warning_status() {
+  local status_var="$1"
+  local blocker_message="$2"
+
+  printf -v "$status_var" 'warn'
+  if [[ "$RESULT" != "fail" ]]; then
+    RESULT="warn"
+  fi
+  BLOCKER="${BLOCKER:-$blocker_message}"
+}
+
+run_checked_output_step() {
+  local status_var="$1"
+  local temp_output command_status first_issue
+  shift
+
+  temp_output="$(/usr/bin/mktemp -t 10kmrr-smoke-output.XXXXXX)"
+  set +e
+  "$@" 2>&1 | /usr/bin/tee "$temp_output"
+  command_status="${PIPESTATUS[0]}"
+  set -e
+
+  if [[ "$command_status" -ne 0 ]]; then
+    printf -v "$status_var" 'fail'
+    RESULT="fail"
+    BLOCKER="${BLOCKER:-command failed: $*}"
+    /bin/rm -f "$temp_output"
+    return 1
+  fi
+
+  if /usr/bin/grep -Eq '^FAIL[[:space:]]' "$temp_output"; then
+    first_issue="$(/usr/bin/grep -E '^FAIL[[:space:]]' "$temp_output" | /usr/bin/head -1 | /usr/bin/tr -s '[:space:]' ' ' | /usr/bin/sed 's/[[:space:]]*$//')"
+    printf -v "$status_var" 'fail'
+    RESULT="fail"
+    BLOCKER="${BLOCKER:-$first_issue}"
+    /bin/rm -f "$temp_output"
+    return 1
+  fi
+
+  if /usr/bin/grep -Eq '^WARN[[:space:]]' "$temp_output"; then
+    first_issue="$(/usr/bin/grep -E '^WARN[[:space:]]' "$temp_output" | /usr/bin/head -1 | /usr/bin/tr -s '[:space:]' ' ' | /usr/bin/sed 's/[[:space:]]*$//')"
+    set_warning_status "$status_var" "$first_issue"
+    /bin/rm -f "$temp_output"
+    return 0
+  fi
+
+  printf -v "$status_var" 'pass'
+  /bin/rm -f "$temp_output"
+  return 0
+}
+
 print_plan() {
   section "Local smoke plan"
   run_or_preview "$ROOT_DIR/script/build_lock_overlay.sh" --verify
@@ -106,13 +157,13 @@ run_smoke() {
   fi
 
   section "Diagnose after install"
-  run_applied_step DIAGNOSE_AFTER_INSTALL "$ROOT_DIR/script/diagnose.sh" || true
+  run_checked_output_step DIAGNOSE_AFTER_INSTALL "$ROOT_DIR/script/diagnose.sh" || true
 
   section "Repair preserves local data"
-  run_applied_step REPAIR_PRESERVES_DATA "$ROOT_DIR/script/repair_lock_overlay_agent.sh" || true
+  run_checked_output_step REPAIR_PRESERVES_DATA "$ROOT_DIR/script/repair_lock_overlay_agent.sh" || true
 
   section "Support report safety"
-  run_applied_step SUPPORT_REPORT_SAFE "$ROOT_DIR/script/support_report.sh" || true
+  run_checked_output_step SUPPORT_REPORT_SAFE "$ROOT_DIR/script/support_report.sh" || true
 
   section "Uninstall"
   if [[ "$FULL_RESET" == "true" ]]; then
@@ -193,6 +244,24 @@ self_test() {
   record_error="$(cat /tmp/10kmrr-run-smoke-record.$$)"
   /bin/rm -f /tmp/10kmrr-run-smoke-record.$$
   printf '%s\n' "$record_error" | /usr/bin/grep -q 'Use --record only with --apply'
+
+  RESULT="warn"
+  BLOCKER=""
+  BUILD_VERIFY="not_run"
+  run_checked_output_step BUILD_VERIFY /bin/sh -c 'printf "WARN  synthetic command warning\n"' >/tmp/10kmrr-run-smoke-warn.$$ 2>&1
+  [[ "$BUILD_VERIFY" == "warn" ]]
+  [[ "$RESULT" == "warn" ]]
+  [[ "$BLOCKER" == 'WARN synthetic command warning' ]]
+  /bin/rm -f /tmp/10kmrr-run-smoke-warn.$$
+
+  RESULT="warn"
+  BLOCKER=""
+  INSTALL_AGENT="not_run"
+  run_checked_output_step INSTALL_AGENT /bin/sh -c 'printf "FAIL  synthetic command failure\n"' >/tmp/10kmrr-run-smoke-fail.$$ 2>&1 || true
+  [[ "$INSTALL_AGENT" == "fail" ]]
+  [[ "$RESULT" == "fail" ]]
+  [[ "$BLOCKER" == 'FAIL synthetic command failure' ]]
+  /bin/rm -f /tmp/10kmrr-run-smoke-fail.$$
 
   printf 'Local smoke runner self-test passed.\n'
 }

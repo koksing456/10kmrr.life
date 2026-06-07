@@ -105,6 +105,7 @@ For the source-based local smoke gate, run and record only on a clean smoke mach
 ```
 
 `--full-reset` removes local cache, display settings, and the stored Stripe key at the end of the smoke.
+The runner records `pass` only when the commands succeed and the diagnostic/support output has no `WARN` or `FAIL` lines.
 
 ## Release Notes Must Say
 
