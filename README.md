@@ -1,0 +1,123 @@
+# 10kmrr.life
+
+Your Stripe MRR, on your Mac Lock Screen.
+
+10kmrr.life is a local-first macOS alpha for Mac-first indie hackers and solo SaaS founders who want their Stripe MRR visible every day without opening a full analytics dashboard.
+
+The current app is `MRRLockScreenOverlay`: a macOS background app that reads Stripe subscription data locally, computes Stripe-like MRR, and displays it as a glass panel on the Mac Lock Screen.
+
+## Alpha Status
+
+This is a gated alpha, not a public installer.
+
+- The source is being prepared as an open-source trust surface.
+- Actual app installation is approved manually for a small alpha group.
+- The app depends on private macOS behavior for Lock Screen placement and private glass rendering.
+- Future macOS releases may require fixes.
+
+Do not treat this as a notarized, broadly supported public Mac app yet.
+
+## What It Is Not
+
+10kmrr.life is not a full analytics dashboard and does not try to replace Stripe Dashboard, Baremetrics, ChartMogul, or finance reporting tools.
+
+It is intentionally focused on one job:
+
+> Make your Stripe MRR visible as a daily founder operating and motivation signal.
+
+## Local Security Model
+
+The alpha is local-first:
+
+- Stripe API key: stored in macOS Keychain.
+- MRR cache: stored in local user defaults.
+- Stripe key and revenue data: not uploaded to a 10kmrr server in the current alpha.
+
+Use a restricted read-only Stripe API key with only the permissions needed to read Billing subscriptions and prices. Do not use a full-access Stripe secret key.
+
+Keychain lookup currently uses:
+
+- service: `life.10kmrr.StripeMRRScreenSaver`
+- account: `stripe_api_key`
+
+The service name is retained for compatibility with the earlier prototype.
+
+See [SECURITY.md](./SECURITY.md) for support and disclosure boundaries.
+
+## Build And Verify
+
+```sh
+./script/build_lock_overlay.sh --verify
+```
+
+## Preview
+
+Preview without locking your Mac:
+
+```sh
+./script/build_lock_overlay.sh --preview-private-glass
+```
+
+The preview follows the screen containing the mouse cursor. It does not unload the installed LaunchAgent.
+
+## Install
+
+Alpha installs are gated. If you are approved for alpha testing, run:
+
+```sh
+./script/install_lock_overlay_agent.sh
+```
+
+The script builds the app, installs it into:
+
+```text
+~/Library/Application Support/10kmrr.life/MRRLockScreenOverlay.app
+```
+
+and generates a per-user LaunchAgent at:
+
+```text
+~/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist
+```
+
+The installed LaunchAgent runs:
+
+```text
+MRRLockScreenOverlay --private-glass
+```
+
+## Uninstall
+
+```sh
+./script/uninstall_lock_overlay_agent.sh
+```
+
+## MRR Semantics
+
+The overlay computes MRR locally from Stripe subscriptions:
+
+- Includes `active` and `past_due` subscriptions.
+- Includes fixed recurring subscription items.
+- Normalizes yearly, weekly, and daily intervals to monthly values.
+- Excludes trialing, canceled, unpaid, free, and metered-only items.
+- Displays separate totals per currency instead of converting currencies.
+- Uses the last cached value when Stripe refresh fails.
+
+## Alpha Feedback
+
+The alpha is testing four things:
+
+- Whether Stripe founders want MRR visible on the Lock Screen after the novelty wears off.
+- Whether restricted-key setup feels acceptable.
+- Whether the overlay stays useful after 7 days.
+- Which Pro upgrades have real pull.
+
+Useful alpha prep docs live under [docs/mvp](./docs/mvp), [docs/alpha](./docs/alpha), and [docs/demo](./docs/demo).
+
+## Open Source Boundary
+
+The intended open-source core is the local app, MRR calculation, Keychain handling, install/verify scripts, and security model.
+
+Paid convenience may later include signed/notarized installers, auto-update, premium visual designs, compatibility maintenance, and priority support.
+
+No public installer is linked until signing, notarization, and support expectations are ready.
