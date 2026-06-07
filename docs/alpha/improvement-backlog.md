@@ -104,7 +104,7 @@ These improve conversion without changing the app.
 These help if the repo becomes public-facing.
 
 - Add `CONTRIBUTING.md` with security boundaries and no-secret contribution rules. Done.
-- Add `CODE_OF_CONDUCT.md` only if community contribution becomes real.
+- Add `CODE_OF_CONDUCT.md` only if community contribution becomes real. Done: public repo now includes a concise conduct policy with no-secret/no-private-revenue rules.
 - Add a `CHANGELOG.md` once alpha versions are tagged. Done: initialized for alpha source changes.
 - Add GitHub labels for install, compatibility, security, MRR semantics, visual design, alpha requests, bug reports, and alpha feedback. Done: see `.github/labels.yml`.
 - Add a safe label sync helper so the manifest can be applied without manual drift. Done: `./script/sync_github_labels.sh --dry-run` previews the `gh` commands and `--apply` updates GitHub.

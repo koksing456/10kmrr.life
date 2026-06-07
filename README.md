@@ -385,6 +385,7 @@ The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha
 The testimonial approval template lives at [docs/alpha/testimonial-approval-template.md](./docs/alpha/testimonial-approval-template.md).
 The improvement backlog lives at [docs/alpha/improvement-backlog.md](./docs/alpha/improvement-backlog.md).
 Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
+Community behavior rules live at [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 The changelog lives at [CHANGELOG.md](./CHANGELOG.md).
 Private beta packaging criteria live at [docs/release/private-beta-packaging-checklist.md](./docs/release/private-beta-packaging-checklist.md).
 Check private beta evidence readiness with `./script/private_beta_readiness.sh` before creating any private package dry run.
