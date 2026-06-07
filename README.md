@@ -112,6 +112,12 @@ Before pushing public-alpha repo changes:
 
 The public verification gate checks shell syntax, focused MRR tests, Stripe request tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, and the universal macOS build.
 
+For the full local readiness pass, including signing and notarization preflight:
+
+```sh
+./script/check.sh
+```
+
 ## Static Alpha Page
 
 Preview the public-alpha landing page locally:

@@ -17,14 +17,31 @@ SETTINGS_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Settings"
 VERBOSE=false
 
 self_test() {
-  local temp_home output secret_pattern
+  local temp_home output secret_pattern temp_app_support temp_plist temp_executable temp_out_log temp_err_log
   temp_home="$(/usr/bin/mktemp -d -t 10kmrr-diagnose-home.XXXXXX)"
   trap 'rm -rf "$temp_home"' RETURN
+
+  temp_app_support="$temp_home/Library/Application Support/10kmrr.life"
+  temp_plist="$temp_home/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
+  temp_executable="$temp_app_support/MRRLockScreenOverlay.app/Contents/MacOS/MRRLockScreenOverlay"
+  temp_out_log="$temp_app_support/logs/mrr-lock-overlay.out.log"
+  temp_err_log="$temp_app_support/logs/mrr-lock-overlay.err.log"
+  /bin/mkdir -p "$temp_home/Library/LaunchAgents"
+  /usr/bin/plutil -create xml1 "$temp_plist"
+  /usr/bin/plutil -insert Label -string "$LABEL" "$temp_plist"
+  /usr/bin/plutil -insert ProgramArguments -array "$temp_plist"
+  /usr/bin/plutil -insert ProgramArguments.0 -string "$temp_executable" "$temp_plist"
+  /usr/bin/plutil -insert ProgramArguments.1 -string "--private-glass" "$temp_plist"
+  /usr/bin/plutil -insert StandardOutPath -string "$temp_out_log" "$temp_plist"
+  /usr/bin/plutil -insert StandardErrorPath -string "$temp_err_log" "$temp_plist"
 
   output="$(HOME="$temp_home" "$0" 2>&1)"
   secret_pattern='(sk_live_[A-Za-z0-9]+|sk_test_[A-Za-z0-9]+|rk_live_[A-Za-z0-9]+|rk_test_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+)'
 
   printf '%s\n' "$output" | /usr/bin/grep -q '10kmrr.life local diagnostic'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'LaunchAgent runs the installed overlay executable.'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'LaunchAgent enables private glass mode.'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'LaunchAgent writes logs under Application Support.'
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Overlay visual style setting: (default )?hero'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe key'
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Cached value was not printed|No last-good MRR cache yet'
@@ -84,6 +101,12 @@ exists_executable() {
   [[ -x "$path" ]]
 }
 
+plist_value() {
+  local plist="$1"
+  local key="$2"
+  /usr/libexec/PlistBuddy -c "Print :$key" "$plist" 2>/dev/null || true
+}
+
 bundle_value() {
   local app="$1"
   local key="$2"
@@ -137,6 +160,30 @@ if [[ -f "$TARGET_PLIST" ]]; then
     pass "LaunchAgent uses this user's HOME path."
   else
     warn "LaunchAgent does not appear to use this user's HOME path."
+  fi
+
+  plist_executable="$(plist_value "$TARGET_PLIST" "ProgramArguments:0")"
+  plist_mode_arg="$(plist_value "$TARGET_PLIST" "ProgramArguments:1")"
+  plist_stdout="$(plist_value "$TARGET_PLIST" "StandardOutPath")"
+  plist_stderr="$(plist_value "$TARGET_PLIST" "StandardErrorPath")"
+  expected_log_prefix="$APP_SUPPORT/logs/"
+
+  if [[ "$plist_executable" == "$INSTALLED_EXECUTABLE" ]]; then
+    pass "LaunchAgent runs the installed overlay executable."
+  else
+    warn "LaunchAgent executable mismatch. Reinstall with ./script/install_lock_overlay_agent.sh"
+  fi
+
+  if [[ "$plist_mode_arg" == "--private-glass" ]]; then
+    pass "LaunchAgent enables private glass mode."
+  else
+    warn "LaunchAgent is missing --private-glass. Reinstall with ./script/install_lock_overlay_agent.sh"
+  fi
+
+  if [[ "$plist_stdout" == "$expected_log_prefix"* && "$plist_stderr" == "$expected_log_prefix"* ]]; then
+    pass "LaunchAgent writes logs under Application Support."
+  else
+    warn "LaunchAgent log paths are unexpected. Reinstall with ./script/install_lock_overlay_agent.sh"
   fi
 else
   warn "LaunchAgent plist missing: $TARGET_PLIST"
