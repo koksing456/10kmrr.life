@@ -65,6 +65,11 @@ validate_safe_text() {
     printf 'Unsafe %s: contains obvious money amount. Use yes/no or a sanitized range instead.\n' "$label" >&2
     exit 1
   fi
+
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+'; then
+    printf 'Unsafe %s: contains email-like contact data. Keep contact mapping outside this repo.\n' "$label" >&2
+    exit 1
+  fi
 }
 
 validate_choice() {
@@ -166,6 +171,13 @@ self_test() {
     --tester-id tester_002 \
     --diagnose-summary 'MRR was US$10,248.00' >/dev/null 2>&1; then
     printf 'record_alpha_install self-test failed: obvious money amount was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id 'founder@example.com' >/dev/null 2>&1; then
+    printf 'record_alpha_install self-test failed: email-like tester id was accepted.\n' >&2
     exit 1
   fi
 
