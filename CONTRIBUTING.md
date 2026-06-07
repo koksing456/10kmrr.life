@@ -28,10 +28,10 @@ Keep changes aligned with that promise. Avoid expanding into a full analytics da
 Run:
 
 ```sh
-./script/verify_public_repo.sh
+./script/check.sh
 ```
 
-This checks shell syntax, MRR calculator fixtures, app build/signing, sanitized demo assets, obvious Stripe secret patterns, local-only paths, ignored private folders, and required public docs.
+This checks shell syntax, MRR calculator fixtures, Stripe client behavior, app build/signing, sanitized demo assets, obvious Stripe secret patterns, local-only paths, ignored private folders, required public docs, and local signing/notarization readiness.
 
 ## Useful Local Commands
 
@@ -51,6 +51,12 @@ Run safe diagnostics:
 
 ```sh
 ./script/diagnose.sh
+```
+
+Repair app and LaunchAgent drift without removing Keychain, cache, or settings:
+
+```sh
+./script/repair_lock_overlay_agent.sh
 ```
 
 ## Private macOS API Caveat
