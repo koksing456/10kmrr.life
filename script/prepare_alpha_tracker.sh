@@ -70,23 +70,26 @@ Do not collect:
 
 Suggested workflow:
 
-1. Approve testers and print their safe invite path with ./script/approve_alpha_tester.sh.
-2. Generate the approved tester invite with ./script/generate_alpha_invite.sh.
-3. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
-4. Ask for ./script/support_report.sh only if something fails.
-5. Record common support issues with ./script/record_alpha_support_issue.sh.
-6. Record install attempts with ./script/record_alpha_install.sh when you need custom partial evidence.
-7. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
+1. Start with ./script/alpha_next_action.sh for the single recommended safe action.
+2. Approve testers and print their safe invite path with ./script/approve_alpha_tester.sh.
+3. Generate the approved tester invite with ./script/generate_alpha_invite.sh.
+4. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
+5. Ask for ./script/support_report.sh only if something fails.
+6. Record common support issues with ./script/record_alpha_support_issue.sh.
+7. Record install attempts with ./script/record_alpha_install.sh when you need custom partial evidence.
+8. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
    For a successful tester, run the record_alpha_success.sh command printed by start_alpha.sh.
-8. Preview private beta local smoke with ./script/run_local_smoke.sh.
-9. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record.
-10. Record Day 7 / Pro signal with ./script/record_alpha_day7.sh.
-11. Review weekly safe aggregates with ./script/alpha_weekly_summary.sh.
-12. Audit private tracker safety with ./script/audit_alpha_tracker.sh.
-13. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
-14. Record only pass/warn/fail summaries and non-sensitive blockers.
+9. Preview private beta local smoke with ./script/run_local_smoke.sh.
+10. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record.
+11. Record Day 7 / Pro signal with ./script/record_alpha_day7.sh.
+12. Review weekly safe aggregates with ./script/alpha_weekly_summary.sh.
+13. Audit private tracker safety with ./script/audit_alpha_tracker.sh.
+14. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
+15. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example approved tester and install evidence rows:
+
+./script/alpha_next_action.sh
 
 ./script/approve_alpha_tester.sh \\
   --tester-id tester_001 \\
@@ -226,6 +229,7 @@ validate_tracker_readme() {
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
   /usr/bin/grep -q './script/generate_alpha_invite.sh' "$output_dir/README.md"
+  /usr/bin/grep -q './script/alpha_next_action.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/record_alpha_support_issue.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/audit_alpha_tracker.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"

@@ -356,6 +356,7 @@ The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alph
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
 Refresh only the local tracker instructions with `./script/prepare_alpha_tracker.sh --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
+Use `./script/alpha_next_action.sh` as the daily operator entrypoint; it prints one safe recommended next action from aggregate tracker state.
 Audit manually edited private tracker rows with `./script/audit_alpha_tracker.sh`; it reports only file, line, and issue type, not row contents.
 Approve a tester and print their safe invite path with `./script/approve_alpha_tester.sh --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in`.
 Generate the approved tester invite with `./script/generate_alpha_invite.sh --tester-id tester_001`.

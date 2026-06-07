@@ -69,6 +69,7 @@ These make learning from testers less manual.
 
 - Turn the alpha user tracker into a small private spreadsheet or lightweight CRM workflow. Done: see [private-alpha-workflow.md](./private-alpha-workflow.md) and CSV templates under [templates](./templates).
 - Add a private tracker safety audit for manual row edits. Done: `./script/audit_alpha_tracker.sh` reports only file, line, and issue type.
+- Add a single next-action recommender for daily alpha operations. Done: `./script/alpha_next_action.sh` reads aggregate tracker state and prints one safe next command.
 - Add a safe invite generator after approving a tester. Done: `./script/generate_alpha_invite.sh` prints a no-secret setup message for one stable tester id.
 - Add a common support issue recorder for blocked testers. Done: `./script/record_alpha_support_issue.sh` writes safe install evidence and compatibility evidence where relevant.
 - Add a 7-day follow-up cadence with retained/not-retained tags. Done: private alpha workflow defines Day 0/1/3/7 cadence and retention tagging.

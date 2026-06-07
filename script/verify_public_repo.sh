@@ -137,6 +137,9 @@ section "Alpha weekly review recorder"
 section "Alpha weekly summary"
 ./script/alpha_weekly_summary.sh --self-test
 
+section "Alpha next action"
+./script/alpha_next_action.sh --self-test
+
 section "Alpha status summary"
 ./script/alpha_status.sh --self-test
 

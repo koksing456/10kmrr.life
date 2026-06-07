@@ -8,6 +8,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 - Run `./script/prepare_alpha_tracker.sh` and keep the generated tracker private.
 - Use `./script/prepare_alpha_tracker.sh --readme-only` for tracker instruction refreshes after rows exist.
+- Run `./script/alpha_next_action.sh` first when deciding what to do next.
 - Run `./script/audit_alpha_tracker.sh` if tracker rows were edited manually.
 - Confirm they use Stripe subscriptions.
 - Confirm they use a Mac daily.
