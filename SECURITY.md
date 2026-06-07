@@ -10,6 +10,18 @@ The key should only have the permissions needed to read Billing subscriptions an
 
 Never send your Stripe key in chat, email, screenshots, support tickets, logs, or pull requests.
 
+The helper script stores the key without printing it:
+
+```sh
+./script/configure_stripe_key.sh
+```
+
+If you accidentally stored the wrong key, remove it with:
+
+```sh
+./script/configure_stripe_key.sh --delete
+```
+
 ## Local Storage
 
 Current alpha storage:
@@ -32,6 +44,7 @@ Safe to share:
 - macOS version.
 - App build date or commit.
 - Whether `./script/build_lock_overlay.sh --verify` passes.
+- Whether `./script/diagnose.sh` reports pass, warn, or fail for each check.
 - Non-sensitive error messages.
 - Whether the generated LaunchAgent exists.
 

@@ -46,5 +46,12 @@ launchctl kickstart -k "gui/$(id -u)/life.10kmrr.mrr-lock-overlay"
 sleep 2
 launchctl print "gui/$(id -u)/life.10kmrr.mrr-lock-overlay" | /usr/bin/sed -n '1,80p'
 
+if ! /usr/bin/security find-generic-password \
+  -s "life.10kmrr.StripeMRRScreenSaver" \
+  -a "stripe_api_key" \
+  >/dev/null 2>&1; then
+  printf 'Warning: Stripe key is not configured. Run ./script/configure_stripe_key.sh before expecting live MRR.\n' >&2
+fi
+
 printf 'Installed overlay app: %s\n' "$TARGET_APP"
 printf 'Installed LaunchAgent: %s\n' "$TARGET_PLIST"

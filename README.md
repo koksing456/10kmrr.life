@@ -54,6 +54,18 @@ The service name is retained for compatibility with the earlier prototype.
 
 See [SECURITY.md](./SECURITY.md) for support and disclosure boundaries.
 
+## Local Architecture
+
+```mermaid
+flowchart LR
+  Stripe["Stripe Billing API"] --> App["MRRLockScreenOverlay"]
+  Keychain["macOS Keychain"] --> App
+  App --> Cache["Local last-good MRR cache"]
+  App --> LockScreen["macOS Lock Screen glass overlay"]
+```
+
+There is no 10kmrr.life server in the current alpha path. The app reads Stripe directly from your Mac, stores the restricted key in Keychain, and keeps only a local last-good cache for offline or failed refresh states.
+
 ## Build And Verify
 
 ```sh
@@ -61,6 +73,12 @@ See [SECURITY.md](./SECURITY.md) for support and disclosure boundaries.
 ```
 
 ## Preview
+
+Configure your Stripe restricted key first:
+
+```sh
+./script/configure_stripe_key.sh
+```
 
 Preview without locking your Mac:
 
@@ -95,6 +113,16 @@ The installed LaunchAgent runs:
 ```text
 MRRLockScreenOverlay --private-glass
 ```
+
+## Diagnose
+
+If the overlay does not appear or the MRR does not refresh, run:
+
+```sh
+./script/diagnose.sh
+```
+
+The diagnostic checks build status, install status, LaunchAgent state, Keychain presence, and local cache presence without printing the Stripe key or cached MRR value.
 
 ## Uninstall
 
