@@ -11,6 +11,10 @@ final class MRRDisplayModel: ObservableObject {
     @Published var errorText: String?
 
     init() {
+        if mockMRRMode {
+            loadMockMRR()
+            return
+        }
         loadCache()
     }
 
@@ -45,6 +49,10 @@ final class MRRDisplayModel: ObservableObject {
 
     func refresh() async {
         guard !isRefreshing else { return }
+        guard !mockMRRMode else {
+            loadMockMRR()
+            return
+        }
         isRefreshing = true
         errorText = nil
         statusText = "Refreshing"
@@ -92,6 +100,19 @@ final class MRRDisplayModel: ObservableObject {
         result = snapshot.result
         lastUpdated = snapshot.lastUpdated
         statusText = "Cached"
+    }
+
+    private func loadMockMRR() {
+        result = MRRResult(
+            minorUnitsByCurrency: ["usd": 1024800],
+            excludedMeteredItems: 0,
+            excludedFreeItems: 0
+        )
+        lastUpdated = Date()
+        staleSince = nil
+        statusText = "Mock"
+        errorText = nil
+        isRefreshing = false
     }
 
     private func saveCache(_ result: MRRResult, lastUpdated: Date?) {

@@ -192,11 +192,13 @@ struct MRRLockOverlayView: View {
     private var headerText: String {
         if model.isRefreshing { return "Refreshing Stripe" }
         if model.errorText != nil { return model.statusText }
+        if model.statusText == "Mock" { return "Mock Stripe MRR" }
         if model.statusText == "Cached" { return "Stripe MRR cached" }
         return "Stripe MRR"
     }
 
     private var footerStatusText: String? {
+        if model.statusText == "Mock" { return "Mock preview" }
         if model.errorText != nil, model.result != nil { return "Using cached MRR" }
         if model.errorText != nil { return model.statusText }
         if model.isRefreshing { return "Refreshing" }

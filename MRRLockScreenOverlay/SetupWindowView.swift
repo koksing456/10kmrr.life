@@ -42,6 +42,10 @@ struct SetupWindowView: View {
                     }
                     .keyboardShortcut(.defaultAction)
 
+                    Button("Preview Mock Overlay") {
+                        openMockPreview()
+                    }
+
                     Button(model.isRefreshingMRR ? "Refreshing..." : "Refresh MRR") {
                         Task {
                             await model.refreshMRR()
@@ -143,5 +147,13 @@ struct SetupWindowView: View {
         }
         .padding(26)
         .frame(width: 560)
+    }
+
+    private func openMockPreview() {
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.arguments = ["--preview", "--private-glass", "--mock-mrr"]
+        configuration.activates = true
+        configuration.createsNewApplicationInstance = true
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
     }
 }

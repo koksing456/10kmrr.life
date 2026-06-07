@@ -46,10 +46,10 @@ verify_app() {
 }
 
 preview_app() {
-  local extra_arg="${1:-}"
+  local extra_args=("$@")
   /usr/bin/pkill -f "$EXECUTABLE .*--preview" 2>/dev/null || true
-  if [[ -n "$extra_arg" ]]; then
-    /usr/bin/nohup "$EXECUTABLE" --preview "$extra_arg" >"$ROOT_DIR/build/logs/mrr-lock-overlay-preview.out.log" 2>"$ROOT_DIR/build/logs/mrr-lock-overlay-preview.err.log" &
+  if [[ "${#extra_args[@]}" -gt 0 ]]; then
+    /usr/bin/nohup "$EXECUTABLE" --preview "${extra_args[@]}" >"$ROOT_DIR/build/logs/mrr-lock-overlay-preview.out.log" 2>"$ROOT_DIR/build/logs/mrr-lock-overlay-preview.err.log" &
   else
     /usr/bin/nohup "$EXECUTABLE" --preview >"$ROOT_DIR/build/logs/mrr-lock-overlay-preview.out.log" 2>"$ROOT_DIR/build/logs/mrr-lock-overlay-preview.err.log" &
   fi
@@ -86,6 +86,10 @@ case "${1:-}" in
     build_app
     preview_app "--private-glass"
     ;;
+  --preview-mock)
+    build_app
+    preview_app "--private-glass" "--mock-mrr"
+    ;;
   --logs)
     logs
     ;;
@@ -93,7 +97,7 @@ case "${1:-}" in
     build_app
     ;;
   *)
-    printf 'Usage: %s [--verify|--setup|--preview|--preview-private-glass|--logs]\n' "$0" >&2
+    printf 'Usage: %s [--verify|--setup|--preview|--preview-private-glass|--preview-mock|--logs]\n' "$0" >&2
     exit 64
     ;;
 esac
