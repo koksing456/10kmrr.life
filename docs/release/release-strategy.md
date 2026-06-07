@@ -7,6 +7,7 @@
 - Public repo: yes.
 - Public downloadable installer: no.
 - Gated alpha install from source: yes.
+- Current source build architecture: Apple Silicon arm64 only.
 - Notarized distribution: not yet.
 - Auto-update: not yet.
 
@@ -38,6 +39,7 @@ The alpha should first prove:
 - `./script/diagnose.sh` gives safe, actionable output.
 - No Stripe keys, real MRR screenshots, local-only paths, or generated artifacts are committed.
 - README and SECURITY docs clearly mention private macOS API risk.
+- Release notes state whether the build is Apple Silicon-only or universal.
 - GitHub issue templates warn against posting sensitive data.
 
 ## Public Repo Gate

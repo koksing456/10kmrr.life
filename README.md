@@ -25,6 +25,7 @@ This is a gated alpha, not a public installer.
 - The source is being prepared as an open-source trust surface.
 - Actual app installation is approved manually for a small alpha group.
 - The app depends on private macOS behavior for Lock Screen placement and private glass rendering.
+- The current source build targets Apple Silicon Macs only (`arm64-apple-macos14.0`).
 - Future macOS releases may require fixes.
 
 Do not treat this as a notarized, broadly supported public Mac app yet.
@@ -71,6 +72,12 @@ flowchart LR
 There is no 10kmrr.life server in the current alpha path. The app reads Stripe directly from your Mac, stores the restricted key in Keychain, and keeps only a local last-good cache for offline or failed refresh states.
 
 ## Build And Verify
+
+Current compatibility boundary:
+
+- macOS 14 or later.
+- Apple Silicon only in the current source alpha build.
+- Intel Mac support is not built yet; track it in the alpha compatibility matrix before widening distribution.
 
 ```sh
 ./script/build_lock_overlay.sh --verify

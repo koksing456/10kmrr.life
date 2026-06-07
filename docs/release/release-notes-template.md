@@ -29,7 +29,8 @@ Short description of what changed.
 
 - macOS versions tested:
 - Apple Silicon tested: yes / no
-- Intel tested: yes / no
+- Intel tested: yes / no / not supported by this build
+- Binary architecture: Apple Silicon arm64 / universal / other
 - External display setups tested:
 - Private glass behavior:
 - Lock Screen visibility:
