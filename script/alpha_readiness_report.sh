@@ -130,10 +130,10 @@ write_report() {
     printf 'Safety boundary: do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots.\n\n'
   } >"$temp_file"
 
-  append_command_section "$temp_file" "Single Recommended Action" "$ROOT_DIR/script/alpha_next_action.sh" --tracker-dir "$TRACKER_DIR"
-  append_command_section "$temp_file" "Private Tracker Audit" "$ROOT_DIR/script/audit_alpha_tracker.sh" --tracker-dir "$TRACKER_DIR"
-  append_command_section "$temp_file" "Weekly Alpha Summary" "$ROOT_DIR/script/alpha_weekly_summary.sh" --tracker-dir "$TRACKER_DIR"
-  append_command_section "$temp_file" "Private Beta Readiness" "$ROOT_DIR/script/private_beta_readiness.sh" --tracker-dir "$TRACKER_DIR" --exclude-intel
+  append_command_section "$temp_file" "Single Recommended Action" "$ROOT_DIR/script/alpha.sh" next --tracker-dir "$TRACKER_DIR"
+  append_command_section "$temp_file" "Private Tracker Audit" "$ROOT_DIR/script/alpha.sh" audit --tracker-dir "$TRACKER_DIR"
+  append_command_section "$temp_file" "Weekly Alpha Summary" "$ROOT_DIR/script/alpha.sh" weekly --tracker-dir "$TRACKER_DIR"
+  append_command_section "$temp_file" "Private Beta Readiness" "$ROOT_DIR/script/alpha.sh" beta-ready --tracker-dir "$TRACKER_DIR" --exclude-intel
 
   assert_report_safe "$temp_file"
   /bin/mv "$temp_file" "$output_file"
@@ -159,6 +159,10 @@ self_test() {
   /usr/bin/grep -q 'Single Recommended Action' "$temp_dir/report.md"
   /usr/bin/grep -q 'Private Tracker Audit' "$temp_dir/report.md"
   /usr/bin/grep -q 'Private Beta Readiness' "$temp_dir/report.md"
+  /usr/bin/grep -q 'Command: `./script/alpha.sh next --tracker-dir build/alpha-tracker`' "$temp_dir/report.md"
+  /usr/bin/grep -q 'Command: `./script/alpha.sh audit --tracker-dir build/alpha-tracker`' "$temp_dir/report.md"
+  /usr/bin/grep -q 'Command: `./script/alpha.sh weekly --tracker-dir build/alpha-tracker`' "$temp_dir/report.md"
+  /usr/bin/grep -q 'Command: `./script/alpha.sh beta-ready --tracker-dir build/alpha-tracker --exclude-intel`' "$temp_dir/report.md"
   /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence' "$temp_dir/report.md"
   /usr/bin/grep -q -- '--dry-run' "$temp_dir/report.md"
   assert_report_safe "$temp_dir/report.md"
