@@ -76,6 +76,7 @@ Suggested workflow:
 4. Ask for ./script/support_report.sh only if something fails.
 5. Record install attempts with ./script/record_alpha_install.sh.
 6. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
+   For a successful tester, use ./script/record_alpha_success.sh to record both rows.
 7. Preview private beta local smoke with ./script/run_local_smoke.sh.
 8. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --record.
 9. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
@@ -117,6 +118,14 @@ Example install evidence row:
   --launchagent-stable yes \\
   --result pass \\
   --next-action "day 7 follow-up"
+
+Successful tester shortcut:
+
+./script/record_alpha_success.sh \\
+  --tester-id tester_001 \\
+  --macos-version 15.5 \\
+  --cpu apple_silicon \\
+  --display-setup built_in
 
 ./script/run_local_smoke.sh
 

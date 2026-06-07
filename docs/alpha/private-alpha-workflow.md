@@ -65,7 +65,7 @@ Record approved testers with the safe append script:
   --next-action "send invite"
 ```
 
-Record install attempts with the safe append script:
+Record install attempts with the safe append script when the setup is partial, warns, or fails:
 
 ```sh
 ./script/record_alpha_install.sh \
@@ -86,7 +86,19 @@ The recorder rejects Stripe-key-like strings, Stripe object IDs, raw Stripe fiel
 
 Use [compatibility-matrix.md](./compatibility-matrix.md) for the field definitions and threshold rules.
 
-Record Lock Screen compatibility with:
+For the common successful case, record install success and Lock Screen compatibility together:
+
+```sh
+./script/record_alpha_success.sh \
+  --tester-id tester_001 \
+  --macos-version 15.5 \
+  --cpu apple_silicon \
+  --display-setup built_in
+```
+
+Use this only after the tester installed, saw MRR, saw the overlay on the Lock Screen, and confirmed the overlay hides after unlock.
+
+Record Lock Screen compatibility separately when you need a partial, warn, or fail row:
 
 ```sh
 ./script/record_alpha_compatibility.sh \

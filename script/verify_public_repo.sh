@@ -101,6 +101,9 @@ section "Alpha install evidence recorder"
 section "Alpha compatibility recorder"
 ./script/record_alpha_compatibility.sh --self-test
 
+section "Alpha success evidence wrapper"
+./script/record_alpha_success.sh --self-test
+
 section "Alpha local smoke recorder"
 ./script/record_alpha_local_smoke.sh --self-test
 

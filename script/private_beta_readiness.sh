@@ -313,7 +313,7 @@ print_readiness() {
 
     if [[ "$install_rows" -eq 0 ]]; then
       status_line "WARN" "install failure rate: unavailable (0 install rows)"
-      status_line "NEXT" "collect install rows with ./script/record_alpha_install.sh"
+      status_line "NEXT" "after a successful tester, record both rows with ./script/record_alpha_success.sh"
       ready=1
     elif [[ "$failure_rate" -lt 30 ]]; then
       status_line "PASS" "install failure rate: ${failure_rate}%"
@@ -351,13 +351,14 @@ print_readiness() {
       if [[ "$missing_intel" -lt 0 ]]; then missing_intel=0; fi
 
       section "Next evidence packet"
+      if [[ "$missing_installs" -gt 0 || "$missing_compatibility" -gt 0 ]]; then
+        status_line "NEXT" "record a successful Apple Silicon tester: ./script/record_alpha_success.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
+      fi
       if [[ "$missing_installs" -gt 0 ]]; then
         status_line "NEXT" "missing successful installs with MRR seen: $missing_installs"
-        status_line "NEXT" "record install: ./script/record_alpha_install.sh --tester-id tester_XXX --stage saw_mrr --build-verify pass --configured-key yes --previewed yes --installed yes --saw-mrr yes --diagnose-summary \"PASS summary only\""
       fi
       if [[ "$missing_compatibility" -gt 0 ]]; then
         status_line "NEXT" "missing Lock Screen compatibility passes: $missing_compatibility"
-        status_line "NEXT" "record compatibility: ./script/record_alpha_compatibility.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass"
       fi
       if [[ "$EXCLUDE_INTEL" == "true" ]]; then
         status_line "NEXT" "Intel evidence is intentionally excluded from this gate"
@@ -499,7 +500,7 @@ self_test() {
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'repeated private API failure detected'
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'Next evidence packet'
   printf '%s\n' "$not_ready_output" | /usr/bin/grep -q 'missing successful installs with MRR seen: 5'
-  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q './script/record_alpha_install.sh --tester-id tester_XXX'
+  printf '%s\n' "$not_ready_output" | /usr/bin/grep -q './script/record_alpha_success.sh --tester-id tester_XXX'
 
   if printf '%s\n%s\n%s\n' "$ready_output" "$ready_without_intel_output" "$not_ready_output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'private_beta_readiness self-test failed: output contained a secret-like token.\n' >&2

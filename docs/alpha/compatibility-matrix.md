@@ -10,7 +10,17 @@ Generate the private ignored tracker with:
 ./script/prepare_alpha_tracker.sh
 ```
 
-Then append compatibility rows with:
+For a successful tester, append install and compatibility evidence together with:
+
+```sh
+./script/record_alpha_success.sh \
+  --tester-id tester_001 \
+  --macos-version 15.5 \
+  --cpu apple_silicon \
+  --display-setup built_in
+```
+
+When a compatibility check is partial, warns, or fails, append a compatibility-only row with:
 
 ```sh
 ./script/record_alpha_compatibility.sh \
