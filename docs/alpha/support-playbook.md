@@ -54,6 +54,22 @@ If the issue is source/build related, ask for:
 
 They should paste only the pass/warn/fail summary and the failing section name.
 
+Record common support blockers with:
+
+```sh
+./script/record_alpha_support_issue.sh \
+  --tester-id tester_001 \
+  --issue-type lock_screen \
+  --result fail \
+  --blocker "Lock Screen panel did not appear" \
+  --next-action "repair then retry diagnose"
+```
+
+Issue types are `build`, `key`, `stripe_permission`, `preview`, `install`,
+`launchagent`, `lock_screen`, `private_glass`, and `unknown`. The recorder
+rejects secrets, contact data, Stripe objects, obvious money amounts, raw-log
+wording, screenshot wording, and customer/payment-data wording.
+
 If tracker rows were edited manually during support, audit the private tracker
 before widening alpha:
 

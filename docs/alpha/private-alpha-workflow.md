@@ -73,6 +73,22 @@ Use `./script/record_alpha_user.sh` directly only when you need to record a part
 
 Record install attempts with the safe append script when the setup is partial, warns, or fails:
 
+For common support blockers, use the shorter support issue packet:
+
+```sh
+./script/record_alpha_support_issue.sh \
+  --tester-id tester_001 \
+  --issue-type lock_screen \
+  --result fail \
+  --macos-version 15.5 \
+  --cpu apple_silicon \
+  --display-setup built_in \
+  --blocker "Lock Screen panel did not appear" \
+  --next-action "repair then retry diagnose"
+```
+
+Use the lower-level install recorder only when you need a custom partial row:
+
 ```sh
 ./script/record_alpha_install.sh \
   --tester-id tester_001 \

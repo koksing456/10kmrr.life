@@ -222,6 +222,7 @@ print_next_actions() {
   status_line "NEXT" "start approved tester: ./script/start_alpha.sh"
   status_line "NEXT" "collect safe evidence: ./script/prepare_alpha_tracker.sh"
   status_line "NEXT" "audit private tracker: ./script/audit_alpha_tracker.sh"
+  status_line "NEXT" "record support issue: ./script/record_alpha_support_issue.sh --tester-id tester_XXX --issue-type lock_screen --result fail"
   status_line "NEXT" "record successful tester: ./script/record_alpha_success.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
   status_line "NEXT" "record Day 7 follow-up: ./script/record_alpha_day7.sh --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
   status_line "NEXT" "weekly alpha summary: ./script/alpha_weekly_summary.sh"

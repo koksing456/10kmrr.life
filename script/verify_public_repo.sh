@@ -110,6 +110,9 @@ section "Alpha install evidence recorder"
 section "Alpha compatibility recorder"
 ./script/record_alpha_compatibility.sh --self-test
 
+section "Alpha support issue recorder"
+./script/record_alpha_support_issue.sh --self-test
+
 section "Alpha success evidence wrapper"
 ./script/record_alpha_success.sh --self-test
 

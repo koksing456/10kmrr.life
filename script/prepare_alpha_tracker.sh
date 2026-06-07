@@ -74,16 +74,17 @@ Suggested workflow:
 2. Generate the approved tester invite with ./script/generate_alpha_invite.sh.
 3. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
 4. Ask for ./script/support_report.sh only if something fails.
-5. Record install attempts with ./script/record_alpha_install.sh.
-6. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
+5. Record common support issues with ./script/record_alpha_support_issue.sh.
+6. Record install attempts with ./script/record_alpha_install.sh when you need custom partial evidence.
+7. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
    For a successful tester, run the record_alpha_success.sh command printed by start_alpha.sh.
-7. Preview private beta local smoke with ./script/run_local_smoke.sh.
-8. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record.
-9. Record Day 7 / Pro signal with ./script/record_alpha_day7.sh.
-10. Review weekly safe aggregates with ./script/alpha_weekly_summary.sh.
-11. Audit private tracker safety with ./script/audit_alpha_tracker.sh.
-12. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
-13. Record only pass/warn/fail summaries and non-sensitive blockers.
+8. Preview private beta local smoke with ./script/run_local_smoke.sh.
+9. Record private beta local smoke on a clean smoke machine with ./script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record.
+10. Record Day 7 / Pro signal with ./script/record_alpha_day7.sh.
+11. Review weekly safe aggregates with ./script/alpha_weekly_summary.sh.
+12. Audit private tracker safety with ./script/audit_alpha_tracker.sh.
+13. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
+14. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example approved tester and install evidence rows:
 
@@ -95,6 +96,16 @@ Example approved tester and install evidence rows:
   --display-setup built_in
 
 ./script/generate_alpha_invite.sh --tester-id tester_001
+
+./script/record_alpha_support_issue.sh \\
+  --tester-id tester_001 \\
+  --issue-type lock_screen \\
+  --result fail \\
+  --macos-version 15.5 \\
+  --cpu apple_silicon \\
+  --display-setup built_in \\
+  --blocker "Lock Screen panel did not appear" \\
+  --next-action "repair then retry diagnose"
 
 ./script/record_alpha_install.sh \\
   --tester-id tester_001 \\
@@ -215,6 +226,7 @@ validate_tracker_readme() {
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$output_dir/README.md"
   /usr/bin/grep -q './script/generate_alpha_invite.sh' "$output_dir/README.md"
+  /usr/bin/grep -q './script/record_alpha_support_issue.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/audit_alpha_tracker.sh' "$output_dir/README.md"
   /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$output_dir/README.md"
   /usr/bin/grep -q './script/record_alpha_day7.sh' "$output_dir/README.md"
