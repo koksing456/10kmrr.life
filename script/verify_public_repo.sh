@@ -34,6 +34,16 @@ if [[ -n "$oversized_swift_files" ]]; then
   exit 1
 fi
 
+section "Default settings consistency"
+if ! rg -q 'fallback: \.hero' MRRLockScreenOverlay/OverlaySettingsStore.swift; then
+  printf 'Expected OverlaySettingsStore visualStyle fallback to remain hero.\n' >&2
+  exit 1
+fi
+if ! rg -q 'Overlay visual style setting: default hero' script/diagnose.sh; then
+  printf 'Expected diagnose.sh to report the hero visual style default.\n' >&2
+  exit 1
+fi
+
 section "MRR calculator tests"
 ./script/test_mrr_calculator.sh
 

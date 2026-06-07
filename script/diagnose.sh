@@ -193,7 +193,7 @@ fi
 if [[ -n "$visual_style" ]]; then
   pass "Overlay visual style setting: $visual_style"
 else
-  pass "Overlay visual style setting: default full"
+  pass "Overlay visual style setting: default hero"
 fi
 if [[ -n "$goal_currency" && -n "$goal_minor_units" && "$goal_minor_units" =~ ^[0-9]+$ && "$goal_minor_units" -gt 0 ]]; then
   goal_currency_upper="$(printf '%s' "$goal_currency" | /usr/bin/tr '[:lower:]' '[:upper:]')"
