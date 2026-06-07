@@ -131,8 +131,8 @@ fi
 
 section "Public ignore contract"
 for ignored_path in build .codex opc-doc Atoll; do
-  if ! git check-ignore -q "$ignored_path"; then
-    printf 'Expected %s to be ignored by git.\n' "$ignored_path" >&2
+  if ! /usr/bin/grep -qx "${ignored_path}/" .gitignore; then
+    printf 'Expected .gitignore to contain %s/.\n' "$ignored_path" >&2
     exit 1
   fi
 done
