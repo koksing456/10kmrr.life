@@ -99,4 +99,12 @@ test -s docs/alpha/templates/weekly-review.csv
 test -s docs/release/release-strategy.md
 test -s docs/release/release-notes-template.md
 
+section "GitHub label manifest"
+for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do
+  if ! rg -q "^- name: ${expected_label}$" .github/labels.yml; then
+    printf 'Missing GitHub label in .github/labels.yml: %s\n' "$expected_label" >&2
+    exit 1
+  fi
+done
+
 printf '\nPublic repo verification passed.\n'

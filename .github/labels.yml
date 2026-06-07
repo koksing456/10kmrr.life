@@ -1,3 +1,11 @@
+- name: alpha-request
+  color: "c8f6da"
+  description: Gated alpha access requests that must avoid secrets and private revenue data.
+
+- name: bug
+  color: "d73a4a"
+  description: Non-sensitive bug reports for the local alpha app or scripts.
+
 - name: install
   color: "2f80ed"
   description: Install, LaunchAgent, setup, or uninstall friction.
