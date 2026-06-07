@@ -9,6 +9,7 @@ Ask for:
 - macOS version.
 - Apple Silicon or Intel.
 - Display setup category.
+- App version and commit from setup or `./script/diagnose.sh`.
 - The command that failed.
 - Pass/warn/fail summaries from safe scripts.
 - Non-sensitive error summaries.
@@ -157,10 +158,22 @@ Remove app and LaunchAgent:
 ./script/uninstall_lock_overlay_agent.sh
 ```
 
+Remove app, LaunchAgent, local cache, and display settings:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --local-data
+```
+
 Remove stored Stripe key:
 
 ```sh
 ./script/configure_stripe_key.sh --delete
 ```
 
-Current uninstall does not remove local cache/settings. If the tester wants a full local data reset, handle that as a separate explicit step.
+Full local reset, including the stored Stripe key:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --all
+```
+
+Only use `--all` when the tester explicitly wants the Keychain key removed.

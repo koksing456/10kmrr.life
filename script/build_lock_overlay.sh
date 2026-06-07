@@ -13,6 +13,10 @@ build_app() {
   rm -rf "$APP_BUNDLE"
   mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources" "$ROOT_DIR/build/logs"
   cp "$INFO_PLIST" "$APP_BUNDLE/Contents/Info.plist"
+  local commit
+  commit="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || printf 'unknown')"
+  /usr/libexec/PlistBuddy -c "Set :TenKMRRCommit $commit" "$APP_BUNDLE/Contents/Info.plist" 2>/dev/null || \
+    /usr/libexec/PlistBuddy -c "Add :TenKMRRCommit string $commit" "$APP_BUNDLE/Contents/Info.plist"
   local sources=()
   while IFS= read -r source; do
     sources+=("$source")

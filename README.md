@@ -118,6 +118,8 @@ The preview follows the screen containing the mouse cursor. It does not unload t
 
 The setup window also lets you choose the local refresh interval and vertical overlay position. These settings are stored locally and apply the next time the overlay starts.
 
+The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.
+
 ## Install
 
 Alpha installs are gated. If you are approved for alpha testing, run:
@@ -160,6 +162,24 @@ The diagnostic checks build status, install status, LaunchAgent state, Keychain 
 
 ```sh
 ./script/uninstall_lock_overlay_agent.sh
+```
+
+To remove local cache and display settings too:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --local-data
+```
+
+To remove the stored Stripe key as well:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --keychain
+```
+
+For a full local reset:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --all
 ```
 
 ## MRR Semantics

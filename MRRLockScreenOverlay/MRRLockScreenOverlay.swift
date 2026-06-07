@@ -820,6 +820,9 @@ private struct SetupWindowView: View {
                 Text("Store a restricted read-only Stripe key in macOS Keychain.")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
+                Text(AppBuildInfo.displayText)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.tertiary)
             }
 
             VStack(alignment: .leading, spacing: 9) {

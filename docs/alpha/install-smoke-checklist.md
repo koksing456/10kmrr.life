@@ -36,6 +36,7 @@ Run:
 Record:
 
 - Build result: pass / warn / fail
+- Build version/commit:
 - Non-sensitive failure summary:
 
 ## Setup
@@ -145,6 +146,23 @@ Record:
 - App removed: yes / no
 - LaunchAgent removed: yes / no
 - Process stopped: yes / no
+
+Optional local data reset:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --local-data
+```
+
+Optional full reset, including the stored Stripe key:
+
+```sh
+./script/uninstall_lock_overlay_agent.sh --all
+```
+
+Record:
+
+- Local cache/settings removed: yes / no / not requested
+- Keychain key removed: yes / no / not requested
 
 ## Reinstall
 

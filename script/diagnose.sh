@@ -53,6 +53,29 @@ exists_executable() {
   [[ -x "$path" ]]
 }
 
+bundle_value() {
+  local app="$1"
+  local key="$2"
+  /usr/libexec/PlistBuddy -c "Print :$key" "$app/Contents/Info.plist" 2>/dev/null || true
+}
+
+print_bundle_version() {
+  local label="$1"
+  local app="$2"
+  local version build commit
+  version="$(bundle_value "$app" "CFBundleShortVersionString")"
+  build="$(bundle_value "$app" "CFBundleVersion")"
+  commit="$(bundle_value "$app" "TenKMRRCommit")"
+  printf '      %s version: %s' "$label" "${version:-unknown}"
+  if [[ -n "$build" ]]; then
+    printf ' build %s' "$build"
+  fi
+  if [[ -n "$commit" ]]; then
+    printf ' commit %s' "$commit"
+  fi
+  printf '\n'
+}
+
 printf '10kmrr.life local diagnostic\n'
 printf 'Repo: %s\n' "$ROOT_DIR"
 printf 'Home: %s\n\n' "$HOME"
@@ -60,12 +83,14 @@ printf 'Home: %s\n\n' "$HOME"
 if exists_executable "$BUILD_EXECUTABLE"; then
   pass "Build artifact exists: $BUILD_APP"
   /usr/bin/file "$BUILD_EXECUTABLE" | /usr/bin/sed 's/^/      /'
+  print_bundle_version "Build" "$BUILD_APP"
 else
   warn "Build artifact missing. Run ./script/build_lock_overlay.sh --verify"
 fi
 
 if exists_executable "$INSTALLED_EXECUTABLE"; then
   pass "Installed app exists: $INSTALLED_APP"
+  print_bundle_version "Installed" "$INSTALLED_APP"
 else
   warn "Installed app missing. Run ./script/install_lock_overlay_agent.sh"
 fi
