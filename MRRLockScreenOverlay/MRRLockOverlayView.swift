@@ -5,6 +5,12 @@ struct MRRLockOverlayView: View {
     @State private var pulse = false
 
     private let cornerRadius: CGFloat = 34
+    private var panelSize: NSSize {
+        OverlaySettingsStore.panelSize
+    }
+    private var sizePreset: OverlaySizePreset {
+        OverlaySettingsStore.sizePreset
+    }
 
     @ViewBuilder
     var body: some View {
@@ -13,12 +19,12 @@ struct MRRLockOverlayView: View {
                 PrivateGlassBackground(variant: 11, cornerRadius: cornerRadius) {
                     panelContent
                 }
-                .frame(width: overlayPanelSize.width, height: overlayPanelSize.height)
+                .frame(width: panelSize.width, height: panelSize.height)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             } else {
                 panelContent
                     .background(stableFrostedBackground)
-                    .frame(width: overlayPanelSize.width, height: overlayPanelSize.height)
+                    .frame(width: panelSize.width, height: panelSize.height)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             }
         }
@@ -34,14 +40,14 @@ struct MRRLockOverlayView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 9) {
                 Text("Stripe MRR")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(.system(size: labelFontSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.82))
                 statusDot
                 Spacer(minLength: 0)
             }
 
             Text(model.primaryValue)
-                .font(.system(size: 54, weight: .semibold, design: .rounded))
+                .font(.system(size: valueFontSize, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white.opacity(0.96))
                 .lineLimit(1)
                 .minimumScaleFactor(0.50)
@@ -50,13 +56,13 @@ struct MRRLockOverlayView: View {
 
             HStack(alignment: .center, spacing: 12) {
                 Text(model.timestampText)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(.system(size: footerFontSize, weight: .medium, design: .rounded))
                     .foregroundStyle(.white.opacity(0.68))
                     .monospacedDigit()
                 Spacer(minLength: 0)
                 if let footerStatusText {
                     Text(footerStatusText)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: footerFontSize, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.64))
                         .lineLimit(1)
                 }
@@ -64,7 +70,7 @@ struct MRRLockOverlayView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 22)
-        .frame(width: overlayPanelSize.width, height: overlayPanelSize.height)
+        .frame(width: panelSize.width, height: panelSize.height)
         .background(Color.white.opacity(usePrivateGlassComponent ? 0.00 : 0.035))
     }
 
@@ -142,6 +148,39 @@ struct MRRLockOverlayView: View {
         }
         .shadow(color: dotColor.opacity(0.42), radius: 7)
         .animation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true), value: pulse)
+    }
+
+    private var labelFontSize: CGFloat {
+        switch sizePreset {
+        case .small:
+            return 13
+        case .medium:
+            return 15
+        case .large:
+            return 16
+        }
+    }
+
+    private var valueFontSize: CGFloat {
+        switch sizePreset {
+        case .small:
+            return 44
+        case .medium:
+            return 54
+        case .large:
+            return 60
+        }
+    }
+
+    private var footerFontSize: CGFloat {
+        switch sizePreset {
+        case .small:
+            return 12
+        case .medium:
+            return 13
+        case .large:
+            return 14
+        }
     }
 
     private var dotColor: Color {

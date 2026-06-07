@@ -159,6 +159,8 @@ fi
 
 refresh_interval="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" refreshIntervalSeconds 2>/dev/null || true; } | /usr/bin/head -1)"
 placement="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" placement 2>/dev/null || true; } | /usr/bin/head -1)"
+horizontal_placement="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" horizontalPlacement 2>/dev/null || true; } | /usr/bin/head -1)"
+size_preset="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" sizePreset 2>/dev/null || true; } | /usr/bin/head -1)"
 if [[ -n "$refresh_interval" && "$refresh_interval" =~ ^[0-9]+$ ]]; then
   pass "Refresh interval setting: $((refresh_interval / 60))m"
 else
@@ -168,6 +170,16 @@ if [[ -n "$placement" ]]; then
   pass "Overlay position setting: $placement"
 else
   pass "Overlay position setting: default center"
+fi
+if [[ -n "$horizontal_placement" ]]; then
+  pass "Overlay horizontal setting: $horizontal_placement"
+else
+  pass "Overlay horizontal setting: default center"
+fi
+if [[ -n "$size_preset" ]]; then
+  pass "Overlay size setting: $size_preset"
+else
+  pass "Overlay size setting: default medium"
 fi
 
 printf '\nSafe next steps:\n'

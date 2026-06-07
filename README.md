@@ -118,7 +118,7 @@ Preview without locking your Mac:
 
 The preview follows the screen containing the mouse cursor. It does not unload the installed LaunchAgent.
 
-The setup window also lets you refresh MRR now, confirm when the last-good cache was updated, and choose the local refresh interval and vertical overlay position. These settings are stored locally and apply the next time the overlay starts.
+The setup window also lets you refresh MRR now, confirm when the last-good cache was updated, and choose the local refresh interval, vertical position, horizontal position, and panel size. These settings are stored locally and apply the next time the overlay starts.
 
 The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.
 

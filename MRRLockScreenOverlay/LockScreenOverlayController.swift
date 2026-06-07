@@ -145,8 +145,18 @@ final class LockScreenOverlayController {
     }
 
     private func frame(for screen: NSScreen) -> NSRect {
-        let size = overlayPanelSize
+        let size = OverlaySettingsStore.panelSize
         let frame = screen.frame
+        let sideMargin = min(max(frame.width * 0.08, 56), 160)
+        let originX: CGFloat
+        switch OverlaySettingsStore.horizontalPlacement {
+        case .left:
+            originX = frame.minX + sideMargin
+        case .center:
+            originX = frame.midX - size.width / 2
+        case .right:
+            originX = frame.maxX - sideMargin - size.width
+        }
         let originY: CGFloat
         switch OverlaySettingsStore.placement {
         case .high:
@@ -157,7 +167,7 @@ final class LockScreenOverlayController {
             originY = frame.minY + (frame.height / 2) - size.height - 180
         }
         return NSRect(
-            x: frame.midX - size.width / 2,
+            x: originX,
             y: originY,
             width: size.width,
             height: size.height

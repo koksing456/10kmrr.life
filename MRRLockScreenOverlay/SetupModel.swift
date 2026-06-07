@@ -12,6 +12,8 @@ final class SetupModel: ObservableObject {
     @Published var isRefreshingMRR = false
     @Published var refreshIntervalMinutes = 5
     @Published var placement = OverlayPlacement.center
+    @Published var horizontalPlacement = OverlayHorizontalPlacement.center
+    @Published var sizePreset = OverlaySizePreset.medium
     @Published var lastRefreshText = "No cached MRR refresh yet"
     @Published var cacheDetailText = "No last-good MRR cache found"
 
@@ -46,11 +48,15 @@ final class SetupModel: ObservableObject {
         let storedRefreshInterval = OverlaySettingsStore.refreshIntervalMinutes
         refreshIntervalMinutes = refreshIntervalOptions.contains(storedRefreshInterval) ? storedRefreshInterval : 5
         placement = OverlaySettingsStore.placement
+        horizontalPlacement = OverlaySettingsStore.horizontalPlacement
+        sizePreset = OverlaySettingsStore.sizePreset
     }
 
     func saveSettings() {
         OverlaySettingsStore.refreshIntervalMinutes = refreshIntervalMinutes
         OverlaySettingsStore.placement = placement
+        OverlaySettingsStore.horizontalPlacement = horizontalPlacement
+        OverlaySettingsStore.sizePreset = sizePreset
         testText = "Saved display settings. Restart installed overlay to apply them."
     }
 

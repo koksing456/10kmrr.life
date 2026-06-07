@@ -87,6 +87,23 @@ struct SetupWindowView: View {
                     .pickerStyle(.segmented)
                     .frame(width: 222)
                 }
+                HStack(spacing: 18) {
+                    Picker("Horizontal", selection: $model.horizontalPlacement) {
+                        ForEach(OverlayHorizontalPlacement.allCases) { placement in
+                            Text(placement.label).tag(placement)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 236)
+
+                    Picker("Size", selection: $model.sizePreset) {
+                        ForEach(OverlaySizePreset.allCases) { sizePreset in
+                            Text(sizePreset.label).tag(sizePreset)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 222)
+                }
                 HStack(spacing: 10) {
                     Button("Save Settings") {
                         model.saveSettings()
