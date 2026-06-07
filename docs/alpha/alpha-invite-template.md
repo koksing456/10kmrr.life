@@ -36,6 +36,18 @@ If something fails:
 
 Share only the sanitized support report summary or the failing section name. Use `--include-logs` only after checking the redacted excerpts do not contain sensitive output.
 
+After setup works, send back only this safe reply format:
+
+- MRR visible in the setup window: yes/no
+- Lock Screen panel appears: yes/no
+- Overlay hides after unlock: yes/no
+- Display setup: built_in/external/multiple/clamshell
+- macOS version: 15.x or unknown
+- Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none
+- Pro interest after first use: low/medium/high/unknown
+
+Do not include exact MRR, Stripe keys, raw Stripe responses, raw logs, customer/payment data, contact data, or unsanitized screenshots.
+
 Day 7 question:
 
 Would you keep MRR on your Lock Screen after the novelty wears off?

@@ -264,6 +264,8 @@ self_test() {
   /usr/bin/grep -q './script/alpha.sh start --tester-id tester_001' "$temp_dir/invites/tester_001.md"
   /usr/bin/grep -q './script/alpha.sh success' "$temp_dir/invites/tester_001.md"
   /usr/bin/grep -q './script/alpha.sh support' "$temp_dir/invites/tester_001.md"
+  /usr/bin/grep -q 'safe reply format' "$temp_dir/invites/tester_001.md"
+  /usr/bin/grep -q 'Do not include exact MRR' "$temp_dir/invites/tester_001.md"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 
   output="$("$0" \

@@ -71,12 +71,17 @@ If something fails:
 
 Share only the sanitized support report summary or the failing section name. Use --include-logs only after checking the redacted excerpts do not contain sensitive output.
 
-After setup works, send back only these confirmations:
+After setup works, send back only this safe reply format:
 
-- MRR is visible: yes/no
+- MRR visible in the setup window: yes/no
 - Lock Screen panel appears: yes/no
 - Overlay hides after unlock: yes/no
 - Display setup: built_in/external/multiple/clamshell
+- macOS version: 15.x or unknown
+- Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none
+- Pro interest after first use: low/medium/high/unknown
+
+Do not include exact MRR, Stripe keys, raw Stripe responses, raw logs, customer/payment data, contact data, or unsanitized screenshots.
 
 Day 7 question:
 
@@ -94,6 +99,9 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh support-report'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Do not send Stripe keys, exact MRR'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Lock Screen panel appears: yes/no'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'safe reply format'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Pro interest after first use: low/medium/high/unknown'
 
   if "$0" --tester-id 'founder@example.com' >/dev/null 2>&1; then
     printf 'generate_alpha_invite self-test failed: email-like tester id was accepted.\n' >&2
