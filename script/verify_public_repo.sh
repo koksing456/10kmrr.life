@@ -32,6 +32,10 @@ section "Demo asset presence"
 test -s docs/demo/assets/landing-hero.png
 test -s docs/demo/assets/landing-desktop.png
 test -s docs/demo/assets/landing-mobile.png
+test -s docs/demo/assets/social-square.png
+test -s docs/demo/assets/social-wide.png
+test -s docs/demo/assets/social-vertical.png
+test -s docs/demo/assets/github-social-preview.png
 
 section "Secret scan"
 if rg -n \
@@ -79,10 +83,15 @@ test -s LICENSE
 test -s .github/ISSUE_TEMPLATE/alpha_request.yml
 test -s docs/alpha/free-pro-boundary.md
 test -s docs/alpha/alpha-ops-checklist.md
+test -s docs/alpha/private-alpha-workflow.md
 test -s docs/alpha/install-smoke-checklist.md
 test -s docs/alpha/compatibility-matrix.md
 test -s docs/alpha/support-playbook.md
 test -s docs/alpha/improvement-backlog.md
+test -s docs/alpha/templates/alpha-users.csv
+test -s docs/alpha/templates/install-funnel.csv
+test -s docs/alpha/templates/pro-interest.csv
+test -s docs/alpha/templates/weekly-review.csv
 test -s docs/release/release-strategy.md
 test -s docs/release/release-notes-template.md
 

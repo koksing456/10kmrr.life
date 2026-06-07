@@ -45,7 +45,7 @@ These reduce maintenance risk.
 - Add timeout, retry, and backoff policy for Stripe requests. Done: Stripe requests have request/resource timeouts plus capped retries for transient network errors, 429, and 5xx responses.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases. Done: sanitized fixture now covers 8 focused calculator cases.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
-- Add CI checks for shell syntax, app build, public repo scan, and MRR calculator tests.
+- Add CI checks for shell syntax, app build, public repo scan, and MRR calculator tests. Done: `.github/workflows/public-repo-check.yml` runs `./script/verify_public_repo.sh` on macOS.
 - Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
 - Add a debug mode that explains which private API path failed without dumping sensitive runtime data. Done: `--debug` / `--preview-debug` exposes safe private API failure labels.
 
