@@ -13,6 +13,11 @@ if ! command -v node >/dev/null 2>&1; then
   exit 69
 fi
 
+if /usr/bin/curl -fsS "http://127.0.0.1:$PORT" >/dev/null 2>&1; then
+  printf 'Port %s already responds on 127.0.0.1. Stop that server or set PORT to a free port.\n' "$PORT" >&2
+  exit 69
+fi
+
 python3 -m http.server "$PORT" --directory "$ROOT_DIR/site" >"$SERVER_LOG" 2>&1 &
 server_pid="$!"
 cleanup() {
@@ -20,12 +25,25 @@ cleanup() {
 }
 trap cleanup EXIT
 
+server_ready=false
 for _ in $(seq 1 40); do
+  if ! /bin/kill -0 "$server_pid" 2>/dev/null; then
+    printf 'Demo asset server exited before becoming ready. Log:\n' >&2
+    /bin/cat "$SERVER_LOG" >&2
+    exit 1
+  fi
   if /usr/bin/curl -fsS "http://127.0.0.1:$PORT" >/dev/null 2>&1; then
+    server_ready=true
     break
   fi
   sleep 0.25
 done
+
+if [[ "$server_ready" != "true" ]]; then
+  printf 'Demo asset server did not become ready on port %s. Log:\n' "$PORT" >&2
+  /bin/cat "$SERVER_LOG" >&2
+  exit 1
+fi
 
 ROOT_DIR="$ROOT_DIR" PORT="$PORT" node <<'JS'
 const { createRequire } = require("module");
