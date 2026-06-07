@@ -21,6 +21,8 @@ Use these sheets:
 - `pro-interest`: one row per 7-day follow-up.
 - `weekly-review`: one row per weekly alpha review.
 
+Keep identity and contact mapping outside this repo. The tracker should use a stable `tester_id`, not names, email addresses, or handles.
+
 Starter CSV templates live in [templates](./templates):
 
 - [alpha-users.csv](./templates/alpha-users.csv)
@@ -43,6 +45,20 @@ Use one of these exact stage values:
 - `closed_lost`
 
 Only advance a tester when the previous stage is confirmed by their non-sensitive report or a safe diagnostic summary.
+
+Record approved testers with the safe append script:
+
+```sh
+./script/record_alpha_user.sh \
+  --tester-id tester_001 \
+  --uses-stripe-subscriptions yes \
+  --macos-version 15.5 \
+  --cpu apple_silicon \
+  --display-setup built_in \
+  --approved yes \
+  --current-stage approved \
+  --next-action "send invite"
+```
 
 Record install attempts with the safe append script:
 
@@ -80,6 +96,18 @@ Use [pro-interest-scorecard.md](./pro-interest-scorecard.md) and record only:
 - Preferred pricing model.
 - Overall Pro signal.
 - Short non-sensitive notes.
+
+Record Day 7 / Pro signal with:
+
+```sh
+./script/record_alpha_pro_followup.sh \
+  --tester-id tester_001 \
+  --retained-day-7 yes \
+  --signed-notarized-installer 3 \
+  --compatibility-updates 2 \
+  --overall-pro-signal medium \
+  --notes "kept it on for day 7"
+```
 
 Do not convert requests for full analytics into automatic product scope. Treat them as positioning data.
 

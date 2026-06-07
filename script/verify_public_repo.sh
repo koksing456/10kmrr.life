@@ -92,6 +92,12 @@ section "Alpha tracker generation"
 section "Alpha install evidence recorder"
 ./script/record_alpha_install.sh --self-test
 
+section "Alpha user recorder"
+./script/record_alpha_user.sh --self-test
+
+section "Alpha Pro follow-up recorder"
+./script/record_alpha_pro_followup.sh --self-test
+
 section "Alpha status summary"
 ./script/alpha_status.sh --self-test
 

@@ -333,7 +333,7 @@ The Free vs Pro boundary lives at [docs/alpha/free-pro-boundary.md](./docs/alpha
 The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alpha/alpha-ops-checklist.md).
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
-Append safe install attempt rows with `./script/record_alpha_install.sh`; it rejects Stripe-key-like strings and obvious money amounts.
+Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, and `./script/record_alpha_pro_followup.sh`; they reject contact-like data, Stripe-key-like strings, and obvious money amounts where relevant.
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).

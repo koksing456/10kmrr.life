@@ -50,18 +50,30 @@ Do not collect:
 - raw Stripe API responses
 - customer, subscription, invoice, payment, email, or card data
 - raw logs
+- personal contact details
 - unsanitized screenshots
 
 Suggested workflow:
 
-1. Send docs/alpha/alpha-invite-template.md to approved testers.
-2. Ask them to run ./script/start_alpha.sh.
-3. Ask for ./script/support_report.sh only if something fails.
-4. Record install attempts with ./script/record_alpha_install.sh.
-5. Record only pass/warn/fail summaries and non-sensitive blockers.
-6. Run the Day 7 follow-up from docs/alpha/seven-day-follow-up-template.md.
+1. Record approved testers with ./script/record_alpha_user.sh.
+2. Send docs/alpha/alpha-invite-template.md to approved testers.
+3. Ask them to run ./script/start_alpha.sh.
+4. Ask for ./script/support_report.sh only if something fails.
+5. Record install attempts with ./script/record_alpha_install.sh.
+6. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
+7. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example install evidence row:
+
+./script/record_alpha_user.sh \\
+  --tester-id tester_001 \\
+  --uses-stripe-subscriptions yes \\
+  --macos-version 15.5 \\
+  --cpu apple_silicon \\
+  --display-setup built_in \\
+  --approved yes \\
+  --current-stage approved \\
+  --next-action "send invite"
 
 ./script/record_alpha_install.sh \\
   --tester-id tester_001 \\
@@ -73,6 +85,14 @@ Example install evidence row:
   --saw-mrr yes \\
   --diagnose-summary "PASS summary only" \\
   --next-action "day 7 follow-up"
+
+./script/record_alpha_pro_followup.sh \\
+  --tester-id tester_001 \\
+  --retained-day-7 yes \\
+  --signed-notarized-installer 3 \\
+  --compatibility-updates 2 \\
+  --overall-pro-signal medium \\
+  --notes "kept it on for day 7"
 EOF
 }
 
@@ -100,7 +120,7 @@ validate_generated_tracker() {
   test -s "$output_dir/pro-interest.csv"
   test -s "$output_dir/weekly-review.csv"
 
-  /usr/bin/head -1 "$output_dir/alpha-users.csv" | /usr/bin/grep -q 'tester_id,candidate,contact'
+  /usr/bin/head -1 "$output_dir/alpha-users.csv" | /usr/bin/grep -q 'tester_id,uses_stripe_subscriptions,macos_version'
   /usr/bin/head -1 "$output_dir/install-funnel.csv" | /usr/bin/grep -q 'tester_id,attempt_date,stage'
   /usr/bin/head -1 "$output_dir/pro-interest.csv" | /usr/bin/grep -q 'tester_id,follow_up_date,retained_day_7'
   /usr/bin/head -1 "$output_dir/weekly-review.csv" | /usr/bin/grep -q 'week_start,support_load,setup_failure_rate'

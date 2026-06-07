@@ -1,2 +1,2 @@
-tester_id,candidate,contact,uses_stripe_subscriptions,macos_version,cpu,display_setup,approved,current_stage,install_status,key_setup_status,first_mrr_seen,retained_day_7,pro_interest,blocker,next_action
-example,Example Founder,handle/email,yes,15.x,apple_silicon,built_in,yes,requested,not_sent,not_started,no,unknown,none,,send security docs
+tester_id,uses_stripe_subscriptions,macos_version,cpu,display_setup,approved,current_stage,install_status,key_setup_status,first_mrr_seen,retained_day_7,pro_interest,blocker,next_action
+example,yes,15.x,apple_silicon,built_in,yes,requested,not_sent,not_started,no,unknown,none,,send security docs
