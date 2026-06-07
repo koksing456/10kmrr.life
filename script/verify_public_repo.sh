@@ -53,11 +53,17 @@ section "Stripe client tests"
 section "Support report redaction"
 ./script/support_report.sh --self-test
 
+section "Diagnostic command self-test"
+./script/diagnose.sh --self-test
+
 section "Stripe key validation"
 ./script/configure_stripe_key.sh --self-test
 
 section "Installer plist generation"
 ./script/install_lock_overlay_agent.sh --self-test
+
+section "Uninstall command self-test"
+./script/uninstall_lock_overlay_agent.sh --self-test
 
 section "Signing preflight parser"
 ./script/signing_preflight.sh --self-test
@@ -144,6 +150,34 @@ test -s docs/alpha/templates/weekly-review.csv
 test -s docs/release/release-strategy.md
 test -s docs/release/release-notes-template.md
 test -s docs/release/private-beta-packaging-checklist.md
+
+section "Public alpha wording gates"
+require_phrase() {
+  local file="$1"
+  local pattern="$2"
+
+  if ! rg -q "$pattern" "$file"; then
+    printf 'Expected public-alpha wording missing from %s: %s\n' "$file" "$pattern" >&2
+    exit 1
+  fi
+}
+
+require_phrase README.md 'gated alpha'
+require_phrase README.md 'not a public installer'
+require_phrase README.md 'private macOS behavior'
+require_phrase README.md 'Do not use a full-access Stripe secret key'
+require_phrase README.md 'There is no 10kmrr\.life server in the current alpha path'
+require_phrase README.md 'mock MRR only'
+require_phrase SECURITY.md 'restricted read-only Stripe API key'
+require_phrase SECURITY.md 'Never send your Stripe key'
+require_phrase SECURITY.md 'private macOS behavior'
+require_phrase SECURITY.md 'not yet a notarized public release'
+require_phrase PRIVACY.md 'does not upload your Stripe key, MRR, customer data, payment data, or Stripe API responses'
+require_phrase PRIVACY.md 'Do not include'
+require_phrase PRIVACY.md 'not a notarized public Mac app yet'
+require_phrase docs/release/release-notes-template.md 'No Stripe keys are included'
+require_phrase docs/release/release-notes-template.md 'No real MRR screenshots are included unless explicitly sanitized and approved'
+require_phrase docs/release/release-notes-template.md 'not a public notarized installer'
 
 section "GitHub label manifest"
 for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do

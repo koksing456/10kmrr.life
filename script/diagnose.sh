@@ -16,13 +16,43 @@ CACHE_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Cache"
 SETTINGS_DOMAIN="life.10kmrr.MRRLockScreenOverlay.Settings"
 VERBOSE=false
 
+self_test() {
+  local temp_home output secret_pattern
+  temp_home="$(/usr/bin/mktemp -d -t 10kmrr-diagnose-home.XXXXXX)"
+  trap 'rm -rf "$temp_home"' RETURN
+
+  output="$(HOME="$temp_home" "$0" 2>&1)"
+  secret_pattern='(sk_live_[A-Za-z0-9]+|sk_test_[A-Za-z0-9]+|rk_live_[A-Za-z0-9]+|rk_test_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+)'
+
+  printf '%s\n' "$output" | /usr/bin/grep -q '10kmrr.life local diagnostic'
+  printf '%s\n' "$output" | /usr/bin/grep -Eq 'Overlay visual style setting: (default )?hero'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe key'
+  printf '%s\n' "$output" | /usr/bin/grep -Eq 'Cached value was not printed|No last-good MRR cache yet'
+
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq "$secret_pattern"; then
+    printf 'diagnose self-test failed: output contained a Stripe-like secret.\n' >&2
+    exit 1
+  fi
+
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq 'lastGoodMRR|goalMinorUnits'; then
+    printf 'diagnose self-test failed: output contained a raw defaults key for private values.\n' >&2
+    exit 1
+  fi
+
+  printf 'diagnose self-test passed.\n'
+}
+
 case "${1:-}" in
   --verbose)
     VERBOSE=true
     ;;
+  --self-test)
+    self_test
+    exit 0
+    ;;
   --help|-h)
     cat <<EOF
-Usage: $0 [--verbose]
+Usage: $0 [--verbose] [--self-test]
 
 Checks local build, install, LaunchAgent, Keychain, and cache state without
 printing the Stripe key or cached MRR value.
@@ -32,7 +62,7 @@ EOF
   "")
     ;;
   *)
-    printf 'Usage: %s [--verbose]\n' "$0" >&2
+    printf 'Usage: %s [--verbose] [--self-test]\n' "$0" >&2
     exit 64
     ;;
 esac

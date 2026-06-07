@@ -50,6 +50,7 @@ These reduce maintenance risk.
 - Add structured log events with no secrets and no MRR values by default. Done: local app logs event names and safe counters only.
 - Add a debug mode that explains which private API path failed without dumping sensitive runtime data. Done: `--debug` / `--preview-debug` exposes safe private API failure labels.
 - Add a sanitized support report for alpha testers. Done: `./script/support_report.sh` writes a redacted local report and keeps raw logs out by default.
+- Add safety self-tests for diagnose and uninstall flows, plus public-alpha wording gates. Done: `./script/verify_public_repo.sh` runs diagnostic redaction, uninstall dry-run, and trust-boundary wording checks.
 
 ## P2: Alpha Ops
 

@@ -97,11 +97,20 @@ Run local Stripe key validation checks without touching Keychain:
 ./script/configure_stripe_key.sh --self-test
 ```
 
+Run diagnostic and uninstall safety self-tests without changing your local install:
+
+```sh
+./script/diagnose.sh --self-test
+./script/uninstall_lock_overlay_agent.sh --self-test
+```
+
 Before pushing public-alpha repo changes:
 
 ```sh
 ./script/verify_public_repo.sh
 ```
+
+The public verification gate checks shell syntax, focused MRR tests, Stripe request tests, diagnostic redaction, installer and uninstall self-tests, public-alpha wording, demo asset presence, ignored local artifacts, secret patterns, and the universal macOS build.
 
 ## Static Alpha Page
 
