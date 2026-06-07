@@ -1,0 +1,23 @@
+- name: install
+  color: "2f80ed"
+  description: Install, LaunchAgent, setup, or uninstall friction.
+
+- name: compatibility
+  color: "9b51e0"
+  description: macOS version, CPU architecture, display setup, or private API behavior.
+
+- name: security
+  color: "eb5757"
+  description: Keychain, restricted Stripe key, privacy, or safe support boundary.
+
+- name: mrr-semantics
+  color: "27ae60"
+  description: Stripe subscription inclusion, exclusion, currency, discount, or MRR calculation behavior.
+
+- name: visual-design
+  color: "f2994a"
+  description: Lock Screen overlay layout, glass, typography, style, or demo asset feedback.
+
+- name: alpha-feedback
+  color: "56ccf2"
+  description: Gated alpha tester feedback, retention signal, or Pro interest.

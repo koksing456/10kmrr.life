@@ -78,7 +78,7 @@ These help if the repo becomes public-facing.
 - Add `CONTRIBUTING.md` with security boundaries and no-secret contribution rules. Done.
 - Add `CODE_OF_CONDUCT.md` only if community contribution becomes real.
 - Add a `CHANGELOG.md` once alpha versions are tagged. Done: initialized for alpha source changes.
-- Add GitHub labels for install, compatibility, security, MRR semantics, visual design, and alpha feedback.
+- Add GitHub labels for install, compatibility, security, MRR semantics, visual design, and alpha feedback. Done: see `.github/labels.yml`.
 - Add release notes template that repeats private API and no-public-installer caveats. Done: see [docs/release/release-notes-template.md](../release/release-notes-template.md).
 
 ## Keep Avoiding
