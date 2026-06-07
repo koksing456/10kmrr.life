@@ -6,7 +6,7 @@ Do not collect Stripe keys, customer/payment data, or unsanitized revenue screen
 
 Score only convenience and maintenance features that fit [free-pro-boundary.md](./free-pro-boundary.md).
 
-Record Day 7 retention and Pro pull with `./script/record_alpha_day7.sh` so the
+Record Day 7 retention and Pro pull with `./script/alpha.sh day7` so the
 `pro-interest` row and `alpha-users` retention snapshot stay in sync.
 
 | Tester | Custom design | Position/size controls | Refresh/cache controls | Multi-currency polish | MRR goal/delta/milestone | Signed/notarized installer | Compatibility updates | Preferred pricing | Overall Pro signal |

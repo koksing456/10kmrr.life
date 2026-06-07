@@ -85,7 +85,7 @@ Ask:
 Record the outcome in the private `pro-interest` and `alpha-users` trackers:
 
 ```sh
-./script/record_alpha_day7.sh \
+./script/alpha.sh day7 \
   --tester-id tester_001 \
   --retained-day-7 yes \
   --overall-pro-signal medium \
@@ -99,7 +99,7 @@ Keep Pro pull separate from general feedback.
 Run the safe aggregate summary before writing the weekly review row:
 
 ```sh
-./script/alpha_weekly_summary.sh
+./script/alpha.sh weekly
 ```
 
 Run the private tracker audit before widening alpha:

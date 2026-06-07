@@ -126,7 +126,7 @@ append_success_records() {
   record_compatibility "$TRACKER_DIR"
 
   printf '\nRecorded successful alpha evidence packet for tester %s.\n' "$TESTER_ID"
-  printf 'Next: follow up on day 7, then record retention and Pro signal with ./script/record_alpha_day7.sh.\n'
+  printf 'Next: follow up on day 7, then record retention and Pro signal with ./script/alpha.sh day7.\n'
 }
 
 self_test() {
@@ -147,6 +147,7 @@ self_test() {
     --display-setup built_in \
     --preview-glass private)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded successful alpha evidence packet'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh day7'
   /usr/bin/tail -1 "$temp_dir/tracker/install-funnel.csv" | /usr/bin/grep -q '"tester_001","2026-06-08","saw_mrr","pass","yes","yes","yes","yes"'
   /usr/bin/tail -1 "$temp_dir/tracker/compatibility.csv" | /usr/bin/grep -q '"tester_001","2026-06-08","15.5","apple_silicon","built_in","pass","private","yes","yes","yes","pass"'
 

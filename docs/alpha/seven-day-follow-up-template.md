@@ -30,7 +30,7 @@ Choose one:
 After the follow-up, record only the safe retention and Pro signal summary:
 
 ```sh
-./script/record_alpha_day7.sh \
+./script/alpha.sh day7 \
   --tester-id tester_001 \
   --retained-day-7 yes \
   --overall-pro-signal medium \

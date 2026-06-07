@@ -180,7 +180,7 @@ the alpha-users retention snapshot after preflighting both writes in a temporary
 tracker:
 
 ```sh
-./script/record_alpha_day7.sh \
+./script/alpha.sh day7 \
   --tester-id tester_001 \
   --retained-day-7 yes \
   --signed-notarized-installer 3 \
@@ -220,7 +220,7 @@ Pause wider alpha expansion if install failure rate exceeds 30 percent for the s
 Start with the safe aggregate summary:
 
 ```sh
-./script/alpha_weekly_summary.sh
+./script/alpha.sh weekly
 ```
 
 It prints counts only. It suggests a `record_alpha_weekly_review.sh` command only after at least one non-example alpha evidence row exists.

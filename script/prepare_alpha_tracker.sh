@@ -155,7 +155,7 @@ Successful tester shortcut:
   --overall-pro-signal medium \\
   --notes "kept it on for day 7"
 
-./script/alpha_weekly_summary.sh
+./script/alpha.sh weekly
 
 ./script/audit_alpha_tracker.sh
 

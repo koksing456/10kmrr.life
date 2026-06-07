@@ -183,7 +183,7 @@ append_day7_records() {
   next_action="$(derived_next_action)"
   printf '\nRecorded Day 7 alpha follow-up packet for tester %s.\n' "$TESTER_ID"
   printf 'Next: %s\n' "$next_action"
-  printf 'Weekly rollup: ./script/alpha_weekly_summary.sh\n'
+  printf 'Weekly rollup: ./script/alpha.sh weekly\n'
 }
 
 self_test() {
@@ -209,6 +209,7 @@ self_test() {
     --cpu apple_silicon \
     --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded Day 7 alpha follow-up packet'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh weekly'
   /usr/bin/tail -1 "$temp_dir/tracker/pro-interest.csv" | /usr/bin/grep -q '"tester_001","2026-06-15","yes"'
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","unknown","15.5","apple_silicon","built_in","yes","retained_day_7","pass","pass","yes","yes","medium"'
 
