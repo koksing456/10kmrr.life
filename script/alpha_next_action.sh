@@ -351,9 +351,9 @@ recommend() {
 
   if [[ "$approved_users" -eq 0 && "$install_rows" -eq 0 ]]; then
     emit_action \
-      "prepare the first alpha invite packet" \
-      "private beta evidence cannot move until at least one tester is approved and invited" \
-      "./script/alpha.sh invite --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in"
+      "preview the first alpha invite packet without writing evidence" \
+      "private beta evidence cannot move until a real tester is approved; preview the packet first to avoid fake tracker rows" \
+      "./script/alpha.sh invite --tester-id tester_001 --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
     return
   fi
 
@@ -428,7 +428,8 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'prepare the first alpha invite packet'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
 
   "$ROOT_DIR/script/approve_alpha_tester.sh" \
     --tracker-dir "$temp_dir/tracker" \

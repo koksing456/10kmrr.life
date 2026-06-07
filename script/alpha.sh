@@ -75,7 +75,8 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" next --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'prepare the first alpha invite packet'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
 
   output="$("$0" status --no-network)"
   printf '%s\n' "$output" | /usr/bin/grep -q '10kmrr.life alpha status'

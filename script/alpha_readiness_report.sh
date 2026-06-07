@@ -159,7 +159,8 @@ self_test() {
   /usr/bin/grep -q 'Single Recommended Action' "$temp_dir/report.md"
   /usr/bin/grep -q 'Private Tracker Audit' "$temp_dir/report.md"
   /usr/bin/grep -q 'Private Beta Readiness' "$temp_dir/report.md"
-  /usr/bin/grep -q 'prepare the first alpha invite packet' "$temp_dir/report.md"
+  /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence' "$temp_dir/report.md"
+  /usr/bin/grep -q -- '--dry-run' "$temp_dir/report.md"
   assert_report_safe "$temp_dir/report.md"
 
   printf 'Alpha readiness report self-test passed.\n'

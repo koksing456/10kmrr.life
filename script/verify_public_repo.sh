@@ -295,7 +295,7 @@ require_phrase() {
   local file="$1"
   local pattern="$2"
 
-  if ! rg -q "$pattern" "$file"; then
+  if ! rg -q -- "$pattern" "$file"; then
     printf 'Expected public-alpha wording missing from %s: %s\n' "$file" "$pattern" >&2
     exit 1
   fi
@@ -305,7 +305,7 @@ reject_phrase() {
   local file="$1"
   local pattern="$2"
 
-  if rg -q "$pattern" "$file"; then
+  if rg -q -- "$pattern" "$file"; then
     printf 'Unsafe public-alpha wording found in %s: %s\n' "$file" "$pattern" >&2
     exit 1
   fi
@@ -321,7 +321,9 @@ require_phrase CONTRIBUTING.md './script/alpha\.sh check'
 require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh invite'
 require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh start'
 require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh support-report'
+require_phrase docs/alpha/alpha-ops-checklist.md '--dry-run'
 require_phrase docs/alpha/alpha-ops-checklist.md './script/alpha\.sh start'
+require_phrase docs/alpha/private-alpha-workflow.md '--dry-run'
 require_phrase docs/alpha/install-smoke-checklist.md './script/alpha\.sh start'
 require_phrase docs/mvp/alpha-install-guide.md './script/alpha\.sh start'
 require_phrase .github/PULL_REQUEST_TEMPLATE.md './script/alpha\.sh check'

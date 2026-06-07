@@ -63,12 +63,11 @@ Prepare the approved tester invite packet with:
   --uses-stripe-subscriptions yes \
   --macos-version 15.5 \
   --cpu apple_silicon \
-  --display-setup built_in
+  --display-setup built_in \
+  --dry-run
 ```
 
-Add `--dry-run` to preview the packet without writing a tracker row or invite file.
-
-This approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`. Use `./script/approve_alpha_tester.sh` and `./script/generate_alpha_invite.sh` directly only when you intentionally need the lower-level split flow.
+This previews the packet without writing a tracker row or invite file. After a real tester is assigned to the stable id, remove `--dry-run` to approve the tester row and write the safe invite body under ignored `build/alpha-invites/`. Use `./script/approve_alpha_tester.sh` and `./script/generate_alpha_invite.sh` directly only when you intentionally need the lower-level split flow.
 
 Use `./script/record_alpha_user.sh` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.
 
