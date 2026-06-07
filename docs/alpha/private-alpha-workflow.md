@@ -14,6 +14,7 @@ Create a private local tracker workspace first:
 
 This writes starter files under `build/alpha-tracker`, which is ignored by git. Move those files into a private spreadsheet or lightweight CRM if you prefer.
 If only the generated tracker README is stale, refresh it with `./script/prepare_alpha_tracker.sh --readme-only` so existing CSV rows are preserved. `--force` refuses to overwrite tracker CSVs that already contain private rows.
+Audit manually edited tracker rows with `./script/audit_alpha_tracker.sh` before widening alpha. The audit prints only file, line, and issue type, not private row contents.
 
 Use these sheets:
 
@@ -207,6 +208,7 @@ Start with the safe aggregate summary:
 ```
 
 It prints counts only and suggests a `record_alpha_weekly_review.sh` command.
+Run `./script/audit_alpha_tracker.sh` before writing the weekly review if any rows were edited manually.
 
 Record the aggregate weekly review with:
 

@@ -8,6 +8,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 - Run `./script/prepare_alpha_tracker.sh` and keep the generated tracker private.
 - Use `./script/prepare_alpha_tracker.sh --readme-only` for tracker instruction refreshes after rows exist.
+- Run `./script/audit_alpha_tracker.sh` if tracker rows were edited manually.
 - Confirm they use Stripe subscriptions.
 - Confirm they use a Mac daily.
 - Confirm they understand this is source alpha, not a notarized public installer.
@@ -94,6 +95,12 @@ Run the safe aggregate summary before writing the weekly review row:
 
 ```sh
 ./script/alpha_weekly_summary.sh
+```
+
+Run the private tracker audit before widening alpha:
+
+```sh
+./script/audit_alpha_tracker.sh
 ```
 
 Use the suggested `record_alpha_weekly_review.sh` command only after checking that the aggregate counts match the private tracker.

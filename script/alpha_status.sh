@@ -108,6 +108,7 @@ print_git_status() {
 
 print_tracker_status() {
   local users_count install_count compatibility_count smoke_count pro_count weekly_count
+  local audit_output
 
   section "Private alpha evidence"
   if [[ -d "$TRACKER_DIR" ]]; then
@@ -143,6 +144,14 @@ print_tracker_status() {
       status_line "INFO" "non-example local smoke checks tracked: $smoke_count"
       status_line "INFO" "non-example Pro follow-ups tracked: $pro_count"
       status_line "INFO" "non-example weekly reviews tracked: $weekly_count"
+      audit_output="$("$ROOT_DIR/script/audit_alpha_tracker.sh" 2>&1 || true)"
+      if printf '%s\n' "$audit_output" | /usr/bin/grep -q '^PASS'; then
+        status_line "PASS" "tracker audit found no unsafe manual entries"
+      else
+        status_line "WARN" "tracker audit found issues or could not run"
+        printf '%s\n' "$audit_output"
+        status_line "NEXT" "sanitize tracker rows before widening alpha: ./script/audit_alpha_tracker.sh"
+      fi
     else
       status_line "WARN" "tracker folder exists but expected CSV files are missing"
       status_line "NEXT" "repair missing tracker files without replacing existing rows: ./script/prepare_alpha_tracker.sh"
@@ -212,6 +221,7 @@ print_next_actions() {
   status_line "NEXT" "generate tester invite: ./script/generate_alpha_invite.sh --tester-id tester_XXX"
   status_line "NEXT" "start approved tester: ./script/start_alpha.sh"
   status_line "NEXT" "collect safe evidence: ./script/prepare_alpha_tracker.sh"
+  status_line "NEXT" "audit private tracker: ./script/audit_alpha_tracker.sh"
   status_line "NEXT" "record successful tester: ./script/record_alpha_success.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
   status_line "NEXT" "record Day 7 follow-up: ./script/record_alpha_day7.sh --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
   status_line "NEXT" "weekly alpha summary: ./script/alpha_weekly_summary.sh"

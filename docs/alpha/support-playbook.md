@@ -54,6 +54,16 @@ If the issue is source/build related, ask for:
 
 They should paste only the pass/warn/fail summary and the failing section name.
 
+If tracker rows were edited manually during support, audit the private tracker
+before widening alpha:
+
+```sh
+./script/audit_alpha_tracker.sh
+```
+
+The audit prints only file, line, and issue type. It does not print private row
+contents.
+
 ## Missing Stripe Key
 
 Symptom:

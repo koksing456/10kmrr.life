@@ -68,6 +68,7 @@ These reduce maintenance risk.
 These make learning from testers less manual.
 
 - Turn the alpha user tracker into a small private spreadsheet or lightweight CRM workflow. Done: see [private-alpha-workflow.md](./private-alpha-workflow.md) and CSV templates under [templates](./templates).
+- Add a private tracker safety audit for manual row edits. Done: `./script/audit_alpha_tracker.sh` reports only file, line, and issue type.
 - Add a safe invite generator after approving a tester. Done: `./script/generate_alpha_invite.sh` prints a no-secret setup message for one stable tester id.
 - Add a 7-day follow-up cadence with retained/not-retained tags. Done: private alpha workflow defines Day 0/1/3/7 cadence and retention tagging.
 - Track install funnel stages: requested, approved, built, configured key, previewed, installed, saw MRR, retained day 7. Done: workflow defines exact stage values and `install-funnel.csv`.
