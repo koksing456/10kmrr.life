@@ -31,6 +31,9 @@ section "Support report redaction"
 section "Stripe key validation"
 ./script/configure_stripe_key.sh --self-test
 
+section "Installer plist generation"
+./script/install_lock_overlay_agent.sh --self-test
+
 section "Signing preflight parser"
 ./script/signing_preflight.sh --self-test
 

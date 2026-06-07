@@ -12,36 +12,92 @@ ERR_LOG="$APP_SUPPORT/logs/mrr-lock-overlay.err.log"
 KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
 LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
+SELF_TEST=false
+
+usage() {
+  cat <<EOF
+Usage: $0 [--self-test] [--help]
+
+Builds and installs the Lock Screen overlay LaunchAgent for the current user.
+
+Options:
+  --self-test  Verify LaunchAgent plist generation without installing anything.
+  --help       Show this help.
+EOF
+}
+
+generate_launch_agent_plist() {
+  local plist_path="$1"
+  local executable_path="$2"
+  local stdout_path="$3"
+  local stderr_path="$4"
+
+  rm -f "$plist_path"
+  /usr/bin/plutil -create xml1 "$plist_path"
+  /usr/bin/plutil -insert Label -string "life.10kmrr.mrr-lock-overlay" "$plist_path"
+  /usr/bin/plutil -insert ProgramArguments -array "$plist_path"
+  /usr/bin/plutil -insert ProgramArguments.0 -string "$executable_path" "$plist_path"
+  /usr/bin/plutil -insert ProgramArguments.1 -string "--private-glass" "$plist_path"
+  /usr/bin/plutil -insert RunAtLoad -bool YES "$plist_path"
+  /usr/bin/plutil -insert KeepAlive -bool YES "$plist_path"
+  /usr/bin/plutil -insert StandardOutPath -string "$stdout_path" "$plist_path"
+  /usr/bin/plutil -insert StandardErrorPath -string "$stderr_path" "$plist_path"
+  /usr/bin/plutil -lint "$plist_path" >/dev/null
+}
+
+self_test_plist_generation() {
+  local tmp_dir
+  tmp_dir="$(mktemp -d -t 10kmrr-install-plist-test.XXXXXX)"
+
+  local plist_path="$tmp_dir/life.10kmrr.mrr-lock-overlay.plist"
+  local executable_path="$tmp_dir/Application Support/10kmrr.life/A&B/MRRLockScreenOverlay"
+  local stdout_path="$tmp_dir/Application Support/10kmrr.life/logs/out.log"
+  local stderr_path="$tmp_dir/Application Support/10kmrr.life/logs/err.log"
+
+  generate_launch_agent_plist "$plist_path" "$executable_path" "$stdout_path" "$stderr_path"
+
+  local generated_executable generated_argument generated_stdout generated_stderr
+  generated_executable="$(/usr/libexec/PlistBuddy -c 'Print :ProgramArguments:0' "$plist_path")"
+  generated_argument="$(/usr/libexec/PlistBuddy -c 'Print :ProgramArguments:1' "$plist_path")"
+  generated_stdout="$(/usr/libexec/PlistBuddy -c 'Print :StandardOutPath' "$plist_path")"
+  generated_stderr="$(/usr/libexec/PlistBuddy -c 'Print :StandardErrorPath' "$plist_path")"
+
+  [[ "$generated_executable" == "$executable_path" ]]
+  [[ "$generated_argument" == "--private-glass" ]]
+  [[ "$generated_stdout" == "$stdout_path" ]]
+  [[ "$generated_stderr" == "$stderr_path" ]]
+
+  rm -rf "$tmp_dir"
+  printf 'Install LaunchAgent plist generation self-test passed.\n'
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    --self-test)
+      SELF_TEST=true
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 64
+      ;;
+  esac
+done
+
+if [[ "$SELF_TEST" == "true" ]]; then
+  self_test_plist_generation
+  exit 0
+fi
 
 "$ROOT_DIR/script/build_lock_overlay.sh" --verify
 
 mkdir -p "$APP_SUPPORT/logs" "$HOME/Library/LaunchAgents"
 rm -rf "$TARGET_APP"
 cp -R "$SOURCE_APP" "$TARGET_APP"
-cat >"$TARGET_PLIST" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>Label</key>
-	<string>life.10kmrr.mrr-lock-overlay</string>
-	<key>ProgramArguments</key>
-	<array>
-		<string>$EXECUTABLE</string>
-		<string>--private-glass</string>
-	</array>
-	<key>RunAtLoad</key>
-	<true/>
-	<key>KeepAlive</key>
-	<true/>
-	<key>StandardOutPath</key>
-	<string>$OUT_LOG</string>
-	<key>StandardErrorPath</key>
-	<string>$ERR_LOG</string>
-</dict>
-</plist>
-EOF
-/usr/bin/plutil -lint "$TARGET_PLIST" >/dev/null
+generate_launch_agent_plist "$TARGET_PLIST" "$EXECUTABLE" "$OUT_LOG" "$ERR_LOG"
 
 launchctl bootout "gui/$(id -u)" "$TARGET_PLIST" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$TARGET_PLIST"
