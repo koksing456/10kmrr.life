@@ -349,7 +349,7 @@ The Free vs Pro boundary lives at [docs/alpha/free-pro-boundary.md](./docs/alpha
 The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alpha/alpha-ops-checklist.md).
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
-Refresh only the local tracker instructions with `./script/prepare_alpha_tracker.sh --readme-only`; use `--force` only when you intentionally want to replace empty generated CSV templates.
+Refresh only the local tracker instructions with `./script/prepare_alpha_tracker.sh --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
 Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_pro_followup.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, and obvious money amounts where relevant.
 Run `./script/run_local_smoke.sh --apply --full-reset --record` only on a clean private-beta smoke machine when you are ready to record local install/repair/uninstall evidence. The default run is a dry run and does not change local state.
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).

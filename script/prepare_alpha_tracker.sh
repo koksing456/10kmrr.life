@@ -7,6 +7,14 @@ OUTPUT_DIR="$ROOT_DIR/build/alpha-tracker"
 SELF_TEST=false
 FORCE=false
 README_ONLY=false
+TRACKER_TEMPLATES=(
+  "alpha-users.csv"
+  "install-funnel.csv"
+  "compatibility.csv"
+  "local-smoke.csv"
+  "pro-interest.csv"
+  "weekly-review.csv"
+)
 
 usage() {
   cat <<EOF
@@ -143,8 +151,45 @@ copy_template() {
     return
   fi
 
+  if [[ -f "$target" && "$FORCE" == "true" ]] && tracker_file_has_private_rows "$target" "$TEMPLATE_DIR/$template_name"; then
+    printf 'Refusing to replace tracker file with existing private rows: %s\n' "$target" >&2
+    printf 'Move or back up that file first, then rerun with --force.\n' >&2
+    return 1
+  fi
+
   /bin/cp "$TEMPLATE_DIR/$template_name" "$target"
   printf 'Wrote tracker file: %s\n' "$target"
+}
+
+tracker_file_has_private_rows() {
+  local target="$1"
+  local template="$2"
+  local template_example=""
+
+  if [[ -f "$template" ]]; then
+    template_example="$(/usr/bin/sed -n '2p' "$template")"
+  fi
+
+  /usr/bin/awk -v template_example="$template_example" '
+    NR > 1 && length($0) > 0 && $0 != template_example { found = 1 }
+    END { exit found ? 0 : 1 }
+  ' "$target"
+}
+
+preflight_force_replace() {
+  local output_dir="$1"
+  local template_name target
+
+  [[ "$FORCE" == "true" ]] || return 0
+
+  for template_name in "${TRACKER_TEMPLATES[@]}"; do
+    target="$output_dir/$template_name"
+    if [[ -f "$target" ]] && tracker_file_has_private_rows "$target" "$TEMPLATE_DIR/$template_name"; then
+      printf 'Refusing --force because tracker file has existing private rows: %s\n' "$target" >&2
+      printf 'Move or back up that file first, then rerun with --force.\n' >&2
+      return 1
+    fi
+  done
 }
 
 validate_tracker_readme() {
@@ -183,15 +228,16 @@ validate_generated_tracker() {
 
 generate_tracker() {
   local output_dir="$1"
+  local template_name
 
   /bin/mkdir -p "$output_dir"
+  if ! preflight_force_replace "$output_dir"; then
+    return 1
+  fi
   write_readme "$output_dir"
-  copy_template "alpha-users.csv" "$output_dir"
-  copy_template "install-funnel.csv" "$output_dir"
-  copy_template "compatibility.csv" "$output_dir"
-  copy_template "local-smoke.csv" "$output_dir"
-  copy_template "pro-interest.csv" "$output_dir"
-  copy_template "weekly-review.csv" "$output_dir"
+  for template_name in "${TRACKER_TEMPLATES[@]}"; do
+    copy_template "$template_name" "$output_dir"
+  done
   validate_generated_tracker "$output_dir"
 
   printf '\nPrivate alpha tracker ready: %s\n' "$output_dir"
@@ -221,6 +267,11 @@ self_test() {
   README_ONLY=true
   refresh_readme_only "$OUTPUT_DIR" >/dev/null
   /usr/bin/grep -q 'tester_selftest' "$OUTPUT_DIR/install-funnel.csv"
+  README_ONLY=false
+  if generate_tracker "$OUTPUT_DIR" >/dev/null 2>&1; then
+    printf 'Alpha tracker self-test failed: --force replaced a tracker with private rows.\n' >&2
+    exit 1
+  fi
   printf 'Alpha tracker generation self-test passed.\n'
 }
 
