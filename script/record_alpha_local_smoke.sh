@@ -69,6 +69,11 @@ validate_safe_text() {
     printf 'Unsafe %s: contains email-like contact data. Keep contact mapping outside this repo.\n' "$label" >&2
     exit 1
   fi
+
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '\b(cus|sub|price|prod|pi|ch|in|cs|pm|seti|si)_[A-Za-z0-9]{8,}\b|client_secret|hosted_invoice_url|invoice_pdf|payment_method|customer_email'; then
+    printf 'Unsafe %s: contains Stripe object, customer, invoice, or payment identifiers. Use a non-sensitive summary instead.\n' "$label" >&2
+    exit 1
+  fi
 }
 
 validate_choice() {
@@ -168,6 +173,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --blocker "key rk_${live_env}_1234567890abcdef" >/dev/null 2>&1; then
     printf 'record_alpha_local_smoke self-test failed: secret-like token was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --blocker 'payment intent pi_1234567890abcdef appeared in report' >/dev/null 2>&1; then
+    printf 'record_alpha_local_smoke self-test failed: Stripe object id was accepted.\n' >&2
     exit 1
   fi
 

@@ -2,7 +2,7 @@
 
 Use this workflow for the gated alpha. Keep the working tracker private.
 
-Do not collect Stripe keys, exact private MRR, raw Stripe API responses, customer/payment data, raw logs, or unsanitized screenshots.
+Do not collect Stripe keys, Stripe object IDs, exact private MRR, raw Stripe API responses, customer/payment data, raw logs, or unsanitized screenshots.
 
 ## Tracker Setup
 
@@ -80,7 +80,7 @@ Record install attempts with the safe append script:
   --next-action "day 7 follow-up"
 ```
 
-The recorder rejects Stripe-key-like strings and obvious money amounts. Do not paste raw logs, exact MRR, raw Stripe responses, customer/payment data, or unsanitized screenshots into tracker fields.
+The recorder rejects Stripe-key-like strings, Stripe object IDs, raw Stripe fields, contact-like data, and obvious money amounts. Do not paste raw logs, exact MRR, raw Stripe responses, customer/payment data, or unsanitized screenshots into tracker fields.
 
 ## Compatibility Evidence
 

@@ -23,8 +23,9 @@ Usage: $0 --tester-id ID [options]
 Appends one safe install-funnel row to the private ignored alpha tracker:
   build/alpha-tracker/install-funnel.csv
 
-This script rejects Stripe-key-like strings and obvious money amounts. It is
-for pass/warn/fail summaries only, not raw logs or exact MRR.
+This script rejects Stripe-key-like strings, Stripe object IDs, raw Stripe
+fields, contact-like data, and obvious money amounts. It is for pass/warn/fail
+summaries only, not raw logs or exact MRR.
 
 Options:
   --tracker-dir DIR          Tracker directory. Default: build/alpha-tracker.
@@ -68,6 +69,11 @@ validate_safe_text() {
 
   if printf '%s\n' "$value" | /usr/bin/grep -Eq '[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+'; then
     printf 'Unsafe %s: contains email-like contact data. Keep contact mapping outside this repo.\n' "$label" >&2
+    exit 1
+  fi
+
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '\b(cus|sub|price|prod|pi|ch|in|cs|pm|seti|si)_[A-Za-z0-9]{8,}\b|client_secret|hosted_invoice_url|invoice_pdf|payment_method|customer_email'; then
+    printf 'Unsafe %s: contains Stripe object, customer, invoice, or payment identifiers. Use a non-sensitive summary instead.\n' "$label" >&2
     exit 1
   fi
 }
@@ -194,6 +200,14 @@ self_test() {
     --tester-id tester_003 \
     --diagnose-summary "key rk_${live_env}_1234567890abcdef" >/dev/null 2>&1; then
     printf 'record_alpha_install self-test failed: secret-like token was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id tester_004 \
+    --diagnose-summary 'raw subscription sub_1234567890abcdef' >/dev/null 2>&1; then
+    printf 'record_alpha_install self-test failed: Stripe object id was accepted.\n' >&2
     exit 1
   fi
 

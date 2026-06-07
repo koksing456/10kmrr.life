@@ -26,8 +26,9 @@ Usage: $0 --tester-id ID [options]
 Appends one safe alpha-users row to the private ignored alpha tracker:
   build/alpha-tracker/alpha-users.csv
 
-Do not store names, emails, Stripe keys, exact MRR, raw logs, customer data, or
-unsanitized screenshots here. Keep identity/contact mapping outside this repo.
+Do not store names, emails, Stripe keys, Stripe object IDs, exact MRR, raw logs,
+customer/payment data, or unsanitized screenshots here. Keep identity/contact
+mapping outside this repo.
 
 Options:
   --tracker-dir DIR                Tracker directory. Default: build/alpha-tracker.
@@ -74,6 +75,11 @@ validate_safe_text() {
 
   if printf '%s\n' "$value" | /usr/bin/grep -Eq '[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+'; then
     printf 'Unsafe %s: contains email-like contact data. Keep contact mapping outside this repo.\n' "$label" >&2
+    exit 1
+  fi
+
+  if printf '%s\n' "$value" | /usr/bin/grep -Eq '\b(cus|sub|price|prod|pi|ch|in|cs|pm|seti|si)_[A-Za-z0-9]{8,}\b|client_secret|hosted_invoice_url|invoice_pdf|payment_method|customer_email'; then
+    printf 'Unsafe %s: contains Stripe object, customer, invoice, or payment identifiers. Use a non-sensitive summary instead.\n' "$label" >&2
     exit 1
   fi
 }
@@ -193,6 +199,11 @@ self_test() {
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_003 --blocker "key rk_${live_env}_1234567890abcdef" >/dev/null 2>&1; then
     printf 'record_alpha_user self-test failed: secret-like token was accepted.\n' >&2
+    exit 1
+  fi
+
+  if "$0" --tracker-dir "$temp_dir/tracker" --tester-id tester_004 --blocker 'customer cus_1234567890abcdef shared raw response' >/dev/null 2>&1; then
+    printf 'record_alpha_user self-test failed: Stripe object id was accepted.\n' >&2
     exit 1
   fi
 

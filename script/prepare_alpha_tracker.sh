@@ -60,6 +60,7 @@ Use stable tester ids such as tester_001. Keep identity and contact mapping outs
 Do not collect:
 
 - Stripe API keys
+- Stripe object IDs
 - exact private MRR
 - raw Stripe API responses
 - customer, subscription, invoice, payment, email, or card data
@@ -194,7 +195,7 @@ preflight_force_replace() {
 
 validate_tracker_readme() {
   local output_dir="$1"
-  local forbidden='(Stripe API keys|exact private MRR|raw Stripe API responses|customer, subscription, invoice, payment, email, or card data|unsanitized screenshots)'
+  local forbidden='(Stripe API keys|Stripe object IDs|exact private MRR|raw Stripe API responses|customer, subscription, invoice, payment, email, or card data|unsanitized screenshots)'
 
   test -s "$output_dir/README.md"
   /usr/bin/grep -Eq "$forbidden" "$output_dir/README.md"
