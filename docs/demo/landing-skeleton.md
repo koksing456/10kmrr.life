@@ -57,8 +57,7 @@ This alpha depends on private macOS behavior for Lock Screen placement and glass
 
 Collect:
 
-- Name / handle.
-- Email or contact.
+- Non-sensitive public request fields only.
 - Uses Stripe subscriptions: yes/no.
 - Main macOS version.
 - Why they want MRR on Lock Screen.
@@ -68,6 +67,7 @@ Do not collect:
 
 - Stripe API key.
 - Exact MRR.
+- Name, handle, email, or preferred contact in the public request flow.
 - Customer or payment data.
 
 ## Pro Interest

@@ -2,11 +2,12 @@
 
 Use this tracker for approved gated alpha testers only.
 
-Do not record Stripe API keys, raw revenue logs, customer/payment data, or unsanitized screenshots.
+Do not record Stripe API keys, raw revenue logs, customer/payment data, email/contact data, names, handles, or unsanitized screenshots.
+Keep identity and contact mapping outside this repo. Use stable tester ids such as `tester_001`.
 
-| Candidate | Contact | Uses Stripe subscriptions | Primary Mac version | Approved | Install status | Key setup status | First MRR seen | Day 7 retained | Pro interest | Blocker | Next action |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Example Founder | handle/email | yes/no/unknown | macOS version | yes/no | not sent/sent/installed/failed | not started/success/failed | yes/no | yes/no/unknown | none/low/medium/high | short note | short note |
+| Tester ID | Uses Stripe subscriptions | Primary Mac version | Approved | Install status | Key setup status | First MRR seen | Day 7 retained | Pro interest | Blocker | Next action |
+|---|---|---|---|---|---|---|---|---|---|---|
+| tester_001 | yes/no/unknown | macOS version | yes/no | not sent/sent/installed/failed | not started/success/failed | yes/no | yes/no/unknown | none/low/medium/high | short note | short note |
 
 ## Approval Criteria
 

@@ -276,6 +276,9 @@ require_phrase PRIVACY.md 'not a notarized public Mac app yet'
 require_phrase docs/release/release-notes-template.md 'No Stripe keys are included'
 require_phrase docs/release/release-notes-template.md 'No real MRR screenshots are included unless explicitly sanitized and approved'
 require_phrase docs/release/release-notes-template.md 'not a public notarized installer'
+require_phrase docs/alpha/alpha-request-template.md 'Keep name, handle, email, and preferred contact mapping outside this repo and outside public GitHub issues'
+require_phrase docs/alpha/alpha-user-tracker.md 'Use stable tester ids such as `tester_001`'
+require_phrase docs/demo/landing-skeleton.md 'Name, handle, email, or preferred contact in the public request flow'
 
 section "GitHub issue safety wording"
 for issue_template in .github/ISSUE_TEMPLATE/alpha_feedback.md .github/ISSUE_TEMPLATE/alpha_request.yml .github/ISSUE_TEMPLATE/bug_report.md; do

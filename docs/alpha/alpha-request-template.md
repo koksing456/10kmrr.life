@@ -6,8 +6,7 @@ The public GitHub issue form lives at [.github/ISSUE_TEMPLATE/alpha_request.yml]
 
 ## Request Fields
 
-- Name or handle:
-- Email or preferred contact:
+- Stable tester id, if already assigned privately:
 - macOS version:
 - Apple Silicon or Intel:
 - Uses Stripe subscriptions: yes / no
@@ -16,10 +15,13 @@ The public GitHub issue form lives at [.github/ISSUE_TEMPLATE/alpha_request.yml]
 - What would make you uninstall it after a week?
 - Interested in Pro convenience features: yes / no / maybe
 
+Keep name, handle, email, and preferred contact mapping outside this repo and outside public GitHub issues.
+
 ## Never Collect
 
 - Stripe API keys.
 - Exact MRR.
+- Names, handles, emails, or preferred contact in public issues or repo-tracked files.
 - Raw Stripe API responses.
 - Stripe dashboard screenshots.
 - Customer names, emails, payments, subscriptions, or invoices.
