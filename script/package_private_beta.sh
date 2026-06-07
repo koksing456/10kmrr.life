@@ -8,10 +8,12 @@ EXECUTABLE="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 PACKAGE_DIR="$ROOT_DIR/build/private-beta"
 STAGE_DIR="$PACKAGE_DIR/stage"
 ADHOC=false
+SELF_TEST=false
 
 usage() {
   cat <<EOF
 Usage: $0 --adhoc
+       $0 --self-test
 
 Builds a private, unnotarized beta zip under build/private-beta.
 
@@ -21,10 +23,63 @@ only suitable for internal/private alpha testing.
 EOF
 }
 
+write_manifest() {
+  local manifest_path="$1"
+  local package_file="$2"
+  local version="$3"
+  local commit="$4"
+
+  cat >"$manifest_path" <<EOF
+10kmrr.life private beta package
+
+Package: $package_file
+Version: $version
+Commit: $commit
+Architecture: universal arm64 x86_64
+Signing: ad-hoc
+Notarized: no
+Distribution: private alpha testing only
+
+Safety boundary:
+- Do not publish this zip as a public installer.
+- Do not bundle Stripe keys.
+- Do not share exact private MRR, raw Stripe responses, raw logs, customer data, payment data, or unsanitized screenshots.
+- Use ./script/install_lock_overlay_agent.sh for LaunchAgent installation from source.
+- Use ./script/uninstall_lock_overlay_agent.sh --all for a full local reset.
+
+Verification:
+- ./script/verify_public_repo.sh passed before packaging.
+- codesign --verify --deep --strict passed.
+- lipo verified arm64 and x86_64 slices.
+EOF
+}
+
+self_test_manifest() {
+  local tmp_dir
+  tmp_dir="$(mktemp -d -t 10kmrr-package-self-test.XXXXXX)"
+  local manifest_path="$tmp_dir/manifest.txt"
+
+  write_manifest "$manifest_path" "10kmrr-life-0.1.0-test-unnotarized-private-beta.zip" "0.1.0" "testcommit"
+
+  /usr/bin/grep -q '^Signing: ad-hoc$' "$manifest_path"
+  /usr/bin/grep -q '^Notarized: no$' "$manifest_path"
+  /usr/bin/grep -q '^Distribution: private alpha testing only$' "$manifest_path"
+  /usr/bin/grep -q 'Do not publish this zip as a public installer' "$manifest_path"
+  /usr/bin/grep -q 'Do not bundle Stripe keys' "$manifest_path"
+  /usr/bin/grep -q 'unsanitized screenshots' "$manifest_path"
+  /usr/bin/grep -q 'verify_public_repo.sh passed before packaging' "$manifest_path"
+
+  rm -rf "$tmp_dir"
+  printf 'Private beta package manifest self-test passed.\n'
+}
+
 for arg in "$@"; do
   case "$arg" in
     --adhoc)
       ADHOC=true
+      ;;
+    --self-test)
+      SELF_TEST=true
       ;;
     --help|-h)
       usage
@@ -36,6 +91,11 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+if [[ "$SELF_TEST" == "true" ]]; then
+  self_test_manifest
+  exit 0
+fi
 
 if [[ "$ADHOC" != "true" ]]; then
   usage >&2
@@ -77,29 +137,7 @@ fi
   /usr/bin/shasum -a 256 "$(basename "$zip_path")" >"$sha_path"
 )
 
-cat >"$manifest_path" <<EOF
-10kmrr.life private beta package
-
-Package: $(basename "$zip_path")
-Version: $version
-Commit: $commit
-Architecture: universal arm64 x86_64
-Signing: ad-hoc
-Notarized: no
-Distribution: private alpha testing only
-
-Safety boundary:
-- Do not publish this zip as a public installer.
-- Do not bundle Stripe keys.
-- Do not share exact private MRR, raw Stripe responses, raw logs, customer data, payment data, or unsanitized screenshots.
-- Use ./script/install_lock_overlay_agent.sh for LaunchAgent installation from source.
-- Use ./script/uninstall_lock_overlay_agent.sh --all for a full local reset.
-
-Verification:
-- ./script/verify_public_repo.sh passed before packaging.
-- codesign --verify --deep --strict passed.
-- lipo verified arm64 and x86_64 slices.
-EOF
+write_manifest "$manifest_path" "$(basename "$zip_path")" "$version" "$commit"
 
 printf 'Wrote private beta package artifacts:\n'
 printf '  %s\n' "$zip_path"

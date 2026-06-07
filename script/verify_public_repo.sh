@@ -52,6 +52,9 @@ section "Installer plist generation"
 section "Signing preflight parser"
 ./script/signing_preflight.sh --self-test
 
+section "Private beta package manifest"
+./script/package_private_beta.sh --self-test
+
 section "Markdown local links"
 ./script/verify_markdown_links.sh
 
