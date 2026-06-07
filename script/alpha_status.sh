@@ -80,6 +80,7 @@ tracker_readme_current() {
   local readme="$TRACKER_DIR/README.md"
   [[ -f "$readme" ]] || return 1
   /usr/bin/grep -q 'Keep identity and contact mapping outside this repo' "$readme" &&
+    /usr/bin/grep -q './script/approve_alpha_tester.sh' "$readme" &&
     /usr/bin/grep -q './script/run_local_smoke.sh --apply --full-reset --confirm-full-reset --record' "$readme" &&
     /usr/bin/grep -q './script/record_alpha_success.sh' "$readme" &&
     /usr/bin/grep -q 'Stripe object IDs' "$readme"
@@ -205,6 +206,7 @@ print_ci_status() {
 print_next_actions() {
   section "Default next actions"
   status_line "NEXT" "before repo changes: ./script/check.sh"
+  status_line "NEXT" "approve tester: ./script/approve_alpha_tester.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"
   status_line "NEXT" "start approved tester: ./script/start_alpha.sh"
   status_line "NEXT" "collect safe evidence: ./script/prepare_alpha_tracker.sh"
   status_line "NEXT" "record successful tester: ./script/record_alpha_success.sh --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in"

@@ -70,7 +70,7 @@ Do not collect:
 
 Suggested workflow:
 
-1. Record approved testers with ./script/record_alpha_user.sh.
+1. Approve testers and print their safe invite path with ./script/approve_alpha_tester.sh.
 2. Send docs/alpha/alpha-invite-template.md to approved testers.
 3. Ask them to run ./script/start_alpha.sh --tester-id tester_001.
 4. Ask for ./script/support_report.sh only if something fails.
@@ -83,17 +83,14 @@ Suggested workflow:
 10. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
 11. Record only pass/warn/fail summaries and non-sensitive blockers.
 
-Example install evidence row:
+Example approved tester and install evidence rows:
 
-./script/record_alpha_user.sh \\
+./script/approve_alpha_tester.sh \\
   --tester-id tester_001 \\
   --uses-stripe-subscriptions yes \\
   --macos-version 15.5 \\
   --cpu apple_silicon \\
-  --display-setup built_in \\
-  --approved yes \\
-  --current-stage approved \\
-  --next-action "send invite"
+  --display-setup built_in
 
 ./script/record_alpha_install.sh \\
   --tester-id tester_001 \\

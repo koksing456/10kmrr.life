@@ -17,10 +17,10 @@ Before setup:
 Setup path:
 
 ```sh
-./script/start_alpha.sh
+./script/start_alpha.sh --tester-id tester_001
 ```
 
-This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
+Replace `tester_001` with the private stable tester id assigned outside this public repo. This opens the setup window and mock preview before installing. Enter the restricted key only in the macOS setup window, never in Terminal or support messages.
 
 If something fails:
 

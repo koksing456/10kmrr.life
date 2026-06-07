@@ -356,6 +356,7 @@ The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alph
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/prepare_alpha_tracker.sh` before inviting testers.
 Refresh only the local tracker instructions with `./script/prepare_alpha_tracker.sh --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
+Approve a tester and print their safe invite path with `./script/approve_alpha_tester.sh --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in`.
 Append safe tracker rows with `./script/record_alpha_user.sh`, `./script/record_alpha_install.sh`, `./script/record_alpha_compatibility.sh`, `./script/record_alpha_local_smoke.sh`, `./script/record_alpha_pro_followup.sh`, and `./script/record_alpha_weekly_review.sh`; they reject contact-like data, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, and obvious money amounts where relevant.
 For the common success case after a tester installs, sees MRR, confirms Lock Screen visibility, and confirms the overlay hides after unlock, use the shorter evidence packet:
 

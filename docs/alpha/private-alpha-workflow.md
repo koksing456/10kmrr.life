@@ -51,19 +51,18 @@ Use one of these exact stage values:
 
 Only advance a tester when the previous stage is confirmed by their non-sensitive report or a safe diagnostic summary.
 
-Record approved testers with the safe append script:
+Approve testers and print their safe invite path with:
 
 ```sh
-./script/record_alpha_user.sh \
+./script/approve_alpha_tester.sh \
   --tester-id tester_001 \
   --uses-stripe-subscriptions yes \
   --macos-version 15.5 \
   --cpu apple_silicon \
-  --display-setup built_in \
-  --approved yes \
-  --current-stage approved \
-  --next-action "send invite"
+  --display-setup built_in
 ```
+
+Use `./script/record_alpha_user.sh` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.
 
 Record install attempts with the safe append script when the setup is partial, warns, or fails:
 
