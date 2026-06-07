@@ -30,6 +30,27 @@ section() {
   printf '\n==> %s\n' "$1"
 }
 
+github_repo_slug_for_remote() {
+  local remote="$1"
+  case "$remote" in
+    git@github.com:*)
+      printf '%s\n' "${remote#git@github.com:}" | /usr/bin/sed 's/\.git$//'
+      ;;
+    https://github.com/*)
+      printf '%s\n' "${remote#https://github.com/}" | /usr/bin/sed 's/\.git$//'
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+github_repo_slug() {
+  local remote
+  remote="$(/usr/bin/git -C "$ROOT_DIR" remote get-url origin 2>/dev/null || true)"
+  github_repo_slug_for_remote "$remote"
+}
+
 tracked_row_count() {
   local file="$1"
   local template_file="${2:-}"
@@ -128,7 +149,7 @@ print_signing_status() {
 }
 
 print_ci_status() {
-  local latest
+  local latest repo
 
   section "GitHub Actions"
   if [[ "$NO_NETWORK" == "true" ]]; then
@@ -142,7 +163,13 @@ print_ci_status() {
     return
   fi
 
-  latest="$(gh run list --repo koksing456/10kmrr.life --limit 1 --json status,conclusion,headSha,displayTitle,workflowName --jq '.[] | [.workflowName, .displayTitle, .status, (.conclusion // ""), (.headSha[0:7])] | @tsv' 2>/dev/null || true)"
+  if ! repo="$(github_repo_slug)"; then
+    status_line "WARN" "could not infer GitHub repo from origin remote"
+    status_line "NEXT" "run local gate: ./script/check.sh"
+    return
+  fi
+
+  latest="$(gh run list --repo "$repo" --limit 1 --json status,conclusion,headSha,displayTitle,workflowName --jq '.[] | [.workflowName, .displayTitle, .status, (.conclusion // ""), (.headSha[0:7])] | @tsv' 2>/dev/null || true)"
   if [[ -z "$latest" ]]; then
     status_line "WARN" "could not read latest GitHub Actions run"
     status_line "NEXT" "run local gate: ./script/check.sh"
@@ -155,7 +182,7 @@ print_ci_status() {
     status_line "PASS" "latest CI passed"
   else
     status_line "WARN" "latest CI status: $status ${conclusion:-pending}"
-    status_line "NEXT" "inspect: gh run list --repo koksing456/10kmrr.life --limit 3"
+    status_line "NEXT" "inspect: gh run list --repo $repo --limit 3"
   fi
 }
 
@@ -169,12 +196,16 @@ print_next_actions() {
 }
 
 self_test() {
-  local output
+  local output repo
   output="$("$0" --no-network)"
   printf '%s\n' "$output" | /usr/bin/grep -q '10kmrr.life alpha status'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private alpha evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Signing and notarization'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Default next actions'
+  repo="$(github_repo_slug_for_remote 'git@github.com:example/10kmrr.life.git')"
+  [[ "$repo" == "example/10kmrr.life" ]]
+  repo="$(github_repo_slug_for_remote 'https://github.com/example/10kmrr.life.git')"
+  [[ "$repo" == "example/10kmrr.life" ]]
   if printf '%s\n' "$output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'alpha_status self-test failed: output contained a secret-like token.\n' >&2
     exit 1
