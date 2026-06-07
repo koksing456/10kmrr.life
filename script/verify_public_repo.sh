@@ -98,6 +98,9 @@ section "Alpha user recorder"
 section "Alpha Pro follow-up recorder"
 ./script/record_alpha_pro_followup.sh --self-test
 
+section "Alpha weekly review recorder"
+./script/record_alpha_weekly_review.sh --self-test
+
 section "Alpha status summary"
 ./script/alpha_status.sh --self-test
 

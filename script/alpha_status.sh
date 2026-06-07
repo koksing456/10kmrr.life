@@ -32,11 +32,27 @@ section() {
 
 tracked_row_count() {
   local file="$1"
+  local template_file="${2:-}"
+  local template_example=""
   if [[ ! -f "$file" ]]; then
     printf '0'
     return
   fi
-  /usr/bin/awk 'NR > 1 && $0 !~ /^example,/ && length($0) > 0 { count++ } END { print count + 0 }' "$file"
+  if [[ -n "$template_file" && -f "$template_file" ]]; then
+    template_example="$(/usr/bin/sed -n '2p' "$template_file")"
+  fi
+  /usr/bin/awk -v template_example="$template_example" '
+    NR > 1 && length($0) > 0 && $0 != template_example { count++ }
+    END { print count + 0 }
+  ' "$file"
+}
+
+template_header_matches() {
+  local generated_file="$1"
+  local template_file="$2"
+
+  [[ -f "$generated_file" && -f "$template_file" ]] || return 1
+  [[ "$(/usr/bin/head -1 "$generated_file")" == "$(/usr/bin/head -1 "$template_file")" ]]
 }
 
 print_git_status() {
@@ -58,18 +74,29 @@ print_git_status() {
 }
 
 print_tracker_status() {
-  local users_count install_count pro_count
+  local users_count install_count pro_count weekly_count
 
   section "Private alpha evidence"
   if [[ -d "$TRACKER_DIR" ]]; then
     if [[ -s "$TRACKER_DIR/alpha-users.csv" && -s "$TRACKER_DIR/install-funnel.csv" && -s "$TRACKER_DIR/pro-interest.csv" && -s "$TRACKER_DIR/weekly-review.csv" ]]; then
       status_line "PASS" "private tracker exists: $TRACKER_DIR"
-      users_count="$(tracked_row_count "$TRACKER_DIR/alpha-users.csv")"
-      install_count="$(tracked_row_count "$TRACKER_DIR/install-funnel.csv")"
-      pro_count="$(tracked_row_count "$TRACKER_DIR/pro-interest.csv")"
+      if template_header_matches "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv" &&
+         template_header_matches "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv" &&
+         template_header_matches "$TRACKER_DIR/pro-interest.csv" "$ROOT_DIR/docs/alpha/templates/pro-interest.csv" &&
+         template_header_matches "$TRACKER_DIR/weekly-review.csv" "$ROOT_DIR/docs/alpha/templates/weekly-review.csv"; then
+        status_line "PASS" "tracker headers match current templates"
+      else
+        status_line "WARN" "tracker headers differ from current templates"
+        status_line "NEXT" "regenerate empty tracker templates with: ./script/prepare_alpha_tracker.sh --force"
+      fi
+      users_count="$(tracked_row_count "$TRACKER_DIR/alpha-users.csv" "$ROOT_DIR/docs/alpha/templates/alpha-users.csv")"
+      install_count="$(tracked_row_count "$TRACKER_DIR/install-funnel.csv" "$ROOT_DIR/docs/alpha/templates/install-funnel.csv")"
+      pro_count="$(tracked_row_count "$TRACKER_DIR/pro-interest.csv" "$ROOT_DIR/docs/alpha/templates/pro-interest.csv")"
+      weekly_count="$(tracked_row_count "$TRACKER_DIR/weekly-review.csv" "$ROOT_DIR/docs/alpha/templates/weekly-review.csv")"
       status_line "INFO" "non-example alpha users tracked: $users_count"
       status_line "INFO" "non-example install attempts tracked: $install_count"
       status_line "INFO" "non-example Pro follow-ups tracked: $pro_count"
+      status_line "INFO" "non-example weekly reviews tracked: $weekly_count"
     else
       status_line "WARN" "tracker folder exists but expected CSV files are missing"
       status_line "NEXT" "repair with: ./script/prepare_alpha_tracker.sh --force"

@@ -61,7 +61,8 @@ Suggested workflow:
 4. Ask for ./script/support_report.sh only if something fails.
 5. Record install attempts with ./script/record_alpha_install.sh.
 6. Record Day 7 / Pro signal with ./script/record_alpha_pro_followup.sh.
-7. Record only pass/warn/fail summaries and non-sensitive blockers.
+7. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
+8. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example install evidence row:
 
@@ -93,6 +94,16 @@ Example install evidence row:
   --compatibility-updates 2 \\
   --overall-pro-signal medium \\
   --notes "kept it on for day 7"
+
+./script/record_alpha_weekly_review.sh \\
+  --week-start 2026-06-08 \\
+  --support-load low \\
+  --setup-failure-rate low \\
+  --retention-count 2 \\
+  --pro-signal-count 1 \\
+  --compatibility-failures 0 \\
+  --decision continue \\
+  --next-action "invite next tester"
 EOF
 }
 

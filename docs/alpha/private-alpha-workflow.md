@@ -137,6 +137,20 @@ Review:
 
 Pause wider alpha expansion if install failure rate exceeds 30 percent for the same reason, if testers repeatedly try to send secrets, or if private macOS API behavior fails on common supported macOS versions.
 
+Record the aggregate weekly review with:
+
+```sh
+./script/record_alpha_weekly_review.sh \
+  --week-start 2026-06-08 \
+  --support-load low \
+  --setup-failure-rate low \
+  --retention-count 2 \
+  --pro-signal-count 1 \
+  --compatibility-failures 0 \
+  --decision continue \
+  --next-action "invite next tester"
+```
+
 ## Public Quotes
 
 Do not publish testimonials by default.
