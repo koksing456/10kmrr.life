@@ -11,6 +11,7 @@ CPU="unknown"
 DISPLAY_SETUP="unknown"
 FORCE=false
 SELF_TEST=false
+DRY_RUN=false
 
 usage() {
   cat <<EOF
@@ -33,6 +34,7 @@ Options:
   --cpu VALUE                      apple_silicon|intel|unknown.
   --display-setup VALUE            built_in|external|multiple|unknown.
   --force                          Allow rewriting an existing invite file and appending another row.
+  --dry-run                        Print the safe packet without writing tracker rows or invite files.
   --self-test                      Verify wrapper behavior in a temporary tracker.
   --help                           Show this help.
 EOF
@@ -135,13 +137,8 @@ assert_invite_safe() {
   fi
 }
 
-write_invite_packet() {
-  local output_file="$1"
-  local temp_file
-
-  /bin/mkdir -p "$OUTPUT_DIR"
-  temp_file="$(/usr/bin/mktemp -t 10kmrr-alpha-invite.XXXXXX)"
-
+render_invite_packet() {
+  local target_file="$1"
   {
     printf '# 10kmrr.life Alpha Invite Packet\n\n'
     printf '%s\n' "- Tester id: \`$TESTER_ID\`"
@@ -162,10 +159,36 @@ write_invite_packet() {
     printf '```sh\n'
     printf './script/record_alpha_support_issue.sh --tester-id %s --issue-type lock_screen --result fail\n' "$(shell_quote "$TESTER_ID")"
     printf '```\n'
-  } >"$temp_file"
+  } >"$target_file"
+}
 
+write_invite_packet() {
+  local output_file="$1"
+  local temp_file
+
+  /bin/mkdir -p "$OUTPUT_DIR"
+  temp_file="$(/usr/bin/mktemp -t 10kmrr-alpha-invite.XXXXXX)"
+
+  render_invite_packet "$temp_file"
   assert_invite_safe "$temp_file"
   /bin/mv "$temp_file" "$output_file"
+}
+
+dry_run_packet() {
+  local temp_file
+  temp_file="$(/usr/bin/mktemp -t 10kmrr-alpha-invite-dry-run.XXXXXX)"
+
+  validate_tester_id "$TESTER_ID"
+  validate_choice "uses Stripe subscriptions" "$USES_STRIPE_SUBSCRIPTIONS" $'yes\nno\nunknown'
+  validate_choice "cpu" "$CPU" $'apple_silicon\nintel\nunknown'
+  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nunknown'
+
+  render_invite_packet "$temp_file"
+  assert_invite_safe "$temp_file"
+
+  printf 'DRY RUN: no tracker row or invite file was written.\n\n'
+  /bin/cat "$temp_file"
+  /bin/rm -f "$temp_file"
 }
 
 prepare_packet() {
@@ -175,6 +198,12 @@ prepare_packet() {
   validate_choice "uses Stripe subscriptions" "$USES_STRIPE_SUBSCRIPTIONS" $'yes\nno\nunknown'
   validate_choice "cpu" "$CPU" $'apple_silicon\nintel\nunknown'
   validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nunknown'
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    dry_run_packet
+    return
+  fi
+
   ensure_tracker
 
   output_file="$OUTPUT_DIR/$TESTER_ID.md"
@@ -228,6 +257,22 @@ self_test() {
   /usr/bin/grep -q './script/record_alpha_success.sh' "$temp_dir/invites/tester_001.md"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 
+  output="$("$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --output-dir "$temp_dir/dry-run-invites" \
+    --tester-id tester_002 \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup built_in \
+    --dry-run)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'DRY RUN: no tracker row or invite file was written'
+  printf '%s\n' "$output" | /usr/bin/grep -q '# 10kmrr.life Alpha Invite Packet'
+  test ! -e "$temp_dir/dry-run-invites/tester_002.md"
+  if /usr/bin/grep -q '"tester_002"' "$temp_dir/tracker/alpha-users.csv"; then
+    printf 'prepare_alpha_invite_packet self-test failed: dry-run wrote a tracker row.\n' >&2
+    exit 1
+  fi
+
   if "$0" --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/invites" --tester-id tester_001 >/dev/null 2>&1; then
     printf 'prepare_alpha_invite_packet self-test failed: duplicate tester id was accepted without --force.\n' >&2
     exit 1
@@ -261,6 +306,7 @@ while [[ $# -gt 0 ]]; do
     --cpu) require_arg "$1" "${2:-}"; CPU="$2"; shift 2 ;;
     --display-setup) require_arg "$1" "${2:-}"; DISPLAY_SETUP="$2"; shift 2 ;;
     --force) FORCE=true; shift ;;
+    --dry-run) DRY_RUN=true; shift ;;
     --self-test) SELF_TEST=true; shift ;;
     --help|-h) usage; exit 0 ;;
     *) usage >&2; exit 64 ;;

@@ -65,6 +65,8 @@ Prepare the approved tester invite packet with:
   --display-setup built_in
 ```
 
+Add `--dry-run` to preview the packet without writing a tracker row or invite file.
+
 This approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`. Use `./script/approve_alpha_tester.sh` and `./script/generate_alpha_invite.sh` directly only when you intentionally need the lower-level split flow.
 
 Use `./script/record_alpha_user.sh` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.

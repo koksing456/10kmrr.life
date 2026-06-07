@@ -30,6 +30,7 @@ Commands:
 
 Examples:
   $0 next
+  $0 invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --dry-run
   $0 invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in
   $0 start --tester-id tester_001
   $0 success --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in
@@ -81,6 +82,10 @@ self_test() {
   output="$("$0" invite --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/invites" --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Prepared safe alpha invite packet'
   test -s "$temp_dir/invites/tester_001.md"
+
+  output="$("$0" invite --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/dry-run-invites" --tester-id tester_002 --macos-version 15.5 --cpu apple_silicon --display-setup built_in --dry-run)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'DRY RUN: no tracker row or invite file was written'
+  test ! -e "$temp_dir/dry-run-invites/tester_002.md"
 
   if "$0" nope >/dev/null 2>&1; then
     printf 'alpha self-test failed: unknown command was accepted.\n' >&2

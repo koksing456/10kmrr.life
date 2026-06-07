@@ -16,6 +16,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Confirm they understand this is source alpha, not a notarized public installer.
 - Confirm they are comfortable creating a restricted read-only Stripe key.
 - Send SECURITY.md before any setup conversation.
+- Preview the invite packet with `./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run` if you want to inspect the message before approving.
 - Prepare the tester invite packet with `./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in`.
 - Send the generated invite body from ignored `build/alpha-invites/tester_XXX.md`.
 - Send [alpha-invite-template.md](./alpha-invite-template.md) after approval only if you need to edit the template manually.
