@@ -86,6 +86,11 @@ self_test() {
   printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/signing_preflight.sh --require-ready'
   printf '%s\n' "$ready_steps" | /usr/bin/grep -q './script/package_private_beta.sh --adhoc'
 
+  if TENKMRR_NOTARY_PROFILE='private-profile-name' "$0" 2>/dev/null | /usr/bin/grep -q 'private-profile-name'; then
+    printf 'Signing preflight self-test failed: notary profile name was printed.\n' >&2
+    exit 1
+  fi
+
   printf 'Signing preflight self-test passed.\n'
 }
 
@@ -164,10 +169,10 @@ if [[ "$has_notarytool" == "true" ]]; then
     printf 'WARN  TENKMRR_NOTARY_PROFILE is not set. Notary keychain profile readiness is not verified.\n'
     missing=1
   elif verify_notary_profile "$notary_profile" "$notary_output"; then
-    printf 'PASS  Notary keychain profile is available: %s\n' "$notary_profile"
+    printf 'PASS  Notary keychain profile is available.\n'
     has_notary_profile=true
   else
-    printf 'WARN  Notary keychain profile could not be verified: %s\n' "$notary_profile"
+    printf 'WARN  Configured notary keychain profile could not be verified.\n'
     missing=1
   fi
 else
