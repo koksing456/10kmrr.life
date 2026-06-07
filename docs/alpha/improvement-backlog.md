@@ -6,11 +6,11 @@ This backlog captures the next meaningful improvements after public-alpha readin
 
 These should happen before inviting more than a handful of testers.
 
-- Add focused MRR calculation tests with sanitized Stripe fixtures.
-- Add a clean install smoke checklist that covers build, setup, preview, install, diagnose, uninstall, and reinstall.
-- Add a compatibility matrix for macOS version, Apple Silicon vs Intel, external displays, and whether private glass works.
+- Add focused MRR calculation tests with sanitized Stripe fixtures. Done: covered by `./script/test_mrr_calculator.sh`.
+- Add a clean install smoke checklist that covers build, setup, preview, install, diagnose, uninstall, and reinstall. Done: see [install-smoke-checklist.md](./install-smoke-checklist.md).
+- Add a compatibility matrix for macOS version, Apple Silicon vs Intel, external displays, and whether private glass works. Done: see [compatibility-matrix.md](./compatibility-matrix.md).
 - Split the 1200+ line Swift app into smaller files: model, Stripe client, MRR calculator, setup UI, overlay UI, SkyLight integration, and app delegate.
-- Add a safe support playbook for common failures: missing key, Stripe permission error, LaunchAgent not loaded, no lock-screen visibility, stale cache, and private API fallback.
+- Add a safe support playbook for common failures: missing key, Stripe permission error, LaunchAgent not loaded, no lock-screen visibility, stale cache, and private API fallback. Done: see [support-playbook.md](./support-playbook.md).
 - Replace mailto-only alpha intake with a simple gated form or private issue flow that explicitly blocks secrets and raw revenue data.
 
 ## P1: Product Experience
@@ -41,7 +41,7 @@ These reduce friction and make the source alpha easier to trust.
 
 These reduce maintenance risk.
 
-- Convert Stripe pagination from recursion to an iterative loop with an explicit page cap.
+- Convert Stripe pagination from recursion to an iterative loop with an explicit page cap. Done: `StripeMRRClient` caps each subscription status at 100 pages.
 - Add timeout, retry, and backoff policy for Stripe requests.
 - Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases.
 - Add a fixture format for sanitized Stripe subscription responses.

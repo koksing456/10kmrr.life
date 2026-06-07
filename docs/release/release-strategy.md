@@ -33,6 +33,7 @@ The alpha should first prove:
 
 - `./script/verify_public_repo.sh` passes.
 - `./script/build_lock_overlay.sh --verify` passes.
+- `./script/test_mrr_calculator.sh` passes.
 - `./script/install_lock_overlay_agent.sh` works from a clean checkout.
 - `./script/diagnose.sh` gives safe, actionable output.
 - No Stripe keys, real MRR screenshots, local-only paths, or generated artifacts are committed.
@@ -47,6 +48,6 @@ Run this before pushing release-readiness changes:
 ./script/verify_public_repo.sh
 ```
 
-The gate checks shell syntax, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, and required public docs.
+The gate checks shell syntax, focused MRR calculator tests, local app build/signing, required sanitized demo assets, obvious Stripe secret patterns, local-only paths, retired wallpaper artifacts, ignored private folders, and required public docs.
 
 It does not install the LaunchAgent. Install/reinstall remains a separate local manual test because it mutates the user's machine state.

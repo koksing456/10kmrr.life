@@ -18,8 +18,12 @@ bash -n \
   script/install_lock_overlay_agent.sh \
   script/open_setup.sh \
   script/serve_site.sh \
+  script/test_mrr_calculator.sh \
   script/uninstall_lock_overlay_agent.sh \
   script/verify_public_repo.sh
+
+section "MRR calculator tests"
+./script/test_mrr_calculator.sh
 
 section "macOS app build and signing"
 ./script/build_lock_overlay.sh --verify
@@ -71,6 +75,9 @@ test -s SECURITY.md
 test -s LICENSE
 test -s docs/alpha/free-pro-boundary.md
 test -s docs/alpha/alpha-ops-checklist.md
+test -s docs/alpha/install-smoke-checklist.md
+test -s docs/alpha/compatibility-matrix.md
+test -s docs/alpha/support-playbook.md
 test -s docs/alpha/improvement-backlog.md
 test -s docs/release/release-strategy.md
 

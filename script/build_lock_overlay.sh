@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_NAME="MRRLockScreenOverlay"
-SOURCE="$ROOT_DIR/MRRLockScreenOverlay/MRRLockScreenOverlay.swift"
+SOURCE_DIR="$ROOT_DIR/MRRLockScreenOverlay"
 INFO_PLIST="$ROOT_DIR/MRRLockScreenOverlay/Info.plist"
 BUILD_DIR="$ROOT_DIR/build/LockScreenOverlay"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
@@ -13,6 +13,10 @@ build_app() {
   rm -rf "$APP_BUNDLE"
   mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources" "$ROOT_DIR/build/logs"
   cp "$INFO_PLIST" "$APP_BUNDLE/Contents/Info.plist"
+  local sources=()
+  while IFS= read -r source; do
+    sources+=("$source")
+  done < <(/usr/bin/find "$SOURCE_DIR" -name '*.swift' -print | /usr/bin/sort)
   /usr/bin/swiftc \
     -swift-version 5 \
     -target arm64-apple-macos14.0 \
@@ -22,7 +26,7 @@ build_app() {
     -framework Security \
     -framework CoreGraphics \
     -framework CoreFoundation \
-    "$SOURCE" \
+    "${sources[@]}" \
     -o "$EXECUTABLE"
   /usr/bin/codesign --force --sign - --timestamp=none "$APP_BUNDLE" >/dev/null
   printf 'Built %s\n' "$APP_BUNDLE"

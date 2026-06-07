@@ -74,6 +74,12 @@ There is no 10kmrr.life server in the current alpha path. The app reads Stripe d
 ./script/build_lock_overlay.sh --verify
 ```
 
+Run focused MRR calculation tests with sanitized Stripe fixtures:
+
+```sh
+./script/test_mrr_calculator.sh
+```
+
 Before pushing public-alpha repo changes:
 
 ```sh
@@ -182,6 +188,9 @@ Useful alpha prep docs live under [docs/mvp](./docs/mvp), [docs/alpha](./docs/al
 The alpha request template lives at [docs/alpha/alpha-request-template.md](./docs/alpha/alpha-request-template.md).
 The Free vs Pro boundary lives at [docs/alpha/free-pro-boundary.md](./docs/alpha/free-pro-boundary.md).
 The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alpha/alpha-ops-checklist.md).
+The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
+The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
+The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).
 The improvement backlog lives at [docs/alpha/improvement-backlog.md](./docs/alpha/improvement-backlog.md).
 
 ## Open Source Boundary

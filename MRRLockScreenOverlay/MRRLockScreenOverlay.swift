@@ -18,6 +18,7 @@ private enum OverlayError: LocalizedError {
     case invalidResponse
     case stripeHTTP(Int, String)
     case stripePermissionHint
+    case stripePaginationLimit(String)
     case skylightUnavailable
 
     var errorDescription: String? {
@@ -30,19 +31,11 @@ private enum OverlayError: LocalizedError {
             return "Stripe returned HTTP \(status). \(message)"
         case .stripePermissionHint:
             return "Stripe key cannot read the required Billing resources. Check restricted key permissions."
+        case let .stripePaginationLimit(status):
+            return "Stripe pagination exceeded the local safety limit while reading \(status) subscriptions."
         case .skylightUnavailable:
             return "Private SkyLight APIs are unavailable on this macOS build."
         }
-    }
-}
-
-private struct MRRResult: Codable, Equatable {
-    var minorUnitsByCurrency: [String: Int64]
-    var excludedMeteredItems: Int
-    var excludedFreeItems: Int
-
-    var isEmpty: Bool {
-        minorUnitsByCurrency.isEmpty
     }
 }
 
@@ -1000,6 +993,12 @@ private enum KeychainStore {
 private final class StripeMRRClient {
     private let apiKey: String
     private let session: URLSession
+    private let maxPagesPerStatus = 100
+
+    private struct StripeSubscriptionPage {
+        var subscriptions: [[String: Any]]
+        var hasMore: Bool
+    }
 
     init(apiKey: String) {
         self.apiKey = apiKey
@@ -1011,12 +1010,29 @@ private final class StripeMRRClient {
 
     func fetchMRR() async throws -> MRRResult {
         var subscriptions: [[String: Any]] = []
-        try await fetch(status: "active", startingAfter: nil, into: &subscriptions)
-        try await fetch(status: "past_due", startingAfter: nil, into: &subscriptions)
+        try await fetchAll(status: "active", into: &subscriptions)
+        try await fetchAll(status: "past_due", into: &subscriptions)
         return MRRCalculator.calculate(from: subscriptions)
     }
 
-    private func fetch(status: String, startingAfter: String?, into subscriptions: inout [[String: Any]]) async throws {
+    private func fetchAll(status: String, into subscriptions: inout [[String: Any]]) async throws {
+        var startingAfter: String?
+
+        for _ in 0..<maxPagesPerStatus {
+            let page = try await fetchPage(status: status, startingAfter: startingAfter)
+            subscriptions.append(contentsOf: page.subscriptions)
+
+            guard page.hasMore else { return }
+            guard let lastID = page.subscriptions.last?["id"] as? String else {
+                throw OverlayError.invalidResponse
+            }
+            startingAfter = lastID
+        }
+
+        throw OverlayError.stripePaginationLimit(status)
+    }
+
+    private func fetchPage(status: String, startingAfter: String?) async throws -> StripeSubscriptionPage {
         var components = URLComponents(string: "https://api.stripe.com/v1/subscriptions")!
         var queryItems = [
             URLQueryItem(name: "status", value: status),
@@ -1049,11 +1065,8 @@ private final class StripeMRRClient {
         }
 
         let page = json["data"] as? [[String: Any]] ?? []
-        subscriptions.append(contentsOf: page)
         let hasMore = (json["has_more"] as? NSNumber)?.boolValue ?? false
-        if hasMore, let lastID = page.last?["id"] as? String {
-            try await fetch(status: status, startingAfter: lastID, into: &subscriptions)
-        }
+        return StripeSubscriptionPage(subscriptions: page, hasMore: hasMore)
     }
 
     private static func safeStripeErrorMessage(from data: Data) -> String {
@@ -1078,101 +1091,6 @@ private final class StripeMRRClient {
             return String(joined.prefix(217)) + "..."
         }
         return joined
-    }
-}
-
-private enum MRRCalculator {
-    static func calculate(from subscriptions: [[String: Any]]) -> MRRResult {
-        var totals: [String: Int64] = [:]
-        var excludedMetered = 0
-        var excludedFree = 0
-
-        for subscription in subscriptions {
-            let status = subscription["status"] as? String ?? ""
-            guard status == "active" || status == "past_due" else { continue }
-
-            let itemsContainer = subscription["items"] as? [String: Any]
-            let items = itemsContainer?["data"] as? [[String: Any]] ?? []
-            for item in items {
-                let price = item["price"] as? [String: Any] ?? [:]
-                let recurring = price["recurring"] as? [String: Any] ?? [:]
-                if (recurring["usage_type"] as? String) == "metered" {
-                    excludedMetered += 1
-                    continue
-                }
-
-                let unitAmount = unitAmountMinorUnits(from: price)
-                let quantity = (item["quantity"] as? NSNumber)?.intValue ?? 1
-                if unitAmount <= 0 || quantity <= 0 {
-                    excludedFree += 1
-                    continue
-                }
-
-                var monthlyAmount = monthlyAmountMinorUnits(unitAmount: unitAmount, recurring: recurring) * Double(quantity)
-                monthlyAmount = applyDiscounts(subscription["discounts"], to: monthlyAmount)
-                if let legacyDiscount = subscription["discount"] as? [String: Any] {
-                    monthlyAmount = applyDiscounts([legacyDiscount], to: monthlyAmount)
-                }
-                monthlyAmount = applyDiscounts(item["discounts"], to: monthlyAmount)
-
-                let currency = (price["currency"] as? String ?? "").lowercased()
-                guard !currency.isEmpty, monthlyAmount > 0 else { continue }
-                totals[currency, default: 0] += Int64(monthlyAmount.rounded())
-            }
-        }
-
-        return MRRResult(
-            minorUnitsByCurrency: totals,
-            excludedMeteredItems: excludedMetered,
-            excludedFreeItems: excludedFree
-        )
-    }
-
-    private static func unitAmountMinorUnits(from price: [String: Any]) -> Double {
-        if let decimal = price["unit_amount_decimal"] as? String {
-            return Double(decimal) ?? 0
-        }
-        return (price["unit_amount"] as? NSNumber)?.doubleValue ?? 0
-    }
-
-    private static func monthlyAmountMinorUnits(unitAmount: Double, recurring: [String: Any]) -> Double {
-        let interval = recurring["interval"] as? String ?? "month"
-        let count = max(1, (recurring["interval_count"] as? NSNumber)?.intValue ?? 1)
-
-        switch interval {
-        case "day":
-            return unitAmount * 30 / Double(count)
-        case "week":
-            return unitAmount * (52 / 12) / Double(count)
-        case "year":
-            return unitAmount / (12 * Double(count))
-        default:
-            return unitAmount / Double(count)
-        }
-    }
-
-    private static func applyDiscounts(_ object: Any?, to amount: Double) -> Double {
-        var discounts: [[String: Any]] = []
-        if let array = object as? [[String: Any]] {
-            discounts = array
-        } else if let container = object as? [String: Any] {
-            discounts = container["data"] as? [[String: Any]] ?? [container]
-        }
-
-        var result = amount
-        for discount in discounts {
-            guard let coupon = discount["coupon"] as? [String: Any] else { continue }
-            if let percent = (coupon["percent_off"] as? NSNumber)?.doubleValue {
-                result *= max(0, 1 - percent / 100)
-            }
-            if let amountOff = (coupon["amount_off"] as? NSNumber)?.doubleValue {
-                let duration = coupon["duration"] as? String ?? ""
-                if duration == "forever" || duration.isEmpty {
-                    result = max(0, result - amountOff)
-                }
-            }
-        }
-        return result
     }
 }
 
@@ -1257,7 +1175,13 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-let app = NSApplication.shared
-private let delegate = AppDelegate()
-app.delegate = delegate
-app.run()
+@main
+private enum MRRLockScreenOverlayApplication {
+    private static let delegate = AppDelegate()
+
+    static func main() {
+        let app = NSApplication.shared
+        app.delegate = delegate
+        app.run()
+    }
+}

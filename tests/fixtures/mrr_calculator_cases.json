@@ -1,0 +1,281 @@
+{
+  "cases": [
+    {
+      "name": "mixed recurring intervals and exclusions",
+      "subscriptions": [
+        {
+          "id": "sub_mock_mixed",
+          "status": "active",
+          "items": {
+            "data": [
+              {
+                "quantity": 2,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 10000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 120000,
+                  "recurring": {
+                    "interval": "year",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 2300,
+                  "recurring": {
+                    "interval": "week",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 100,
+                  "recurring": {
+                    "interval": "day",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 0,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 2500,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "metered"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "sub_mock_past_due",
+          "status": "past_due",
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "eur",
+                  "unit_amount": 5000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "sub_mock_canceled",
+          "status": "canceled",
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 999999,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "expectedMinorUnitsByCurrency": {
+        "usd": 42967,
+        "eur": 5000
+      },
+      "expectedExcludedMeteredItems": 1,
+      "expectedExcludedFreeItems": 1
+    },
+    {
+      "name": "subscription legacy and item discounts",
+      "subscriptions": [
+        {
+          "id": "sub_mock_percent_discount",
+          "status": "active",
+          "discounts": [
+            {
+              "coupon": {
+                "percent_off": 25,
+                "duration": "forever"
+              }
+            }
+          ],
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 10000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "sub_mock_item_amount_discount",
+          "status": "active",
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "discounts": [
+                  {
+                    "coupon": {
+                      "amount_off": 1000,
+                      "duration": "forever"
+                    }
+                  }
+                ],
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 5000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "sub_mock_legacy_discount",
+          "status": "active",
+          "discount": {
+            "coupon": {
+              "percent_off": 10,
+              "duration": "forever"
+            }
+          },
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 10000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "expectedMinorUnitsByCurrency": {
+        "usd": 20500
+      },
+      "expectedExcludedMeteredItems": 0,
+      "expectedExcludedFreeItems": 0
+    },
+    {
+      "name": "interval counts and decimal amount",
+      "subscriptions": [
+        {
+          "id": "sub_mock_interval_counts",
+          "status": "active",
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 30000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 3,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 240000,
+                  "recurring": {
+                    "interval": "year",
+                    "interval_count": 2,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount_decimal": "1234.5",
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "expectedMinorUnitsByCurrency": {
+        "usd": 21235
+      },
+      "expectedExcludedMeteredItems": 0,
+      "expectedExcludedFreeItems": 0
+    }
+  ]
+}
