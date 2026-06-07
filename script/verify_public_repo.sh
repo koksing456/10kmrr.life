@@ -10,21 +10,17 @@ section() {
 }
 
 section "Shell syntax"
-bash -n \
-  script/build_lock_overlay.sh \
-  script/capture_demo_assets.sh \
-  script/capture_demo_video.sh \
-  script/configure_stripe_key.sh \
-  script/diagnose.sh \
-  script/install_lock_overlay_agent.sh \
-  script/open_setup.sh \
-  script/package_private_beta.sh \
-  script/serve_site.sh \
-  script/signing_preflight.sh \
-  script/support_report.sh \
-  script/test_mrr_calculator.sh \
-  script/uninstall_lock_overlay_agent.sh \
-  script/verify_public_repo.sh
+while IFS= read -r script_path; do
+  bash -n "$script_path"
+done < <(find script -maxdepth 1 -type f -name '*.sh' | sort)
+
+section "Executable script bits"
+while IFS= read -r script_path; do
+  if [[ ! -x "$script_path" ]]; then
+    printf 'Expected script to be executable: %s\n' "$script_path" >&2
+    exit 1
+  fi
+done < <(find script -maxdepth 1 -type f -name '*.sh' | sort)
 
 section "MRR calculator tests"
 ./script/test_mrr_calculator.sh
