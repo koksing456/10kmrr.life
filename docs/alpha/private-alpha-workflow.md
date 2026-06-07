@@ -102,7 +102,7 @@ Use the lower-level install recorder only when you need a custom partial row:
   --next-action "day 7 follow-up"
 ```
 
-The recorder rejects Stripe-key-like strings, Stripe object IDs, raw Stripe fields, contact-like data, and obvious money amounts. Do not paste raw logs, exact MRR, raw Stripe responses, customer/payment data, or unsanitized screenshots into tracker fields.
+The recorder rejects placeholder evidence, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, contact-like data, and obvious money amounts. Do not paste raw logs, exact MRR, raw Stripe responses, customer/payment data, or unsanitized screenshots into tracker fields.
 
 ## Compatibility Evidence
 

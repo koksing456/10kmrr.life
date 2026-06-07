@@ -70,6 +70,7 @@ scan_file() {
   done < <(
     /usr/bin/awk -v template_example="$template_example" '
       NR <= 1 || length($0) == 0 || $0 == template_example { next }
+      /(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)/ { print NR ":placeholder evidence"; next }
       /sk_live_|sk_test_|rk_live_|rk_test_|whsec_/ { print NR ":secret-like token"; next }
       /[^[:space:]@,"]+@[^[:space:]@,"]+\.[^[:space:]@,"]+/ { print NR ":email-like contact data"; next }
       /\b(cus|sub|price|prod|pi|ch|in|cs|pm|seti|si)_[A-Za-z0-9]{8,}\b|client_secret|hosted_invoice_url|invoice_pdf|payment_method|customer_email/ { print NR ":Stripe object or raw Stripe field"; next }
@@ -149,6 +150,24 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'secret-like token'
   if printf '%s\n' "$output" | /usr/bin/grep -Eq "rk_${live_env}_1234567890abcdef"; then
     printf 'audit_alpha_tracker self-test failed: audit output printed the unsafe value.\n' >&2
+    exit 1
+  fi
+
+  /bin/rm -rf "$temp_dir/tracker"
+  /bin/mkdir -p "$temp_dir/tracker"
+  /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
+  printf 'tester_XXX,yes,15.x,apple_silicon,built_in,yes,approved,not_sent,not_started,unknown,unknown,none,"","send invite"\n' >>"$temp_dir/tracker/alpha-users.csv"
+  if "$0" --tracker-dir "$temp_dir/tracker" >/tmp/10kmrr-alpha-audit-placeholder.$$ 2>&1; then
+    printf 'audit_alpha_tracker self-test failed: placeholder tracker row was accepted.\n' >&2
+    /bin/rm -f /tmp/10kmrr-alpha-audit-placeholder.$$
+    exit 1
+  fi
+  output="$(cat /tmp/10kmrr-alpha-audit-placeholder.$$)"
+  /bin/rm -f /tmp/10kmrr-alpha-audit-placeholder.$$
+  printf '%s\n' "$output" | /usr/bin/grep -q 'alpha-users.csv:'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'placeholder evidence'
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq 'tester_XXX|15\.x'; then
+    printf 'audit_alpha_tracker self-test failed: audit output printed placeholder row contents.\n' >&2
     exit 1
   fi
 
