@@ -18,8 +18,8 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 - Confirm they are comfortable creating a restricted read-only Stripe key.
 - Send SECURITY.md before any setup conversation.
 - Preview the invite packet with `./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run` before writing any tracker rows.
-- Prepare the tester invite packet only after you have a real tester assigned to that stable id: remove `--dry-run` from the preview command.
-- Send the generated invite body from ignored `build/alpha-invites/tester_XXX.md`.
+- Prepare the tester invite packet only after you have a real tester assigned to that stable id: replace `tester_XXX` and `15.x`, then remove `--dry-run`.
+- Send the generated invite body from ignored `build/alpha-invites/<tester-id>.md`.
 - Send [alpha-invite-template.md](./alpha-invite-template.md) after approval only if you need to edit the template manually.
 
 ## During Setup

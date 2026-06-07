@@ -220,7 +220,7 @@ print_next_actions() {
   status_line "NEXT" "single recommended action: ./script/alpha.sh next"
   status_line "NEXT" "write readiness report: ./script/alpha.sh report"
   status_line "NEXT" "preview tester invite packet without writing evidence: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
-  status_line "NEXT" "write invite packet only for a real approved tester: remove --dry-run from the preview command"
+  status_line "NEXT" "write invite packet only for a real approved tester: replace tester_XXX and 15.x, then remove --dry-run"
   status_line "NEXT" "template, replace tester_XXX first: ./script/alpha.sh start --tester-id tester_XXX"
   status_line "NEXT" "collect safe evidence: ./script/alpha.sh tracker"
   status_line "NEXT" "audit private tracker: ./script/alpha.sh audit"
@@ -239,6 +239,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private alpha evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Signing and notarization'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Default next actions'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'replace tester_XXX and 15.x, then remove --dry-run'
   printf '%s\n' "$output" | /usr/bin/grep -q 'template, replace tester_XXX first'
   printf '%s\n' "$output" | /usr/bin/grep -q 'template, replace tester_XXX and 15.x first'
   repo="$(github_repo_slug_for_remote 'git@github.com:example/10kmrr.life.git')"
