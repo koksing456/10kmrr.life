@@ -18,6 +18,10 @@ struct SetupLocalSupport {
         return "Source checkout not detected from this app bundle. Copy commands and run them from your 10kmrr.life checkout."
     }
 
+    var supportReportURL: URL? {
+        sourceRootURL?.appendingPathComponent("build/support/10kmrr-support-report.txt")
+    }
+
     func command(scriptName: String, arguments: [String] = []) -> String {
         let scriptCommand = ([scriptName] + arguments).joined(separator: " ")
         let baseCommand = "./script/\(scriptCommand)"
@@ -50,6 +54,19 @@ struct SetupLocalSupport {
 
     static func redactedHomePath(_ path: String, homeDirectory: String = NSHomeDirectory()) -> String {
         path.replacingOccurrences(of: homeDirectory, with: "~")
+    }
+
+    static func redactedLocalPath(
+        _ path: String,
+        homeDirectory: String = NSHomeDirectory(),
+        sourceRootURL: URL?
+    ) -> String {
+        var redacted = path
+        if let sourceRootURL {
+            redacted = redacted.replacingOccurrences(of: sourceRootURL.path, with: "<repo>")
+        }
+        redacted = redacted.replacingOccurrences(of: homeDirectory, with: "~")
+        return redacted
     }
 
     static func sanitizedDiagnosticSummary(

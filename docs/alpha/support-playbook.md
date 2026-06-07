@@ -30,7 +30,7 @@ If the setup window opens, ask the tester to use the Install & support card:
 
 - Click `Run Diagnose`.
 - Share only the PASS/WARN summary, not screenshots with real MRR.
-- Use `Copy Support Report` if a sanitized support report is needed.
+- Use `Generate Report` if a sanitized support report is needed, then review the opened report before sharing.
 
 Ask the tester to run:
 

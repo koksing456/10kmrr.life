@@ -21,8 +21,9 @@ private enum SetupLocalSupportTests {
             try testSourceRootDetection()
             try testCommandGeneration()
             try testShellQuoting()
+            try testSupportReportPathAndRedaction()
             try testDiagnosticSummarySanitizesSensitiveValues()
-            print("Setup local support tests passed (4 cases).")
+            print("Setup local support tests passed (5 cases).")
         } catch {
             fputs("\(error)\n", stderr)
             exit(1)
@@ -82,6 +83,26 @@ private enum SetupLocalSupportTests {
             SetupLocalSupport.shellQuotedPath("/tmp/kok's app"),
             "'/tmp/kok'\\''s app'",
             "single quote shell escaping"
+        )
+    }
+
+    private static func testSupportReportPathAndRedaction() throws {
+        let sourceRootURL = URL(fileURLWithPath: "/Users/example/10kmrr.life")
+        let support = SetupLocalSupport(sourceRootURL: sourceRootURL)
+
+        try assertEqual(
+            support.supportReportURL?.path,
+            "/Users/example/10kmrr.life/build/support/10kmrr-support-report.txt",
+            "support report path"
+        )
+        try assertEqual(
+            SetupLocalSupport.redactedLocalPath(
+                "/Users/example/10kmrr.life/build/support/10kmrr-support-report.txt",
+                homeDirectory: "/Users/example",
+                sourceRootURL: sourceRootURL
+            ),
+            "<repo>/build/support/10kmrr-support-report.txt",
+            "support report display path"
         )
     }
 

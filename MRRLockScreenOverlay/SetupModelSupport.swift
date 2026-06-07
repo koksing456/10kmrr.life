@@ -3,7 +3,11 @@ import Foundation
 
 extension SetupModel {
     var canRunDiagnostic: Bool {
-        localSupport.sourceRootURL != nil && !isRunningDiagnostic
+        localSupport.sourceRootURL != nil && !isRunningDiagnostic && !isGeneratingSupportReport
+    }
+
+    var canGenerateSupportReport: Bool {
+        localSupport.sourceRootURL != nil && !isRunningDiagnostic && !isGeneratingSupportReport
     }
 
     var installCommand: String {
@@ -41,6 +45,20 @@ extension SetupModel {
         supportText = "Opened local logs folder."
     }
 
+    func openSupportReport() {
+        guard let reportURL = localSupport.supportReportURL else {
+            supportText = "Source checkout not detected. Generate the support report from your checkout first."
+            return
+        }
+
+        if FileManager.default.fileExists(atPath: reportURL.path) {
+            NSWorkspace.shared.open(reportURL)
+            supportText = "Opened sanitized support report."
+        } else {
+            supportText = "No support report exists yet. Click Generate Report first."
+        }
+    }
+
     func runDiagnostic() async {
         guard !isRunningDiagnostic else { return }
         guard let sourceRootURL = localSupport.sourceRootURL else {
@@ -56,6 +74,34 @@ extension SetupModel {
         refreshStatus()
         refreshCacheStatus()
         isRunningDiagnostic = false
+    }
+
+    func generateSupportReport() async {
+        guard !isGeneratingSupportReport else { return }
+        guard let sourceRootURL = localSupport.sourceRootURL else {
+            supportText = "Source checkout not detected. Copy the support report command and run it from your checkout."
+            return
+        }
+
+        isGeneratingSupportReport = true
+        supportText = "Generating sanitized support report..."
+
+        let output = await Self.runScript(named: "support_report.sh", in: sourceRootURL)
+        if let reportURL = localSupport.supportReportURL,
+           FileManager.default.fileExists(atPath: reportURL.path) {
+            let safePath = SetupLocalSupport.redactedLocalPath(
+                reportURL.path,
+                sourceRootURL: sourceRootURL
+            )
+            supportText = "Generated sanitized support report:\n\(safePath)\nReview before sharing."
+            NSWorkspace.shared.open(reportURL)
+        } else {
+            supportText = SetupLocalSupport.sanitizedDiagnosticSummary(from: output)
+        }
+
+        refreshStatus()
+        refreshCacheStatus()
+        isGeneratingSupportReport = false
     }
 
     private func copyToPasteboard(_ value: String) {
