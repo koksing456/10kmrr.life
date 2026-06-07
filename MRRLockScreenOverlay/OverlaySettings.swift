@@ -88,6 +88,28 @@ enum OverlayDisplayMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum OverlayVisualStyle: String, CaseIterable, Identifiable {
+    case full
+    case compact
+    case number
+    case goal
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .full:
+            return "Full"
+        case .compact:
+            return "Compact"
+        case .number:
+            return "Number"
+        case .goal:
+            return "Goal"
+        }
+    }
+}
+
 enum OverlaySettingsStore {
     private static let defaults = UserDefaults(suiteName: "life.10kmrr.MRRLockScreenOverlay.Settings") ?? .standard
     private static let refreshIntervalKey = "refreshIntervalSeconds"
@@ -95,6 +117,9 @@ enum OverlaySettingsStore {
     private static let horizontalPlacementKey = "horizontalPlacement"
     private static let sizePresetKey = "sizePreset"
     private static let displayModeKey = "displayMode"
+    private static let visualStyleKey = "visualStyle"
+    private static let goalCurrencyKey = "goalCurrency"
+    private static let goalMinorUnitsKey = "goalMinorUnits"
 
     static var refreshIntervalSeconds: TimeInterval {
         let stored = defaults.integer(forKey: refreshIntervalKey)
@@ -166,8 +191,57 @@ enum OverlaySettingsStore {
         }
     }
 
+    static var visualStyle: OverlayVisualStyle {
+        get {
+            guard let rawValue = defaults.string(forKey: visualStyleKey),
+                  let visualStyle = OverlayVisualStyle(rawValue: rawValue)
+            else {
+                return .full
+            }
+            return visualStyle
+        }
+        set {
+            defaults.set(newValue.rawValue, forKey: visualStyleKey)
+        }
+    }
+
+    static var goalCurrency: String {
+        get {
+            let stored = defaults.string(forKey: goalCurrencyKey) ?? "usd"
+            let cleaned = stored.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return cleaned.isEmpty ? "usd" : cleaned
+        }
+        set {
+            let cleaned = newValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            defaults.set(cleaned.isEmpty ? "usd" : cleaned, forKey: goalCurrencyKey)
+        }
+    }
+
+    static var goalMinorUnits: Int64? {
+        get {
+            guard let value = defaults.object(forKey: goalMinorUnitsKey) as? NSNumber else { return nil }
+            let minorUnits = value.int64Value
+            return minorUnits > 0 ? minorUnits : nil
+        }
+        set {
+            if let newValue, newValue > 0 {
+                defaults.set(NSNumber(value: newValue), forKey: goalMinorUnitsKey)
+            } else {
+                defaults.removeObject(forKey: goalMinorUnitsKey)
+            }
+        }
+    }
+
     static var panelSize: NSSize {
-        sizePreset.size
+        let baseSize = sizePreset.size
+        switch visualStyle {
+        case .full, .goal:
+            return baseSize
+        case .compact:
+            return NSSize(width: max(330, baseSize.width - 58), height: max(118, baseSize.height - 44))
+        case .number:
+            return NSSize(width: max(292, baseSize.width - 112), height: max(92, baseSize.height - 76))
+        }
     }
 
     static func reset() {
@@ -176,5 +250,8 @@ enum OverlaySettingsStore {
         defaults.removeObject(forKey: horizontalPlacementKey)
         defaults.removeObject(forKey: sizePresetKey)
         defaults.removeObject(forKey: displayModeKey)
+        defaults.removeObject(forKey: visualStyleKey)
+        defaults.removeObject(forKey: goalCurrencyKey)
+        defaults.removeObject(forKey: goalMinorUnitsKey)
     }
 }

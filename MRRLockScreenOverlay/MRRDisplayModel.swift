@@ -47,6 +47,16 @@ final class MRRDisplayModel: ObservableObject {
         return "Stripe MRR"
     }
 
+    func amountMinorUnits(for currency: String) -> Int64? {
+        let normalized = currency.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !normalized.isEmpty else { return nil }
+        return result?.minorUnitsByCurrency[normalized]
+    }
+
+    func displayValue(minorUnits: Int64, currency: String) -> String {
+        Self.format(minorUnits: minorUnits, currency: currency)
+    }
+
     func refresh() async {
         guard !isRefreshing else { return }
         guard !mockMRRMode else {

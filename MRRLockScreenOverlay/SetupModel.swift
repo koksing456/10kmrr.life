@@ -15,6 +15,9 @@ final class SetupModel: ObservableObject {
     @Published var horizontalPlacement = OverlayHorizontalPlacement.center
     @Published var sizePreset = OverlaySizePreset.medium
     @Published var displayMode = OverlayDisplayMode.main
+    @Published var visualStyle = OverlayVisualStyle.full
+    @Published var goalCurrencyInput = "USD"
+    @Published var goalAmountInput = ""
     @Published var lastRefreshText = "No cached MRR refresh yet"
     @Published var cacheDetailText = "No last-good MRR cache found"
 
@@ -52,6 +55,9 @@ final class SetupModel: ObservableObject {
         horizontalPlacement = OverlaySettingsStore.horizontalPlacement
         sizePreset = OverlaySettingsStore.sizePreset
         displayMode = OverlaySettingsStore.displayMode
+        visualStyle = OverlaySettingsStore.visualStyle
+        goalCurrencyInput = OverlaySettingsStore.goalCurrency.uppercased()
+        goalAmountInput = Self.formatGoalAmount(OverlaySettingsStore.goalMinorUnits)
     }
 
     func saveSettings() {
@@ -60,6 +66,9 @@ final class SetupModel: ObservableObject {
         OverlaySettingsStore.horizontalPlacement = horizontalPlacement
         OverlaySettingsStore.sizePreset = sizePreset
         OverlaySettingsStore.displayMode = displayMode
+        OverlaySettingsStore.visualStyle = visualStyle
+        OverlaySettingsStore.goalCurrency = goalCurrencyInput
+        OverlaySettingsStore.goalMinorUnits = Self.parseGoalMinorUnits(goalAmountInput)
         testText = "Saved display settings. Restart installed overlay to apply them."
     }
 
@@ -140,6 +149,33 @@ final class SetupModel: ObservableObject {
         formatter.dateStyle = .none
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+
+    private static func parseGoalMinorUnits(_ input: String) -> Int64? {
+        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let decimal = Decimal(string: trimmed),
+              decimal > 0
+        else {
+            return nil
+        }
+        let minorUnits = decimal * Decimal(100)
+        return NSDecimalNumber(decimal: minorUnits).rounding(
+            accordingToBehavior: NSDecimalNumberHandler(
+                roundingMode: .plain,
+                scale: 0,
+                raiseOnExactness: false,
+                raiseOnOverflow: false,
+                raiseOnUnderflow: false,
+                raiseOnDivideByZero: false
+            )
+        ).int64Value
+    }
+
+    private static func formatGoalAmount(_ minorUnits: Int64?) -> String {
+        guard let minorUnits else { return "" }
+        let decimal = Decimal(minorUnits) / Decimal(100)
+        return NSDecimalNumber(decimal: decimal).stringValue
     }
 
     private func cacheSummary(forCurrencyCount currencyCount: Int) -> String {

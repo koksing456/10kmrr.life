@@ -131,7 +131,9 @@ Preview with mock MRR before configuring a Stripe key:
 
 The preview uses the selected display mode from setup. It does not unload the installed LaunchAgent.
 
-The setup window also lets you preview a mock overlay before adding a Stripe key, refresh MRR now, confirm when the last-good cache was updated, and choose the local refresh interval, vertical position, horizontal position, panel size, and display mode. These settings are stored locally and apply the next time the overlay starts.
+The setup window also lets you preview a mock overlay before adding a Stripe key, refresh MRR now, confirm when the last-good cache was updated, and choose the local refresh interval, vertical position, horizontal position, panel size, display mode, visual style, and optional MRR goal. These settings are stored locally and apply the next time the overlay starts.
+
+Visual styles include full panel, compact panel, number-only, and goal panel. Goal settings are local-only and are used only to render progress on the Lock Screen.
 
 The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.
 

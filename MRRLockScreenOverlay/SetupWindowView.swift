@@ -115,6 +115,26 @@ struct SetupWindowView: View {
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 236)
+                HStack(spacing: 18) {
+                    Picker("Style", selection: $model.visualStyle) {
+                        ForEach(OverlayVisualStyle.allCases) { visualStyle in
+                            Text(visualStyle.label).tag(visualStyle)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 332)
+                }
+                HStack(spacing: 10) {
+                    TextField("Goal currency", text: $model.goalCurrencyInput)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 116)
+                    TextField("Goal MRR amount", text: $model.goalAmountInput)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 166)
+                    Text("Used by Goal style")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
                 HStack(spacing: 10) {
                     Button("Save Settings") {
                         model.saveSettings()

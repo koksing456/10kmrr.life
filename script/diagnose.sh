@@ -162,6 +162,9 @@ placement="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" placement 2>/dev/null |
 horizontal_placement="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" horizontalPlacement 2>/dev/null || true; } | /usr/bin/head -1)"
 size_preset="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" sizePreset 2>/dev/null || true; } | /usr/bin/head -1)"
 display_mode="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" displayMode 2>/dev/null || true; } | /usr/bin/head -1)"
+visual_style="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" visualStyle 2>/dev/null || true; } | /usr/bin/head -1)"
+goal_currency="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" goalCurrency 2>/dev/null || true; } | /usr/bin/head -1)"
+goal_minor_units="$({ /usr/bin/defaults read "$SETTINGS_DOMAIN" goalMinorUnits 2>/dev/null || true; } | /usr/bin/head -1)"
 if [[ -n "$refresh_interval" && "$refresh_interval" =~ ^[0-9]+$ ]]; then
   pass "Refresh interval setting: $((refresh_interval / 60))m"
 else
@@ -186,6 +189,17 @@ if [[ -n "$display_mode" ]]; then
   pass "Overlay display setting: $display_mode"
 else
   pass "Overlay display setting: default main"
+fi
+if [[ -n "$visual_style" ]]; then
+  pass "Overlay visual style setting: $visual_style"
+else
+  pass "Overlay visual style setting: default full"
+fi
+if [[ -n "$goal_currency" && -n "$goal_minor_units" && "$goal_minor_units" =~ ^[0-9]+$ && "$goal_minor_units" -gt 0 ]]; then
+  goal_currency_upper="$(printf '%s' "$goal_currency" | /usr/bin/tr '[:lower:]' '[:upper:]')"
+  pass "Goal setting exists for $goal_currency_upper. Goal amount was not printed."
+else
+  pass "Goal setting: not configured"
 fi
 
 printf '\nSafe next steps:\n'
