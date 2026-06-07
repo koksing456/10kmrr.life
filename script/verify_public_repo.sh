@@ -22,6 +22,18 @@ while IFS= read -r script_path; do
   fi
 done < <(find script -maxdepth 1 -type f -name '*.sh' | sort)
 
+section "Swift file size guard"
+swift_line_limit=200
+oversized_swift_files="$(
+  /usr/bin/find MRRLockScreenOverlay -maxdepth 1 -type f -name '*.swift' -print0 |
+    /usr/bin/xargs -0 /usr/bin/wc -l |
+    /usr/bin/awk -v limit="$swift_line_limit" 'NF == 2 && $2 != "total" && $1 >= limit { print $1 " " $2 }'
+)"
+if [[ -n "$oversized_swift_files" ]]; then
+  printf 'Swift files must stay under %s lines. Split these files before publishing:\n%s\n' "$swift_line_limit" "$oversized_swift_files" >&2
+  exit 1
+fi
+
 section "MRR calculator tests"
 ./script/test_mrr_calculator.sh
 
