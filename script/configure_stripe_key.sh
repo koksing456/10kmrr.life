@@ -7,7 +7,7 @@ KEYCHAIN_ACCOUNT="stripe_api_key"
 
 usage() {
   cat <<EOF
-Usage: $0 [--status|--delete|--help]
+Usage: $0 [--status|--delete|--self-test|--help]
 
 Stores the Stripe restricted API key used by MRRLockScreenOverlay in macOS Keychain.
 The key is never printed by this script.
@@ -15,8 +15,56 @@ The key is never printed by this script.
 Options:
   --status   Check whether a key exists without printing it.
   --delete   Remove the stored key.
+  --self-test Verify local key validation rules without touching Keychain.
   --help     Show this help.
 EOF
+}
+
+validate_key() {
+  local key="$1"
+
+  if [[ -z "$key" ]]; then
+    printf 'No key entered. Nothing changed.\n' >&2
+    return 64
+  fi
+
+  if [[ "$key" == sk_* ]]; then
+    printf 'Refusing to store a full-access Stripe secret key. Create a restricted read-only key instead.\n' >&2
+    return 65
+  fi
+
+  if [[ "$key" != rk_* ]]; then
+    printf 'Warning: key does not start with rk_. Continuing because Stripe key prefixes may change.\n' >&2
+  fi
+
+  return 0
+}
+
+self_test() {
+  local output
+
+  if validate_key "sk_""test_selftest" >/dev/null 2>&1; then
+    printf 'Key validation self-test failed: sk_ key was accepted.\n' >&2
+    exit 1
+  fi
+
+  if validate_key "" >/dev/null 2>&1; then
+    printf 'Key validation self-test failed: empty key was accepted.\n' >&2
+    exit 1
+  fi
+
+  if ! validate_key "rk_""test_selftest" >/dev/null 2>&1; then
+    printf 'Key validation self-test failed: rk_ key was rejected.\n' >&2
+    exit 1
+  fi
+
+  output="$(validate_key "custom_prefix_selftest" 2>&1 || true)"
+  if ! printf '%s\n' "$output" | /usr/bin/grep -q 'Warning: key does not start with rk_'; then
+    printf 'Key validation self-test failed: non-rk warning missing.\n' >&2
+    exit 1
+  fi
+
+  printf 'Stripe key validation self-test passed.\n'
 }
 
 key_exists() {
@@ -60,6 +108,10 @@ case "${1:-}" in
     fi
     exit 0
     ;;
+  --self-test)
+    self_test
+    exit 0
+    ;;
   "")
     ;;
   *)
@@ -73,19 +125,7 @@ printf 'Recommended prefix: rk_live_ or rk_test_. Do not use a full-access sk_li
 IFS= read -rsp "Stripe restricted key: " stripe_key
 printf '\n'
 
-if [[ -z "$stripe_key" ]]; then
-  printf 'No key entered. Nothing changed.\n' >&2
-  exit 64
-fi
-
-if [[ "$stripe_key" == sk_* ]]; then
-  printf 'Refusing to store a full-access Stripe secret key. Create a restricted read-only key instead.\n' >&2
-  exit 65
-fi
-
-if [[ "$stripe_key" != rk_* ]]; then
-  printf 'Warning: key does not start with rk_. Continuing because Stripe key prefixes may change.\n' >&2
-fi
+validate_key "$stripe_key"
 
 /usr/bin/security add-generic-password \
   -U \

@@ -91,6 +91,12 @@ Run focused MRR calculation tests with sanitized Stripe fixtures:
 ./script/test_mrr_calculator.sh
 ```
 
+Run local Stripe key validation checks without touching Keychain:
+
+```sh
+./script/configure_stripe_key.sh --self-test
+```
+
 Before pushing public-alpha repo changes:
 
 ```sh
