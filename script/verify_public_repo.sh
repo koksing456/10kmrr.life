@@ -277,6 +277,17 @@ require_phrase docs/release/release-notes-template.md 'No Stripe keys are includ
 require_phrase docs/release/release-notes-template.md 'No real MRR screenshots are included unless explicitly sanitized and approved'
 require_phrase docs/release/release-notes-template.md 'not a public notarized installer'
 
+section "GitHub issue safety wording"
+for issue_template in .github/ISSUE_TEMPLATE/alpha_feedback.md .github/ISSUE_TEMPLATE/alpha_request.yml .github/ISSUE_TEMPLATE/bug_report.md; do
+  require_phrase "$issue_template" 'Stripe keys'
+  require_phrase "$issue_template" 'exact MRR'
+  require_phrase "$issue_template" 'email/contact data'
+  require_phrase "$issue_template" 'customer data'
+  require_phrase "$issue_template" 'payment data'
+  require_phrase "$issue_template" 'raw logs'
+  require_phrase "$issue_template" 'unsanitized revenue screenshots'
+done
+
 section "GitHub label manifest"
 for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do
   if ! rg -q "^- name: ${expected_label}$" .github/labels.yml; then
