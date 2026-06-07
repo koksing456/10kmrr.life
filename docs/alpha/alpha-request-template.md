@@ -2,6 +2,8 @@
 
 Use this template for gated alpha requests. It is intentionally designed to avoid collecting sensitive Stripe or revenue data.
 
+The public GitHub issue form lives at [.github/ISSUE_TEMPLATE/alpha_request.yml](../../.github/ISSUE_TEMPLATE/alpha_request.yml). Public requests must not include email, exact MRR, Stripe keys, customer data, payment data, raw logs, raw Stripe responses, or unsanitized revenue screenshots.
+
 ## Request Fields
 
 - Name or handle:

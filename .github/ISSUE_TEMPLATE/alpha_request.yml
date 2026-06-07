@@ -1,0 +1,72 @@
+name: Alpha request
+description: Request gated alpha access without sharing secrets or private revenue data
+title: "[Alpha request] "
+labels:
+  - alpha-request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in 10kmrr.life.
+
+        This request is public. Do not include Stripe API keys, exact MRR, customer data, payment data, raw Stripe responses, raw logs, or screenshots with real revenue.
+  - type: dropdown
+    id: stripe_subscriptions
+    attributes:
+      label: Do you use Stripe subscriptions today?
+      options:
+        - "Yes"
+        - "No"
+        - "Soon"
+    validations:
+      required: true
+  - type: input
+    id: macos_version
+    attributes:
+      label: macOS version
+      placeholder: "Example: macOS 15.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: cpu
+    attributes:
+      label: Mac CPU
+      options:
+        - Apple Silicon
+        - Intel
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: restricted_key_comfort
+    attributes:
+      label: Are you comfortable creating a restricted read-only Stripe key?
+      options:
+        - "Yes"
+        - "No"
+        - "Unsure"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why do you want MRR on your Lock Screen?
+      description: Keep this high level. Do not share exact MRR.
+      placeholder: "I want a daily revenue signal because..."
+    validations:
+      required: true
+  - type: textarea
+    id: uninstall_risk
+    attributes:
+      label: What would make you uninstall it after a week?
+      description: This helps test whether the lock-screen signal has durable pull.
+      placeholder: "I would uninstall if..."
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I did not include Stripe keys, exact MRR, customer data, payment data, raw logs, raw Stripe responses, or unsanitized revenue screenshots.
+          required: true
