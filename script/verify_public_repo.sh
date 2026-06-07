@@ -71,6 +71,7 @@ test -s SECURITY.md
 test -s LICENSE
 test -s docs/alpha/free-pro-boundary.md
 test -s docs/alpha/alpha-ops-checklist.md
+test -s docs/alpha/improvement-backlog.md
 test -s docs/release/release-strategy.md
 
 printf '\nPublic repo verification passed.\n'
