@@ -162,6 +162,7 @@ print_next_actions() {
   status_line "NEXT" "start approved tester: ./script/start_alpha.sh"
   status_line "NEXT" "collect safe evidence: ./script/prepare_alpha_tracker.sh"
   status_line "NEXT" "debug tester issue: ./script/support_report.sh"
+  status_line "NEXT" "check private beta gate: ./script/private_beta_readiness.sh"
 }
 
 self_test() {

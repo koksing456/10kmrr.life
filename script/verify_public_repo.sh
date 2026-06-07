@@ -83,6 +83,9 @@ section "Signing preflight parser"
 section "Private beta package manifest"
 ./script/package_private_beta.sh --self-test
 
+section "Private beta readiness"
+./script/private_beta_readiness.sh --self-test
+
 section "GitHub label sync parser"
 ./script/sync_github_labels.sh --self-test
 

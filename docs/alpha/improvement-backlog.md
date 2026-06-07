@@ -40,6 +40,7 @@ These reduce friction and make the source alpha easier to trust.
 - Migrate the old Keychain service name to a cleaner `life.10kmrr.MRRLockScreenOverlay` service while preserving compatibility. Done: app and scripts prefer the current service and keep legacy fallback/delete coverage.
 - Add release versioning and a visible app version/build commit in setup and diagnostics. Done: setup and `./script/diagnose.sh` show version and commit.
 - Add a public privacy page that mirrors README and SECURITY in plain product language. Done: see [PRIVACY.md](../../PRIVACY.md).
+- Add a private beta evidence readiness gate before package dry runs. Done: `./script/private_beta_readiness.sh` checks install evidence, Lock Screen compatibility, Intel evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
 
 ## P1: Engineering Quality
 

@@ -32,6 +32,18 @@ The alpha should first prove:
 
 Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md) before creating any private signed package.
 
+Summarize the private beta evidence gate with:
+
+```sh
+./script/private_beta_readiness.sh
+```
+
+Use strict mode before any private package dry run:
+
+```sh
+./script/private_beta_readiness.sh --require-ready
+```
+
 ## Release Checklist
 
 - `./script/check.sh` passes.

@@ -344,6 +344,7 @@ The improvement backlog lives at [docs/alpha/improvement-backlog.md](./docs/alph
 Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
 The changelog lives at [CHANGELOG.md](./CHANGELOG.md).
 Private beta packaging criteria live at [docs/release/private-beta-packaging-checklist.md](./docs/release/private-beta-packaging-checklist.md).
+Check private beta evidence readiness with `./script/private_beta_readiness.sh` before creating any private package dry run.
 
 ## Open Source Boundary
 
@@ -354,5 +355,7 @@ Paid convenience may later include signed/notarized installers, auto-update, pre
 No public installer is linked until signing, notarization, and support expectations are ready.
 
 For private package dry runs only, `./script/package_private_beta.sh --adhoc` creates an explicitly unnotarized zip under `build/private-beta`. Do not publish it as a public installer.
+
+Before packaging, run `./script/private_beta_readiness.sh`. Strict mode, `./script/private_beta_readiness.sh --require-ready`, fails until alpha evidence and Developer ID signing prerequisites are ready.
 
 To check whether the machine is ready for Developer ID signing and notarization setup, run `./script/signing_preflight.sh`. It does not print notary credentials.

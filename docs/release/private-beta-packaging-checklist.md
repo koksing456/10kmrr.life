@@ -14,6 +14,18 @@ Do not publish a public installer until signing, notarization, support, rollback
 - `./script/install_lock_overlay_agent.sh`, `./script/repair_lock_overlay_agent.sh`, and `./script/uninstall_lock_overlay_agent.sh --all` pass a local smoke test.
 - `./script/support_report.sh` produces a safe report without raw secrets or exact MRR.
 
+Summarize evidence readiness:
+
+```sh
+./script/private_beta_readiness.sh
+```
+
+Use strict mode before any private package dry run:
+
+```sh
+./script/private_beta_readiness.sh --require-ready
+```
+
 ## Signing Inputs
 
 Record these privately. Do not commit them.
