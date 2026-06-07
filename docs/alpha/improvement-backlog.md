@@ -71,6 +71,7 @@ These make learning from testers less manual.
 - Add a private tracker safety audit for manual row edits. Done: `./script/audit_alpha_tracker.sh` reports only file, line, and issue type.
 - Add a single next-action recommender for daily alpha operations. Done: `./script/alpha_next_action.sh` reads aggregate tracker state and prints one safe next command.
 - Add a unified alpha operator entrypoint. Done: `./script/alpha.sh` dispatches common private alpha commands without changing the focused lower-level scripts.
+- Add signing and packaging shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh signing`, `./script/alpha.sh beta-ready`, and `./script/alpha.sh package` delegate to the existing guarded scripts.
 - Add a safe private readiness report. Done: `./script/alpha_readiness_report.sh` writes `build/alpha-readiness-report.md` with aggregate status and blocker sections.
 - Add a safe invite generator after approving a tester. Done: `./script/generate_alpha_invite.sh` prints a no-secret setup message for one stable tester id.
 - Add a first-tester invite packet wrapper. Done: `./script/prepare_alpha_invite_packet.sh` approves the tester and writes a private invite packet under ignored `build/alpha-invites/`.

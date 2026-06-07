@@ -409,14 +409,14 @@ recommend() {
     emit_action \
       "finish Developer ID signing and notary setup" \
       "evidence path is ready enough for signing work, but signing preflight is not ready" \
-      "./script/signing_preflight.sh"
+      "./script/alpha.sh signing"
     return
   fi
 
   emit_action \
     "create signed private beta package" \
     "alpha evidence, local smoke, weekly review, and signing are ready" \
-    "./script/package_private_beta.sh --signed"
+    "./script/alpha.sh package --signed"
 }
 
 self_test() {

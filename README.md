@@ -385,6 +385,7 @@ Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
 The changelog lives at [CHANGELOG.md](./CHANGELOG.md).
 Private beta packaging criteria live at [docs/release/private-beta-packaging-checklist.md](./docs/release/private-beta-packaging-checklist.md).
 Check private beta evidence readiness with `./script/private_beta_readiness.sh` before creating any private package dry run.
+The same operator flow is available through `./script/alpha.sh beta-ready`, `./script/alpha.sh signing`, and `./script/alpha.sh package --signed`.
 
 ## Open Source Boundary
 

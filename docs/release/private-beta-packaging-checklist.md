@@ -47,7 +47,7 @@ Record these privately. Do not commit them.
 Check local signing readiness:
 
 ```sh
-./script/signing_preflight.sh
+./script/alpha.sh signing
 ```
 
 For strict private beta readiness, store notary credentials privately and set the profile name only in your shell environment:
@@ -55,7 +55,7 @@ For strict private beta readiness, store notary credentials privately and set th
 ```sh
 xcrun notarytool store-credentials "your-private-profile-name"
 export TENKMRR_NOTARY_PROFILE="your-private-profile-name"
-./script/signing_preflight.sh --require-ready
+./script/alpha.sh signing --require-ready
 ```
 
 Do not commit the profile name if it identifies a private Apple account or team.
@@ -63,7 +63,7 @@ Do not commit the profile name if it identifies a private Apple account or team.
 Use strict mode before attempting a private signed package:
 
 ```sh
-./script/signing_preflight.sh --require-ready
+./script/alpha.sh signing --require-ready
 ```
 
 ## Package Shape
@@ -79,7 +79,7 @@ Preferred private beta shape:
 Private signed/notarized package:
 
 ```sh
-./script/package_private_beta.sh --signed
+./script/alpha.sh package --signed
 ```
 
 This first runs `./script/private_beta_readiness.sh --require-ready`, then re-signs the staged app with Developer ID, notarizes a zip with the private notary keychain profile, staples the app, validates the ticket, and writes a private beta zip under `build/private-beta`.
@@ -87,7 +87,7 @@ This first runs `./script/private_beta_readiness.sh --require-ready`, then re-si
 Source-generated unnotarized dry run:
 
 ```sh
-./script/package_private_beta.sh --adhoc
+./script/alpha.sh package --adhoc
 ```
 
 This also runs the readiness gate, then writes an explicitly unnotarized private zip under `build/private-beta` for internal testing only. It is not a public installer and should not be distributed broadly.
@@ -95,13 +95,13 @@ This also runs the readiness gate, then writes an explicitly unnotarized private
 For an Apple Silicon-only private beta package, run:
 
 ```sh
-./script/package_private_beta.sh --signed --exclude-intel
+./script/alpha.sh package --signed --exclude-intel
 ```
 
 For an Apple Silicon-only unnotarized dry run, run:
 
 ```sh
-./script/package_private_beta.sh --adhoc --exclude-intel
+./script/alpha.sh package --adhoc --exclude-intel
 ```
 
 The generated manifest must say Intel Lock Screen behavior is excluded/unverified.

@@ -171,7 +171,7 @@ print_signing_status() {
     status_line "NEXT" "private signed package: ./script/package_private_beta.sh --signed"
   else
     status_line "WARN" "Developer ID signed/notarized beta is not ready"
-    status_line "NEXT" "details: ./script/signing_preflight.sh"
+    status_line "NEXT" "details: ./script/alpha.sh signing"
   fi
   /bin/rm -f "/tmp/10kmrr-alpha-status-signing.$$"
 }
@@ -228,7 +228,7 @@ print_next_actions() {
   status_line "NEXT" "record Day 7 follow-up: ./script/alpha.sh day7 --tester-id tester_XXX --retained-day-7 yes --overall-pro-signal medium"
   status_line "NEXT" "weekly alpha summary: ./script/alpha.sh weekly"
   status_line "NEXT" "debug tester issue: ./script/support_report.sh"
-  status_line "NEXT" "check private beta gate: ./script/private_beta_readiness.sh"
+  status_line "NEXT" "check private beta gate: ./script/alpha.sh beta-ready"
 }
 
 self_test() {

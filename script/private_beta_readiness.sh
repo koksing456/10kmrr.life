@@ -379,7 +379,7 @@ print_readiness() {
     status_line "PASS" "Developer ID signing prerequisites appear ready"
   else
     status_line "WARN" "Developer ID signing prerequisites are not ready"
-    status_line "NEXT" "run: ./script/signing_preflight.sh"
+    status_line "NEXT" "run: ./script/alpha.sh signing"
     ready=1
   fi
 

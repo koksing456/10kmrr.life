@@ -98,7 +98,7 @@ Record full local smoke only on a clean smoke machine:
 For a private signed/notarized package after evidence and signing are ready:
 
 ```sh
-./script/package_private_beta.sh --signed
+./script/alpha.sh package --signed
 ```
 
 This creates a private signed/notarized zip under `build/private-beta`. It is still not a public installer.
@@ -106,7 +106,7 @@ This creates a private signed/notarized zip under `build/private-beta`. It is st
 For an explicit internal unnotarized package dry run only:
 
 ```sh
-./script/package_private_beta.sh --adhoc
+./script/alpha.sh package --adhoc
 ```
 
 This creates an unnotarized private zip under `build/private-beta`. It is not a public installer and should not be used as the default private beta package once Developer ID signing is ready.
@@ -115,7 +115,7 @@ The packaging script refuses to continue unless `./script/private_beta_readiness
 For Developer ID readiness:
 
 ```sh
-./script/signing_preflight.sh
+./script/alpha.sh signing
 ```
 
 This checks whether Developer ID signing and a notary keychain profile appear available without printing notary credentials. Set `TENKMRR_NOTARY_PROFILE` only in your private shell when you want strict notarization readiness checked.
