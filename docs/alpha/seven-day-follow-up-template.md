@@ -28,3 +28,5 @@ Choose one:
 ## Notes Boundary
 
 Do not record exact private MRR unless the tester intentionally shares a sanitized value.
+
+If the tester gives feedback that may become a public quote, use [testimonial-approval-template.md](./testimonial-approval-template.md). Do not publish informal follow-up replies as testimonials.

@@ -260,6 +260,7 @@ The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./doc
 The install smoke checklist lives at [docs/alpha/install-smoke-checklist.md](./docs/alpha/install-smoke-checklist.md).
 The compatibility matrix lives at [docs/alpha/compatibility-matrix.md](./docs/alpha/compatibility-matrix.md).
 The safe support playbook lives at [docs/alpha/support-playbook.md](./docs/alpha/support-playbook.md).
+The testimonial approval template lives at [docs/alpha/testimonial-approval-template.md](./docs/alpha/testimonial-approval-template.md).
 The improvement backlog lives at [docs/alpha/improvement-backlog.md](./docs/alpha/improvement-backlog.md).
 Contribution rules live at [CONTRIBUTING.md](./CONTRIBUTING.md).
 The changelog lives at [CHANGELOG.md](./CHANGELOG.md).

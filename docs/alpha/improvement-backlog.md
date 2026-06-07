@@ -70,6 +70,7 @@ These improve conversion without changing the app.
 - Make the landing page CTA point to the real gated intake once it exists. Done: the static page points to the public GitHub alpha request issue form.
 - Add a concise "why I built this" section to the landing page, not only the README. Done.
 - Add a stronger before/after demo: Stripe Dashboard requires checking; lock screen makes MRR ambient. Done: the static landing page includes a mock before/after section without real Stripe dashboard data.
+- Add a testimonial approval workflow before collecting public quotes. Done: see [testimonial-approval-template.md](./testimonial-approval-template.md).
 - Add testimonials only after alpha users explicitly approve public quotes.
 
 ## P2: Repo And Community

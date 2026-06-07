@@ -101,6 +101,7 @@ test -s docs/alpha/private-alpha-workflow.md
 test -s docs/alpha/install-smoke-checklist.md
 test -s docs/alpha/compatibility-matrix.md
 test -s docs/alpha/support-playbook.md
+test -s docs/alpha/testimonial-approval-template.md
 test -s docs/alpha/improvement-backlog.md
 test -s docs/alpha/templates/alpha-users.csv
 test -s docs/alpha/templates/install-funnel.csv

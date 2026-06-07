@@ -83,3 +83,9 @@ Review:
 - Scope pull toward full analytics.
 
 Pause wider alpha expansion if install failure rate exceeds 30 percent for the same reason, if testers repeatedly try to send secrets, or if private macOS API behavior fails on common supported macOS versions.
+
+## Public Quotes
+
+Do not publish testimonials by default.
+
+If a tester offers public feedback, use [testimonial-approval-template.md](./testimonial-approval-template.md) and publish only after approval of the exact wording and attribution.
