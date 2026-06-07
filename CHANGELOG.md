@@ -22,6 +22,7 @@ This project is in gated public alpha. There is no public notarized installer ye
 - Stripe key validation self-test in the public verification gate.
 - GitHub PR and support templates that default to sanitized reports and no-secret confirmations.
 - Testimonial approval template that blocks unapproved quotes and unsanitized revenue details.
+- Public verification now checks issue-template labels against `.github/labels.yml`.
 - Structured local logs without keys, exact MRR, raw Stripe responses, or customer/payment data.
 - Sanitized landing, social, GitHub preview, and short demo video assets.
 - Static alpha landing page with story, before/after demo, local-first security model, and gated alpha CTA.

@@ -119,4 +119,44 @@ for expected_label in alpha-request alpha-feedback bug compatibility install mrr
   fi
 done
 
+declared_labels="$(/usr/bin/awk '/^- name: / { print $3 }' .github/labels.yml | /usr/bin/sort -u)"
+used_issue_labels="$(
+  {
+    /usr/bin/awk '
+      /^labels:[[:space:]]*[^[:space:]]/ {
+        sub(/^labels:[[:space:]]*/, "")
+        gsub(/"/, "")
+        print
+        next
+      }
+      /^labels:[[:space:]]*$/ {
+        in_labels = 1
+        next
+      }
+      in_labels && /^[[:space:]]*-[[:space:]]*/ {
+        sub(/^[[:space:]]*-[[:space:]]*/, "")
+        gsub(/"/, "")
+        print
+        next
+      }
+      in_labels && /^[^[:space:]-]/ {
+        in_labels = 0
+      }
+    ' .github/ISSUE_TEMPLATE/*.yml
+
+    /usr/bin/awk -F': ' '/^labels: / {
+      gsub(/"/, "", $2)
+      print $2
+    }' .github/ISSUE_TEMPLATE/*.md
+  } | /usr/bin/sort -u
+)"
+
+while IFS= read -r used_label; do
+  [[ -z "$used_label" ]] && continue
+  if ! printf '%s\n' "$declared_labels" | /usr/bin/grep -qx "$used_label"; then
+    printf 'Issue template uses label missing from .github/labels.yml: %s\n' "$used_label" >&2
+    exit 1
+  fi
+done <<< "$used_issue_labels"
+
 printf '\nPublic repo verification passed.\n'
