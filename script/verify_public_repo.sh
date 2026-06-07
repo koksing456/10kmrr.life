@@ -186,16 +186,20 @@ if rg -n \
 fi
 
 section "Local-only path and retired artifact scan"
-user_path_pattern="/Users/${USER:-koksing}"
-local_scan_pattern="${user_path_pattern}|/var/folders|TemporaryItems|NSIRD|Screenshot 2026|MRRWallpaperUpdater|life\\.10kmrr\\.mrr-wallpaper"
-if rg -n \
+local_scan_pattern="/Users/[[:alnum:]_.-]+|/var/folders|TemporaryItems|NSIRD|Screenshot 2026|MRRWallpaperUpdater|life\\.10kmrr\\.mrr-wallpaper"
+local_matches="$(
+  rg -n \
   "$local_scan_pattern" \
   . \
   -g '!build/**' \
   -g '!Atoll/**' \
   -g '!opc-doc/**' \
   -g '!.codex/**' \
-  -g '!script/verify_public_repo.sh'; then
+  -g '!script/verify_public_repo.sh' |
+    /usr/bin/grep -v '/Users/example' || true
+)"
+if [[ -n "$local_matches" ]]; then
+  printf '%s\n' "$local_matches"
   printf 'Local-only path or retired wallpaper artifact found.\n' >&2
   exit 1
 fi
