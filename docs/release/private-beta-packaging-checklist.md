@@ -50,6 +50,8 @@ Check local signing readiness:
 ./script/alpha.sh signing
 ```
 
+Use [signing-notarization-setup.md](./signing-notarization-setup.md) if Developer ID or notary setup is still the blocker.
+
 For strict private beta readiness, store notary credentials privately and set the profile name only in your shell environment:
 
 ```sh

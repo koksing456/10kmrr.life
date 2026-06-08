@@ -31,6 +31,7 @@ The alpha should first prove:
 5. Public installer only after support, security, and rollback expectations are documented.
 
 Use [private-beta-packaging-checklist.md](./private-beta-packaging-checklist.md) before creating any private signed package.
+Use [signing-notarization-setup.md](./signing-notarization-setup.md) when the remaining blocker is Developer ID or notary setup.
 
 Summarize the private beta evidence gate with:
 
@@ -121,3 +122,4 @@ For Developer ID readiness:
 ```
 
 This checks whether Developer ID signing and a notary keychain profile appear available without printing notary credentials. Set `TENKMRR_NOTARY_PROFILE` only in your private shell when you want strict notarization readiness checked.
+Detailed private signing setup is documented in [signing-notarization-setup.md](./signing-notarization-setup.md).

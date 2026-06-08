@@ -439,3 +439,4 @@ Run `./script/alpha.sh beta-ready` to see the missing alpha evidence or Develope
 To check whether the machine is ready for Developer ID signing and notarization setup, run `./script/alpha.sh signing`. It does not print notary credentials.
 
 For strict notarization readiness, store credentials privately with `xcrun notarytool store-credentials <profile-name>`, set `TENKMRR_NOTARY_PROFILE` in your shell, then run `./script/alpha.sh signing --require-ready`. Do not commit the notary profile name if it identifies a private Apple account or team.
+The private signing setup runbook lives at [docs/release/signing-notarization-setup.md](./docs/release/signing-notarization-setup.md).
