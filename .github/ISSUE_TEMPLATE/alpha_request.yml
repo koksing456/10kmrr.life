@@ -9,7 +9,7 @@ body:
       value: |
         Thanks for your interest in 10kmrr.life.
 
-        This request is public. Do not include Stripe API keys, exact MRR, email/contact data, customer data, payment data, raw Stripe responses, raw logs, or unsanitized revenue screenshots.
+        This request is public. Do not include Stripe API keys, Stripe object IDs, exact MRR, email/contact data, customer data, payment data, raw Stripe responses, raw logs, or unsanitized revenue screenshots.
   - type: dropdown
     id: stripe_subscriptions
     attributes:
@@ -34,6 +34,19 @@ body:
       options:
         - Apple Silicon
         - Intel
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: display_setup
+    attributes:
+      label: Display setup
+      description: This is non-sensitive compatibility context for Lock Screen placement.
+      options:
+        - Built-in display only
+        - One external display
+        - Multiple displays
+        - Clamshell
         - Not sure
     validations:
       required: true
@@ -68,5 +81,5 @@ body:
     attributes:
       label: Safety confirmation
       options:
-        - label: I did not include Stripe keys, exact MRR, email/contact data, customer data, payment data, raw logs, raw Stripe responses, or unsanitized revenue screenshots.
+        - label: I did not include Stripe keys, Stripe object IDs, exact MRR, email/contact data, customer data, payment data, raw logs, raw Stripe responses, or unsanitized revenue screenshots.
           required: true

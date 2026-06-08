@@ -19,6 +19,8 @@ screenshots.
   - CPU: `apple_silicon`, `intel`, or `unknown`.
   - Display setup: `built_in`, `external`, `multiple`, `clamshell`, or `unknown`.
   - Whether they use Stripe subscriptions.
+- If the tester came from a public alpha request, map the public display setup
+  answer using [alpha-request-template.md](./alpha-request-template.md).
 - Preview the invite with `--dry-run`.
 - Do not write the invite packet until the tester is real and approved.
 

@@ -359,6 +359,8 @@ require_phrase docs/release/release-notes-template.md 'No Stripe keys are includ
 require_phrase docs/release/release-notes-template.md 'No real MRR screenshots are included unless explicitly sanitized and approved'
 require_phrase docs/release/release-notes-template.md 'not a public notarized installer'
 require_phrase docs/alpha/alpha-request-template.md 'Keep name, handle, email, and preferred contact mapping outside this repo and outside public GitHub issues'
+require_phrase docs/alpha/alpha-request-template.md 'Map public display setup answers into tracker values'
+require_phrase docs/alpha/alpha-request-template.md 'Stripe object IDs'
 require_phrase docs/alpha/alpha-user-tracker.md 'Use stable tester ids such as `tester_001`'
 require_phrase docs/alpha/install-smoke-checklist.md 'Do not record exact MRR'
 require_phrase docs/alpha/seven-day-follow-up-template.md 'Do not record exact private MRR'
@@ -381,6 +383,9 @@ for issue_template in .github/ISSUE_TEMPLATE/alpha_feedback.md .github/ISSUE_TEM
   require_phrase "$issue_template" 'raw logs'
   require_phrase "$issue_template" 'unsanitized revenue screenshots'
 done
+require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'id: display_setup'
+require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'Clamshell'
+require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'Stripe object IDs'
 
 section "GitHub label manifest"
 for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do
