@@ -31,6 +31,7 @@ Commands:
   day7      Record Day 7 retention and Pro signal.
   weekly    Print safe weekly aggregate summary.
   review    Record one safe aggregate weekly review row.
+  health    Print safe local install/support health triage.
   audit     Audit private tracker rows for unsafe fields.
   smoke     Preview or run guarded local smoke checks.
   support-report
@@ -72,6 +73,7 @@ command_script() {
     day7) printf '%s\n' "$ROOT_DIR/script/record_alpha_day7.sh" ;;
     weekly) printf '%s\n' "$ROOT_DIR/script/alpha_weekly_summary.sh" ;;
     review) printf '%s\n' "$ROOT_DIR/script/record_alpha_weekly_review.sh" ;;
+    health) printf '%s\n' "$ROOT_DIR/script/alpha_health.sh" ;;
     audit) printf '%s\n' "$ROOT_DIR/script/audit_alpha_tracker.sh" ;;
     smoke) printf '%s\n' "$ROOT_DIR/script/run_local_smoke.sh" ;;
     support-report) printf '%s\n' "$ROOT_DIR/script/support_report.sh" ;;
@@ -125,6 +127,9 @@ self_test() {
 
   output="$("$0" smoke --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Local smoke runner self-test passed'
+
+  output="$("$0" health --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha health triage self-test passed'
 
   output="$("$0" support-report --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Support report redaction self-test passed'

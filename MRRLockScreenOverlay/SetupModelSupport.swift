@@ -6,12 +6,16 @@ extension SetupModel {
         localSupport.sourceRootURL != nil && !isBusyWithLocalSupport
     }
 
+    var canRunHealthCheck: Bool {
+        localSupport.sourceRootURL != nil && !isBusyWithLocalSupport
+    }
+
     var canGenerateSupportReport: Bool {
         localSupport.sourceRootURL != nil && !isBusyWithLocalSupport
     }
 
     var isBusyWithLocalSupport: Bool {
-        isInstallingOverlay || isRepairingOverlay || isRunningDiagnostic || isGeneratingSupportReport
+        isInstallingOverlay || isRepairingOverlay || isRunningHealth || isRunningDiagnostic || isGeneratingSupportReport
     }
 
     var startCommand: String {
@@ -20,6 +24,10 @@ extension SetupModel {
 
     var supportReportCommand: String {
         localSupport.alphaCommand(command: "support-report")
+    }
+
+    var healthCommand: String {
+        localSupport.alphaCommand(command: "health")
     }
 
     var diagnoseCommand: String {
@@ -34,6 +42,11 @@ extension SetupModel {
     func copySupportReportCommand() {
         copyToPasteboard(supportReportCommand)
         supportText = "Copied sanitized support report command."
+    }
+
+    func copyHealthCommand() {
+        copyToPasteboard(healthCommand)
+        supportText = "Copied alpha health triage command."
     }
 
     func copyDiagnoseCommand() {
@@ -61,6 +74,23 @@ extension SetupModel {
         } else {
             supportText = "No support report exists yet. Click Generate Report first."
         }
+    }
+
+    func runHealthCheck() async {
+        guard !isRunningHealth else { return }
+        guard let sourceRootURL = localSupport.sourceRootURL else {
+            supportText = "Source checkout not detected. Copy the health command and run it from your checkout."
+            return
+        }
+
+        isRunningHealth = true
+        supportText = "Running alpha health triage..."
+
+        let output = await Self.runCommand(arguments: ["./script/alpha.sh", "health"], in: sourceRootURL)
+        supportText = SetupLocalSupport.sanitizedDiagnosticSummary(from: output, maxLines: 14)
+        refreshStatus()
+        refreshCacheStatus()
+        isRunningHealth = false
     }
 
     func runDiagnostic() async {

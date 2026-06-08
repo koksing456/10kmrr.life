@@ -127,6 +127,21 @@ struct SetupLocalSupport {
                 options: .regularExpression
             )
             .replacingOccurrences(
+                of: "\\b(cus|sub|si|seti|price|prod|in|pi|pm|cs|ch)_[A-Za-z0-9_]+\\b",
+                with: "[redacted Stripe object]",
+                options: .regularExpression
+            )
+            .replacingOccurrences(
+                of: "(?i)\\b(client_secret|hosted_invoice_url|invoice_pdf|payment_method|customer_email)\\b",
+                with: "[redacted Stripe field]",
+                options: .regularExpression
+            )
+            .replacingOccurrences(
+                of: "(?i)\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b",
+                with: "[redacted email]",
+                options: .regularExpression
+            )
+            .replacingOccurrences(
                 of: "([A-Z]{2,4}\\$[0-9][0-9,]*(\\.[0-9]{2})?|[A-Z]{3}[[:space:]]+[0-9][0-9,]*(\\.[0-9]{2})?)",
                 with: "[redacted amount]",
                 options: .regularExpression
@@ -142,7 +157,7 @@ struct SetupLocalSupport {
                 options: .regularExpression
             )
 
-        let usefulPrefixes = ["PASS  ", "WARN  ", "FAIL  ", "ERROR ", "NEXT  ", "RULE  ", "Suggested next steps:", "  - "]
+        let usefulPrefixes = ["PASS  ", "WARN  ", "FAIL  ", "INFO  ", "ERROR ", "NEXT  ", "RULE  ", "Suggested next steps:", "  - "]
         let summaryLines = safeOutput
             .split(separator: "\n", omittingEmptySubsequences: false)
             .map(String.init)

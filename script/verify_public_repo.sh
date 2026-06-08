@@ -155,6 +155,9 @@ section "Alpha readiness report"
 section "Alpha status summary"
 ./script/alpha_status.sh --self-test
 
+section "Alpha health triage"
+./script/alpha_health.sh --self-test
+
 section "Markdown local links"
 ./script/verify_markdown_links.sh
 
@@ -319,11 +322,13 @@ require_phrase README.md './script/alpha\.sh check'
 require_phrase README.md './script/alpha\.sh support-report'
 require_phrase README.md './script/alpha\.sh beta-ready'
 require_phrase README.md './script/alpha\.sh start'
+require_phrase README.md './script/alpha\.sh health'
 require_phrase README.md './script/alpha\.sh labels --dry-run'
 require_phrase SECURITY.md './script/alpha\.sh support-report'
 require_phrase CONTRIBUTING.md './script/alpha\.sh check'
 require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh invite'
 require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh start'
+require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh health'
 require_phrase docs/alpha/alpha-invite-template.md './script/alpha\.sh support-report'
 require_phrase docs/alpha/alpha-ops-checklist.md '--dry-run'
 require_phrase docs/alpha/alpha-ops-checklist.md './script/alpha\.sh start'
@@ -370,6 +375,7 @@ require_phrase docs/alpha/alpha-user-tracker.md 'Use stable tester ids such as `
 require_phrase docs/alpha/install-smoke-checklist.md 'Do not record exact MRR'
 require_phrase docs/alpha/seven-day-follow-up-template.md 'Do not record exact private MRR'
 require_phrase docs/alpha/support-playbook.md 'the excerpts are still redacted'
+require_phrase docs/alpha/support-playbook.md './script/alpha\.sh health'
 require_phrase docs/demo/landing-skeleton.md 'Name, handle, email, or preferred contact in the public request flow'
 
 for public_alpha_doc in README.md SECURITY.md docs/alpha/*.md .github/ISSUE_TEMPLATE/*.md; do
@@ -395,6 +401,8 @@ require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'Stripe object IDs'
 require_phrase script/alpha_next_action.sh 'Stripe object IDs'
 require_phrase script/alpha_weekly_summary.sh 'Stripe object IDs'
 require_phrase script/alpha_readiness_report.sh 'Stripe object IDs'
+require_phrase script/alpha_health.sh 'Stripe object IDs'
+require_phrase script/alpha_health.sh './script/alpha\.sh support-report'
 
 section "GitHub label manifest"
 for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do

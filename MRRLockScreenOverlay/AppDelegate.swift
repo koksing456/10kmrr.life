@@ -52,6 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(menuItem("Refresh MRR Now", action: #selector(refreshMRRFromMenu)))
         menu.addItem(menuItem("Preview Overlay", action: #selector(previewOverlayFromMenu)))
         menu.addItem(.separator())
+        menu.addItem(menuItem("Copy Health Triage Command", action: #selector(copyHealthCommand)))
         menu.addItem(menuItem("Copy Diagnose Command", action: #selector(copyDiagnoseCommand)))
         menu.addItem(menuItem("Copy Support Report Command", action: #selector(copySupportReportCommand)))
         menu.addItem(menuItem("Copy Repair Command", action: #selector(copyRepairCommand)))
@@ -83,6 +84,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc @MainActor
     private func previewOverlayFromMenu() {
         openNewAppInstance(arguments: ["--preview", "--private-glass"])
+    }
+
+    @objc @MainActor
+    private func copyHealthCommand() {
+        copyToPasteboard(localSupportAlphaCommand(command: "health"))
     }
 
     @objc @MainActor

@@ -112,6 +112,7 @@ Run local Stripe key validation checks without touching Keychain:
 Run diagnostic and uninstall safety self-tests without changing your local install:
 
 ```sh
+./script/alpha_health.sh --self-test
 ./script/diagnose.sh --self-test
 ./script/uninstall_lock_overlay_agent.sh --self-test
 ```
@@ -219,13 +220,13 @@ The preview uses the selected display mode from setup. It does not unload the in
 
 The setup window is organized as a first-run flow: preview mock MRR, save a restricted Stripe key in Keychain, refresh MRR, then use advanced settings only if you want to tune placement, size, display mode, visual style, refresh interval, or an optional MRR goal.
 
-Setup also includes an Install & support card. When the source checkout is detected, it can install the overlay after Keychain and cache readiness, run a repair that preserves Keychain/cache/settings, run `./script/diagnose.sh`, generate and open a sanitized support report through `./script/alpha.sh support-report`, copy guided fallback commands, and open the local logs folder.
+Setup also includes an Install & support card. When the source checkout is detected, it can install the overlay after Keychain and cache readiness, run a repair that preserves Keychain/cache/settings, run `./script/alpha.sh health`, run `./script/diagnose.sh`, generate and open a sanitized support report through `./script/alpha.sh support-report`, copy guided fallback commands, and open the local logs folder.
 
 Visual styles include hero panel, full panel, compact panel, number-only, goal panel, and focus panel. Hero is the default first-run style. Goal settings are local-only and are used only to render progress on the Lock Screen.
 
 The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.
 
-When the overlay app is running, the 10kmrr.life menu bar item can open setup, refresh MRR now, launch a preview overlay, copy diagnose/support-report/repair/uninstall commands for the detected source checkout, open the local logs folder, and restart the overlay process.
+When the overlay app is running, the 10kmrr.life menu bar item can open setup, refresh MRR now, launch a preview overlay, copy health/diagnose/support-report/repair/uninstall commands for the detected source checkout, open the local logs folder, and restart the overlay process.
 
 The installer stores the local source checkout path in app support so installed menu commands can still copy runnable support commands. This marker contains only a local filesystem path, not Stripe data or MRR.
 
@@ -249,7 +250,7 @@ If you are coordinating an approved tester, pass the private stable tester id:
 ./script/alpha.sh start --tester-id tester_001
 ```
 
-The guided flow builds the app, opens setup, launches a mock preview, waits for you to save a restricted key in the macOS setup window, confirms a Keychain key and last-good MRR cache exist without printing either value, then installs the LaunchAgent and runs diagnose. If setup is not ready yet, the script pauses before changing the LaunchAgent. After install, it prints the safe evidence command to run after you manually confirm MRR is visible, the overlay appears on the Lock Screen, and the overlay hides after unlock.
+The guided flow builds the app, opens setup, launches a mock preview, waits for you to save a restricted key in the macOS setup window, confirms a Keychain key and last-good MRR cache exist without printing either value, then installs the LaunchAgent and runs diagnose. If setup is not ready yet, the script pauses before changing the LaunchAgent. After install, use `./script/alpha.sh health` for safe local triage, then run the safe evidence command after you manually confirm MRR is visible, the overlay appears on the Lock Screen, and the overlay hides after unlock.
 
 To preview the steps without changing local state:
 
@@ -285,7 +286,18 @@ MRRLockScreenOverlay --private-glass
 
 ## Diagnose
 
-If the overlay does not appear or the MRR does not refresh, run:
+If the overlay does not appear or the MRR does not refresh, start with the safe
+alpha health triage:
+
+```sh
+./script/alpha.sh health
+```
+
+It summarizes local build, Keychain, LaunchAgent, cache, signing, and support
+next steps without printing the Stripe key, exact MRR, raw logs, raw Stripe
+responses, customer/payment data, contact data, or Stripe object IDs.
+
+For lower-level detail on the same machine, run:
 
 ```sh
 ./script/diagnose.sh
@@ -377,7 +389,7 @@ Preview the tester invite packet without writing tracker rows or invite files wi
 Prepare the approved tester invite packet only after you have a real tester assigned to that stable id: replace `tester_XXX` and `15.x`, then remove `--dry-run`. The write command approves the tester row and writes the safe invite body under ignored `build/alpha-invites/`.
 Append safe tracker rows through the focused `./script/alpha.sh success`, `./script/alpha.sh support`, `./script/alpha.sh day7`, `./script/alpha.sh smoke`, and `./script/alpha.sh weekly` flows where possible. The underlying recorders reject placeholder evidence, contact-like data, Stripe-key-like strings, Stripe object IDs, raw Stripe fields, and obvious money amounts where relevant.
 For common setup/support failures, use `./script/alpha.sh support --tester-id tester_001 --issue-type lock_screen --result fail` instead of manually composing install and compatibility rows.
-For support diagnostics, use `./script/alpha.sh support-report`; for private beta source smoke, use `./script/alpha.sh smoke` first because the default is a dry run.
+For support diagnostics, start with `./script/alpha.sh health`, then use `./script/alpha.sh support-report` when you need a sanitized report to share; for private beta source smoke, use `./script/alpha.sh smoke` first because the default is a dry run.
 For the common success case after a tester installs, sees MRR, confirms Lock Screen visibility, and confirms the overlay hides after unlock, use the shorter evidence packet:
 
 ```sh

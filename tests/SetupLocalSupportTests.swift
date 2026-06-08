@@ -164,6 +164,9 @@ private enum SetupLocalSupportTests {
         Home: /Users/example
         PASS  Last-good MRR cache exists. Cached value was not printed.
         WARN  Stripe key \(restrictedLivePrefix)1234567890abcdef should never be shown.
+        WARN  Stripe customer cus_1234567890abcdef should never be shown.
+        WARN  Stripe field customer_email should never be shown.
+        WARN  Email founder@example.com should never be shown.
         WARN  Demo amount US$12,345.67 should not be shown.
         WARN  Demo amount $351.93 should not be shown.
         WARN  MRR 10248.00 should not be shown.
@@ -178,10 +181,16 @@ private enum SetupLocalSupportTests {
 
         try assertContains(summary, "PASS  Last-good MRR cache exists", "status line")
         try assertContains(summary, "WARN  Stripe key \(restrictedLivePrefix)[redacted]", "secret redaction")
+        try assertContains(summary, "WARN  Stripe customer [redacted Stripe object]", "Stripe object redaction")
+        try assertContains(summary, "WARN  Stripe field [redacted Stripe field]", "Stripe field redaction")
+        try assertContains(summary, "WARN  Email [redacted email]", "email redaction")
         try assertContains(summary, "WARN  Demo amount [redacted amount]", "amount redaction")
         try assertContains(summary, "  - Generate sanitized support report", "next action")
         try assertNotContains(summary, "/Users/example", "home path redaction")
         try assertNotContains(summary, "1234567890abcdef", "secret suffix redaction")
+        try assertNotContains(summary, "cus_1234567890abcdef", "Stripe object id redaction")
+        try assertNotContains(summary, "customer_email", "Stripe field redaction")
+        try assertNotContains(summary, "founder@example.com", "email redaction")
         try assertNotContains(summary, "12,345.67", "amount value redaction")
         try assertNotContains(summary, "351.93", "bare dollar amount redaction")
         try assertNotContains(summary, "10248.00", "MRR-labelled amount redaction")

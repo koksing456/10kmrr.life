@@ -28,11 +28,18 @@ Never ask for:
 
 If the setup window opens, ask the tester to use the Install & support card:
 
+- Click `Run Health` or run `./script/alpha.sh health`.
 - Click `Run Diagnose`.
 - Share only the PASS/WARN summary, not screenshots with real MRR.
 - Use `Generate Report` if a sanitized support report is needed, then review the opened report before sharing.
 
-Ask the tester to run:
+Ask the tester to run health triage first:
+
+```sh
+./script/alpha.sh health
+```
+
+If a shareable support artifact is needed, ask them to run:
 
 ```sh
 ./script/alpha.sh support-report
@@ -124,7 +131,7 @@ Action:
 
 ```sh
 ./script/repair_lock_overlay_agent.sh
-./script/diagnose.sh
+./script/alpha.sh health
 ```
 
 The repair script rebuilds the app and reinstalls the LaunchAgent while preserving the Stripe Keychain entry, local cache, and display settings.

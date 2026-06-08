@@ -25,6 +25,15 @@ extension SetupWindowView {
                         }
                     }
                     .disabled(!model.canRepairOverlay)
+                }
+
+                HStack(spacing: 10) {
+                    Button(model.isRunningHealth ? "Checking..." : "Run Health") {
+                        Task {
+                            await model.runHealthCheck()
+                        }
+                    }
+                    .disabled(!model.canRunHealthCheck)
 
                     Button(model.isRunningDiagnostic ? "Running..." : "Run Diagnose") {
                         Task {
@@ -56,16 +65,22 @@ extension SetupWindowView {
                         model.copyInstallCommand()
                     }
 
-                    Button("Copy Support Cmd") {
-                        model.copySupportReportCommand()
+                    Button("Copy Health Cmd") {
+                        model.copyHealthCommand()
                     }
                 }
 
                 HStack(spacing: 10) {
+                    Button("Copy Support Cmd") {
+                        model.copySupportReportCommand()
+                    }
+
                     Button("Copy Repair Cmd") {
                         model.copyRepairCommand()
                     }
+                }
 
+                HStack(spacing: 10) {
                     Button("Copy Diagnose Cmd") {
                         model.copyDiagnoseCommand()
                     }
