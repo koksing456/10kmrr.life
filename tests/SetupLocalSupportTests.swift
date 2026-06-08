@@ -19,15 +19,47 @@ private enum SetupLocalSupportTests {
     static func main() {
         do {
             try testSourceRootDetection()
+            try testSourceRootMarkerFallback()
             try testCommandGeneration()
             try testShellQuoting()
             try testSupportReportPathAndRedaction()
             try testDiagnosticSummarySanitizesSensitiveValues()
-            print("Setup local support tests passed (5 cases).")
+            print("Setup local support tests passed (6 cases).")
         } catch {
             fputs("\(error)\n", stderr)
             exit(1)
         }
+    }
+
+    private static func testSourceRootMarkerFallback() throws {
+        let tempRoot = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("10kmrr-marker-support-\(UUID().uuidString)")
+        defer {
+            try? FileManager.default.removeItem(at: tempRoot)
+        }
+
+        let sourceRoot = tempRoot.appendingPathComponent("source checkout")
+        try makeValidSourceRoot(sourceRoot)
+
+        let installedAppURL = tempRoot
+            .appendingPathComponent("Installed/MRRLockScreenOverlay.app")
+        try FileManager.default.createDirectory(at: installedAppURL, withIntermediateDirectories: true)
+
+        let appSupportURL = tempRoot.appendingPathComponent("Application Support/10kmrr.life")
+        try FileManager.default.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
+        try "\(sourceRoot.path)\n".write(
+            to: SetupLocalSupport.sourceRootMarkerURL(appSupportURL: appSupportURL),
+            atomically: true,
+            encoding: .utf8
+        )
+
+        let support = SetupLocalSupport(bundleURL: installedAppURL, appSupportURL: appSupportURL)
+        try assertEqual(support.sourceRootURL?.path, sourceRoot.path, "source marker fallback")
+        try assertEqual(
+            support.command(scriptName: "diagnose.sh"),
+            "cd '\(sourceRoot.path)' && ./script/diagnose.sh",
+            "installed app command should use source marker"
+        )
     }
 
     private static func testSourceRootDetection() throws {
@@ -43,25 +75,29 @@ private enum SetupLocalSupportTests {
             at: appURL,
             withIntermediateDirectories: true
         )
-        try FileManager.default.createDirectory(
-            at: tempRoot.appendingPathComponent("script"),
-            withIntermediateDirectories: true
-        )
-        try FileManager.default.createDirectory(
-            at: tempRoot.appendingPathComponent("MRRLockScreenOverlay"),
-            withIntermediateDirectories: true
-        )
-        let diagnoseURL = tempRoot.appendingPathComponent("script/diagnose.sh")
-        try "#!/usr/bin/env bash\n".write(to: diagnoseURL, atomically: true, encoding: .utf8)
-        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: diagnoseURL.path)
-        try "".write(
-            to: tempRoot.appendingPathComponent("MRRLockScreenOverlay/SetupWindowView.swift"),
-            atomically: true,
-            encoding: .utf8
-        )
+        try makeValidSourceRoot(tempRoot)
 
         let detectedRoot = SetupLocalSupport.detectSourceRoot(from: appURL)
         try assertEqual(detectedRoot?.path, tempRoot.path, "source root detection")
+    }
+
+    private static func makeValidSourceRoot(_ sourceRoot: URL) throws {
+        try FileManager.default.createDirectory(
+            at: sourceRoot.appendingPathComponent("script"),
+            withIntermediateDirectories: true
+        )
+        try FileManager.default.createDirectory(
+            at: sourceRoot.appendingPathComponent("MRRLockScreenOverlay"),
+            withIntermediateDirectories: true
+        )
+        let diagnoseURL = sourceRoot.appendingPathComponent("script/diagnose.sh")
+        try "#!/usr/bin/env bash\n".write(to: diagnoseURL, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: diagnoseURL.path)
+        try "".write(
+            to: sourceRoot.appendingPathComponent("MRRLockScreenOverlay/SetupWindowView.swift"),
+            atomically: true,
+            encoding: .utf8
+        )
     }
 
     private static func testCommandGeneration() throws {

@@ -16,6 +16,7 @@ Current alpha storage:
 - Last-good MRR value: local user defaults.
 - Last updated timestamp: local user defaults.
 - Display settings: local user defaults.
+- Source checkout path for support commands: local app support file.
 
 The current alpha does not upload your Stripe key, MRR, customer data, payment data, or Stripe API responses to a 10kmrr.life server.
 

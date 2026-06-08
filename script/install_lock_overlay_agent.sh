@@ -9,6 +9,7 @@ TARGET_PLIST="$HOME/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
 EXECUTABLE="$TARGET_APP/Contents/MacOS/MRRLockScreenOverlay"
 OUT_LOG="$APP_SUPPORT/logs/mrr-lock-overlay.out.log"
 ERR_LOG="$APP_SUPPORT/logs/mrr-lock-overlay.err.log"
+SOURCE_MARKER="$APP_SUPPORT/source-checkout.path"
 KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
 LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
@@ -45,6 +46,14 @@ generate_launch_agent_plist() {
   /usr/bin/plutil -lint "$plist_path" >/dev/null
 }
 
+write_source_marker() {
+  local marker_path="$1"
+  local source_root="$2"
+
+  printf '%s\n' "$source_root" >"$marker_path"
+  /bin/chmod 600 "$marker_path"
+}
+
 self_test_plist_generation() {
   local tmp_dir
   tmp_dir="$(mktemp -d -t 10kmrr-install-plist-test.XXXXXX)"
@@ -66,6 +75,13 @@ self_test_plist_generation() {
   [[ "$generated_argument" == "--private-glass" ]]
   [[ "$generated_stdout" == "$stdout_path" ]]
   [[ "$generated_stderr" == "$stderr_path" ]]
+
+  local marker_path="$tmp_dir/source-checkout.path"
+  local marker_mode
+  write_source_marker "$marker_path" "$tmp_dir/source checkout"
+  [[ "$(<"$marker_path")" == "$tmp_dir/source checkout" ]]
+  marker_mode="$(/usr/bin/stat -f '%Lp' "$marker_path")"
+  [[ "$marker_mode" == "600" ]]
 
   rm -rf "$tmp_dir"
   printf 'Install LaunchAgent plist generation self-test passed.\n'
@@ -97,6 +113,7 @@ fi
 mkdir -p "$APP_SUPPORT/logs" "$HOME/Library/LaunchAgents"
 rm -rf "$TARGET_APP"
 cp -R "$SOURCE_APP" "$TARGET_APP"
+write_source_marker "$SOURCE_MARKER" "$ROOT_DIR"
 generate_launch_agent_plist "$TARGET_PLIST" "$EXECUTABLE" "$OUT_LOG" "$ERR_LOG"
 
 launchctl bootout "gui/$(id -u)" "$TARGET_PLIST" 2>/dev/null || true

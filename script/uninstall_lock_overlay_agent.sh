@@ -4,6 +4,7 @@ set -euo pipefail
 TARGET_PLIST="$HOME/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
 APP_SUPPORT="$HOME/Library/Application Support/10kmrr.life"
 TARGET_APP="$APP_SUPPORT/MRRLockScreenOverlay.app"
+SOURCE_MARKER="$APP_SUPPORT/source-checkout.path"
 KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
 LEGACY_KEYCHAIN_SERVICE="life.10kmrr.StripeMRRScreenSaver"
 KEYCHAIN_ACCOUNT="stripe_api_key"
@@ -48,6 +49,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'DRY-RUN  /usr/bin/pkill -x MRRLockScreenOverlay'
   printf '%s\n' "$output" | /usr/bin/grep -q "DRY-RUN  /bin/rm -f $temp_home/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
   printf '%s\n' "$output" | /usr/bin/grep -q "DRY-RUN  /bin/rm -rf $temp_home/Library/Application Support/10kmrr.life/MRRLockScreenOverlay.app"
+  printf '%s\n' "$output" | /usr/bin/grep -q "DRY-RUN  /bin/rm -f $temp_home/Library/Application Support/10kmrr.life/source-checkout.path"
   printf '%s\n' "$output" | /usr/bin/grep -q 'DRY-RUN  /usr/bin/defaults delete life.10kmrr.MRRLockScreenOverlay.Cache'
   printf '%s\n' "$output" | /usr/bin/grep -q 'DRY-RUN  /usr/bin/security delete-generic-password'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Removed Stripe key from macOS Keychain if it existed.'
@@ -89,6 +91,7 @@ run_action /bin/launchctl bootout "gui/$(id -u)" "$TARGET_PLIST" 2>/dev/null || 
 run_action /usr/bin/pkill -x MRRLockScreenOverlay 2>/dev/null || true
 run_action /bin/rm -f "$TARGET_PLIST"
 run_action /bin/rm -rf "$TARGET_APP"
+run_action /bin/rm -f "$SOURCE_MARKER"
 
 printf 'Removed Lock Screen overlay LaunchAgent and app bundle.\n'
 

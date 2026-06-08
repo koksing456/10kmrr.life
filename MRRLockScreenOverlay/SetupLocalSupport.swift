@@ -3,8 +3,9 @@ import Foundation
 struct SetupLocalSupport {
     let sourceRootURL: URL?
 
-    init(bundleURL: URL = Bundle.main.bundleURL) {
+    init(bundleURL: URL = Bundle.main.bundleURL, appSupportURL: URL = Self.defaultAppSupportURL()) {
         sourceRootURL = Self.detectSourceRoot(from: bundleURL)
+            ?? Self.detectSourceRootFromMarker(appSupportURL: appSupportURL)
     }
 
     init(sourceRootURL: URL?) {
@@ -39,20 +40,45 @@ struct SetupLocalSupport {
     }
 
     static func detectSourceRoot(from bundleURL: URL) -> URL? {
-        let fileManager = FileManager.default
         var currentURL = bundleURL.deletingLastPathComponent()
 
         for _ in 0..<8 {
-            let diagnosePath = currentURL.appendingPathComponent("script/diagnose.sh").path
-            let sourcePath = currentURL.appendingPathComponent("MRRLockScreenOverlay/SetupWindowView.swift").path
-            if fileManager.isExecutableFile(atPath: diagnosePath),
-               fileManager.fileExists(atPath: sourcePath) {
+            if isValidSourceRoot(currentURL) {
                 return currentURL
             }
             currentURL.deleteLastPathComponent()
         }
 
         return nil
+    }
+
+    static func detectSourceRootFromMarker(appSupportURL: URL) -> URL? {
+        let markerURL = sourceRootMarkerURL(appSupportURL: appSupportURL)
+        guard let rawPath = try? String(contentsOf: markerURL, encoding: .utf8) else {
+            return nil
+        }
+        let path = rawPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !path.isEmpty else { return nil }
+
+        let sourceRootURL = URL(fileURLWithPath: path)
+        return isValidSourceRoot(sourceRootURL) ? sourceRootURL : nil
+    }
+
+    static func sourceRootMarkerURL(appSupportURL: URL) -> URL {
+        appSupportURL.appendingPathComponent("source-checkout.path")
+    }
+
+    static func defaultAppSupportURL() -> URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/10kmrr.life")
+    }
+
+    private static func isValidSourceRoot(_ sourceRootURL: URL) -> Bool {
+        let fileManager = FileManager.default
+        let diagnosePath = sourceRootURL.appendingPathComponent("script/diagnose.sh").path
+        let sourcePath = sourceRootURL.appendingPathComponent("MRRLockScreenOverlay/SetupWindowView.swift").path
+        return fileManager.isExecutableFile(atPath: diagnosePath) &&
+            fileManager.fileExists(atPath: sourcePath)
     }
 
     static func shellQuotedPath(_ path: String) -> String {

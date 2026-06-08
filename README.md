@@ -227,6 +227,8 @@ The setup window shows the local app version and build commit so alpha reports c
 
 When the overlay app is running, the 10kmrr.life menu bar item can open setup, refresh MRR now, launch a preview overlay, copy diagnose/support-report/repair/uninstall commands for the detected source checkout, open the local logs folder, and restart the overlay process.
 
+The installer stores the local source checkout path in app support so installed menu commands can still copy runnable support commands. This marker contains only a local filesystem path, not Stripe data or MRR.
+
 ## Install
 
 Alpha installs are gated. If you are approved for alpha testing, use the guided first-run flow:
