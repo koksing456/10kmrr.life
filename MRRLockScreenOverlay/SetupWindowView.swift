@@ -122,7 +122,7 @@ struct SetupWindowView: View {
             Divider()
 
             HStack {
-                Text("After setup, copy the install command here or run ./script/start_alpha.sh from the checkout.")
+                Text("After setup, copy the guided start command here or run ./script/alpha.sh start from the checkout.")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()

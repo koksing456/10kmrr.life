@@ -14,6 +14,8 @@ logs, raw Stripe responses, customer/payment data, or contact data.
 Commands:
   status    Print alpha status summary.
   next      Print one recommended next action.
+  first-tester
+            Print the safe first-tester flow without writing evidence.
   report    Write the private readiness report under build/.
   check     Run the full public-alpha repo gate and signing preflight.
   tracker   Prepare or refresh the private tracker workspace.
@@ -41,6 +43,7 @@ Commands:
 
 Examples:
   $0 next
+  $0 first-tester
   $0 invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run
   $0 invite --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in
   $0 start --tester-id tester_001
@@ -54,6 +57,7 @@ command_script() {
   case "$1" in
     status) printf '%s\n' "$ROOT_DIR/script/alpha_status.sh" ;;
     next) printf '%s\n' "$ROOT_DIR/script/alpha_next_action.sh" ;;
+    first-tester) printf '%s\n' "$ROOT_DIR/script/alpha_first_tester.sh" ;;
     report) printf '%s\n' "$ROOT_DIR/script/alpha_readiness_report.sh" ;;
     check) printf '%s\n' "$ROOT_DIR/script/check.sh" ;;
     tracker) printf '%s\n' "$ROOT_DIR/script/prepare_alpha_tracker.sh" ;;
@@ -88,8 +92,12 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" next --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence'
-  printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'print the first-tester alpha flow without writing evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh first-tester'
+
+  output="$("$0" first-tester --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in)"
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh invite'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh success'
 
   output="$("$0" status --no-network)"
   printf '%s\n' "$output" | /usr/bin/grep -q '10kmrr.life alpha status'

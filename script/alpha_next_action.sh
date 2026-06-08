@@ -384,9 +384,9 @@ recommend() {
 
   if [[ "$approved_users" -eq 0 && "$install_rows" -eq 0 ]]; then
     emit_action \
-      "preview the first alpha invite packet without writing evidence" \
-      "private beta evidence cannot move until a real tester is approved; preview the packet first to avoid fake tracker rows" \
-      "./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
+      "print the first-tester alpha flow without writing evidence" \
+      "private beta evidence cannot move until a real tester is approved; print the full safe flow first to avoid fake tracker rows" \
+      "./script/alpha.sh first-tester"
     return
   fi
 
@@ -461,9 +461,8 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence'
-  printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
-  printf '%s\n' "$output" | /usr/bin/grep -q -- '--tester-id tester_XXX'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'print the first-tester alpha flow without writing evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh first-tester'
 
   /bin/rm -rf "$temp_dir/missing-tracker"
   output="$("$0" --tracker-dir "$temp_dir/missing-tracker" --no-signing)"

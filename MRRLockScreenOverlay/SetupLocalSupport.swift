@@ -23,8 +23,15 @@ struct SetupLocalSupport {
     }
 
     func command(scriptName: String, arguments: [String] = []) -> String {
-        let scriptCommand = ([scriptName] + arguments).joined(separator: " ")
-        let baseCommand = "./script/\(scriptCommand)"
+        scriptCommand(tokens: ["./script/\(scriptName)"] + arguments)
+    }
+
+    func alphaCommand(command: String, arguments: [String] = []) -> String {
+        scriptCommand(tokens: ["./script/alpha.sh", command] + arguments)
+    }
+
+    private func scriptCommand(tokens: [String]) -> String {
+        let baseCommand = tokens.map(Self.shellQuotedToken).joined(separator: " ")
         guard let sourceRootURL else {
             return baseCommand
         }
@@ -50,6 +57,18 @@ struct SetupLocalSupport {
 
     static func shellQuotedPath(_ path: String) -> String {
         "'\(path.replacingOccurrences(of: "'", with: "'\\''"))'"
+    }
+
+    static func shellQuotedToken(_ token: String) -> String {
+        guard token.rangeOfCharacter(from: CharacterSet.whitespacesAndNewlines) != nil ||
+              token.contains("'") ||
+              token.contains("\"") ||
+              token.contains("$") ||
+              token.contains("\\")
+        else {
+            return token
+        }
+        return shellQuotedPath(token)
     }
 
     static func redactedHomePath(_ path: String, homeDirectory: String = NSHomeDirectory()) -> String {

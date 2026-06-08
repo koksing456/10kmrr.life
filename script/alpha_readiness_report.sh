@@ -163,8 +163,8 @@ self_test() {
   /usr/bin/grep -q 'Command: `./script/alpha.sh audit --tracker-dir build/alpha-tracker`' "$temp_dir/report.md"
   /usr/bin/grep -q 'Command: `./script/alpha.sh weekly --tracker-dir build/alpha-tracker`' "$temp_dir/report.md"
   /usr/bin/grep -q 'Command: `./script/alpha.sh beta-ready --tracker-dir build/alpha-tracker --exclude-intel`' "$temp_dir/report.md"
-  /usr/bin/grep -q 'preview the first alpha invite packet without writing evidence' "$temp_dir/report.md"
-  /usr/bin/grep -q -- '--dry-run' "$temp_dir/report.md"
+  /usr/bin/grep -q 'print the first-tester alpha flow without writing evidence' "$temp_dir/report.md"
+  /usr/bin/grep -q './script/alpha.sh first-tester' "$temp_dir/report.md"
   assert_report_safe "$temp_dir/report.md"
 
   printf 'Alpha readiness report self-test passed.\n'

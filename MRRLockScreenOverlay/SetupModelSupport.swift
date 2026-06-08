@@ -10,21 +10,25 @@ extension SetupModel {
         localSupport.sourceRootURL != nil && !isRunningDiagnostic && !isGeneratingSupportReport
     }
 
-    var installCommand: String {
-        localSupport.command(scriptName: "install_lock_overlay_agent.sh")
+    var startCommand: String {
+        localSupport.alphaCommand(command: "start")
     }
 
     var supportReportCommand: String {
-        localSupport.command(scriptName: "support_report.sh")
+        localSupport.alphaCommand(command: "support-report")
     }
 
     var diagnoseCommand: String {
         localSupport.command(scriptName: "diagnose.sh")
     }
 
-    func copyInstallCommand() {
-        copyToPasteboard(installCommand)
-        supportText = "Copied install command."
+    var repairCommand: String {
+        localSupport.command(scriptName: "repair_lock_overlay_agent.sh")
+    }
+
+    func copyStartCommand() {
+        copyToPasteboard(startCommand)
+        supportText = "Copied guided alpha start command."
     }
 
     func copySupportReportCommand() {
@@ -35,6 +39,11 @@ extension SetupModel {
     func copyDiagnoseCommand() {
         copyToPasteboard(diagnoseCommand)
         supportText = "Copied diagnose command."
+    }
+
+    func copyRepairCommand() {
+        copyToPasteboard(repairCommand)
+        supportText = "Copied repair command. Repair keeps Keychain, cache, and display settings."
     }
 
     func openLogsFolder() {
@@ -86,7 +95,7 @@ extension SetupModel {
         isGeneratingSupportReport = true
         supportText = "Generating sanitized support report..."
 
-        let output = await Self.runScript(named: "support_report.sh", in: sourceRootURL)
+        let output = await Self.runCommand(arguments: ["./script/alpha.sh", "support-report"], in: sourceRootURL)
         if let reportURL = localSupport.supportReportURL,
            FileManager.default.fileExists(atPath: reportURL.path) {
             let safePath = SetupLocalSupport.redactedLocalPath(
@@ -110,14 +119,19 @@ extension SetupModel {
     }
 
     private static func runScript(named scriptName: String, in sourceRootURL: URL) async -> String {
+        await runCommand(arguments: ["./script/\(scriptName)"], in: sourceRootURL)
+    }
+
+    private static func runCommand(arguments: [String], in sourceRootURL: URL) async -> String {
         await Task.detached(priority: .userInitiated) {
             let process = Process()
             let outputPipe = Pipe()
             let errorPipe = Pipe()
+            let commandLabel = arguments.joined(separator: " ")
 
             process.currentDirectoryURL = sourceRootURL
             process.executableURL = URL(fileURLWithPath: "/bin/bash")
-            process.arguments = ["-lc", "./script/\(scriptName)"]
+            process.arguments = ["-lc", commandLabel]
             process.standardOutput = outputPipe
             process.standardError = errorPipe
 
@@ -125,7 +139,7 @@ extension SetupModel {
                 try process.run()
                 process.waitUntilExit()
             } catch {
-                return "FAIL  Could not run ./script/\(scriptName): \(error.localizedDescription)"
+                return "FAIL  Could not run \(commandLabel): \(error.localizedDescription)"
             }
 
             let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
@@ -137,7 +151,7 @@ extension SetupModel {
                 return output
             }
 
-            return output + "\nWARN  ./script/\(scriptName) exited with status \(process.terminationStatus)\n" + errorOutput
+            return output + "\nWARN  \(commandLabel) exited with status \(process.terminationStatus)\n" + errorOutput
         }.value
     }
 }

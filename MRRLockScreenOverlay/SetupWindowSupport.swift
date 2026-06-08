@@ -32,12 +32,22 @@ extension SetupWindowView {
                 }
 
                 HStack(spacing: 10) {
-                    Button("Copy Install") {
-                        model.copyInstallCommand()
+                    Button("Copy Start Cmd") {
+                        model.copyStartCommand()
                     }
 
                     Button("Copy Support Cmd") {
                         model.copySupportReportCommand()
+                    }
+
+                    Button("Copy Repair Cmd") {
+                        model.copyRepairCommand()
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    Button("Copy Diagnose Cmd") {
+                        model.copyDiagnoseCommand()
                     }
 
                     Button("Open Logs") {

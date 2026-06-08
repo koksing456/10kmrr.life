@@ -16,6 +16,7 @@ This writes starter files under `build/alpha-tracker`, which is ignored by git. 
 If only the generated tracker README is stale, refresh it with `./script/alpha.sh tracker --readme-only` so existing CSV rows are preserved. `--force` refuses to overwrite tracker CSVs that already contain private rows.
 Audit manually edited tracker rows with `./script/alpha.sh audit` before widening alpha. The audit prints only file, line, and issue type, not private row contents.
 Use `./script/alpha.sh next` as the daily operator entrypoint. It reads aggregate tracker state and prints one safe recommended next command.
+Use `./script/alpha.sh first-tester` when preparing the first approved tester. It prints the no-write invite preview, real invite write, guided setup, partial evidence, success, support, and Day 7 commands in one safe sequence.
 Use `./script/alpha.sh check` before repo changes or releases.
 Use `./script/alpha.sh report` when you need a local private status packet. It writes `build/alpha-readiness-report.md`, which is ignored by git.
 

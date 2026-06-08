@@ -6,10 +6,20 @@ struct SetupProgressView: View {
     let hasCache: Bool
     let openMockPreview: () -> Void
 
+    private var isReadyToInstall: Bool {
+        didPreviewMock && isConfigured && hasCache
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("First run")
-                .font(.system(size: 13, weight: .semibold))
+            HStack(alignment: .firstTextBaseline) {
+                Text("First run")
+                    .font(.system(size: 13, weight: .semibold))
+                Spacer()
+                Text(isReadyToInstall ? "Ready to install" : "Setup in progress")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(isReadyToInstall ? Color.green : Color.secondary)
+            }
 
             HStack(alignment: .top, spacing: 12) {
                 progressStep(
@@ -35,7 +45,7 @@ struct SetupProgressView: View {
 
                 Spacer(minLength: 0)
 
-                Button("Preview Mock") {
+                Button(didPreviewMock ? "Preview Again" : "Preview Mock") {
                     openMockPreview()
                 }
             }

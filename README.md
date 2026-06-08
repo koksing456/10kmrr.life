@@ -219,7 +219,7 @@ The preview uses the selected display mode from setup. It does not unload the in
 
 The setup window is organized as a first-run flow: preview mock MRR, save a restricted Stripe key in Keychain, refresh MRR, then use advanced settings only if you want to tune placement, size, display mode, visual style, refresh interval, or an optional MRR goal.
 
-Setup also includes an Install & support card. When the source checkout is detected, it can run `./script/diagnose.sh`, generate and open a sanitized support report, copy install/support commands, and open the local logs folder.
+Setup also includes an Install & support card. When the source checkout is detected, it can run `./script/diagnose.sh`, generate and open a sanitized support report through `./script/alpha.sh support-report`, copy guided start/support/repair/diagnose commands, and open the local logs folder.
 
 Visual styles include hero panel, full panel, compact panel, number-only, goal panel, and focus panel. Hero is the default first-run style. Goal settings are local-only and are used only to render progress on the Lock Screen.
 
@@ -233,6 +233,12 @@ Alpha installs are gated. If you are approved for alpha testing, use the guided 
 
 ```sh
 ./script/alpha.sh start
+```
+
+If you are coordinating the first real tester, print the full no-write operator flow first:
+
+```sh
+./script/alpha.sh first-tester
 ```
 
 If you are coordinating an approved tester, pass the private stable tester id:

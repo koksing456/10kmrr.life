@@ -76,6 +76,11 @@ private enum SetupLocalSupportTests {
             "cd '/tmp/10kmrr test' && ./script/support_report.sh --include-logs",
             "command should include arguments"
         )
+        try assertEqual(
+            support.alphaCommand(command: "support-report", arguments: ["--note", "needs review"]),
+            "cd '/tmp/10kmrr test' && ./script/alpha.sh support-report --note 'needs review'",
+            "alpha command should use the unified alpha entrypoint and quote arguments"
+        )
     }
 
     private static func testShellQuoting() throws {
@@ -83,6 +88,16 @@ private enum SetupLocalSupportTests {
             SetupLocalSupport.shellQuotedPath("/tmp/kok's app"),
             "'/tmp/kok'\\''s app'",
             "single quote shell escaping"
+        )
+        try assertEqual(
+            SetupLocalSupport.shellQuotedToken("plain-token"),
+            "plain-token",
+            "plain shell token"
+        )
+        try assertEqual(
+            SetupLocalSupport.shellQuotedToken("value with spaces"),
+            "'value with spaces'",
+            "space shell token escaping"
         )
     }
 
