@@ -12,13 +12,29 @@ extension SetupWindowView {
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 10) {
+                    Button(model.isInstallingOverlay ? "Installing..." : "Install Overlay") {
+                        Task {
+                            await model.installOverlay()
+                        }
+                    }
+                    .disabled(!model.canInstallOverlay)
+
+                    Button(model.isRepairingOverlay ? "Repairing..." : "Run Repair") {
+                        Task {
+                            await model.repairOverlay()
+                        }
+                    }
+                    .disabled(!model.canRepairOverlay)
+
                     Button(model.isRunningDiagnostic ? "Running..." : "Run Diagnose") {
                         Task {
                             await model.runDiagnostic()
                         }
                     }
                     .disabled(!model.canRunDiagnostic)
+                }
 
+                HStack(spacing: 10) {
                     Button(model.isGeneratingSupportReport ? "Generating..." : "Generate Report") {
                         Task {
                             await model.generateSupportReport()
@@ -36,16 +52,20 @@ extension SetupWindowView {
                         model.copyStartCommand()
                     }
 
-                    Button("Copy Support Cmd") {
-                        model.copySupportReportCommand()
+                    Button("Copy Install Cmd") {
+                        model.copyInstallCommand()
                     }
 
-                    Button("Copy Repair Cmd") {
-                        model.copyRepairCommand()
+                    Button("Copy Support Cmd") {
+                        model.copySupportReportCommand()
                     }
                 }
 
                 HStack(spacing: 10) {
+                    Button("Copy Repair Cmd") {
+                        model.copyRepairCommand()
+                    }
+
                     Button("Copy Diagnose Cmd") {
                         model.copyDiagnoseCommand()
                     }

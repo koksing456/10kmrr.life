@@ -3,11 +3,15 @@ import Foundation
 
 extension SetupModel {
     var canRunDiagnostic: Bool {
-        localSupport.sourceRootURL != nil && !isRunningDiagnostic && !isGeneratingSupportReport
+        localSupport.sourceRootURL != nil && !isBusyWithLocalSupport
     }
 
     var canGenerateSupportReport: Bool {
-        localSupport.sourceRootURL != nil && !isRunningDiagnostic && !isGeneratingSupportReport
+        localSupport.sourceRootURL != nil && !isBusyWithLocalSupport
+    }
+
+    var isBusyWithLocalSupport: Bool {
+        isInstallingOverlay || isRepairingOverlay || isRunningDiagnostic || isGeneratingSupportReport
     }
 
     var startCommand: String {
@@ -20,10 +24,6 @@ extension SetupModel {
 
     var diagnoseCommand: String {
         localSupport.command(scriptName: "diagnose.sh")
-    }
-
-    var repairCommand: String {
-        localSupport.command(scriptName: "repair_lock_overlay_agent.sh")
     }
 
     func copyStartCommand() {
@@ -39,11 +39,6 @@ extension SetupModel {
     func copyDiagnoseCommand() {
         copyToPasteboard(diagnoseCommand)
         supportText = "Copied diagnose command."
-    }
-
-    func copyRepairCommand() {
-        copyToPasteboard(repairCommand)
-        supportText = "Copied repair command. Repair keeps Keychain, cache, and display settings."
     }
 
     func openLogsFolder() {
@@ -113,16 +108,16 @@ extension SetupModel {
         isGeneratingSupportReport = false
     }
 
-    private func copyToPasteboard(_ value: String) {
+    func copyToPasteboard(_ value: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(value, forType: .string)
     }
 
-    private static func runScript(named scriptName: String, in sourceRootURL: URL) async -> String {
+    static func runScript(named scriptName: String, in sourceRootURL: URL) async -> String {
         await runCommand(arguments: ["./script/\(scriptName)"], in: sourceRootURL)
     }
 
-    private static func runCommand(arguments: [String], in sourceRootURL: URL) async -> String {
+    static func runCommand(arguments: [String], in sourceRootURL: URL) async -> String {
         await Task.detached(priority: .userInitiated) {
             let process = Process()
             let outputPipe = Pipe()

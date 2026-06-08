@@ -21,7 +21,9 @@ final class SetupModel: ObservableObject {
     @Published var goalAmountInput = ""
     @Published var lastRefreshText = "No cached MRR refresh yet"
     @Published var cacheDetailText = "No last-good MRR cache found"
-    @Published var supportText = "Run Diagnose from setup after building or installing. It shows safe PASS/WARN lines without printing MRR values."
+    @Published var supportText = "Install enables after a restricted key and last-good cache are ready. Diagnose shows safe PASS/WARN lines without printing MRR values."
+    @Published var isInstallingOverlay = false
+    @Published var isRepairingOverlay = false
     @Published var isRunningDiagnostic = false
     @Published var isGeneratingSupportReport = false
 
