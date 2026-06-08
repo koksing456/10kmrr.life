@@ -23,7 +23,7 @@ Guides a gated alpha tester through the safe local first-run path:
   1. Build and verify the app.
   2. Open setup for restricted Stripe key storage in Keychain.
   3. Launch a mock MRR preview.
-  4. Optionally install the LaunchAgent and run diagnose.
+  4. Optionally install the LaunchAgent, run diagnose, and print health triage guidance.
   5. Print the safe evidence-recording command after manual Lock Screen check.
 
 This script never asks for or prints a Stripe key. Enter the key only in the
@@ -58,7 +58,8 @@ Alpha start flow:
 5. Confirm Keychain key status and last-good MRR cache without printing values.
 6. ./script/install_lock_overlay_agent.sh
 7. ./script/diagnose.sh
-8. After manually confirming Lock Screen visibility and unlock behavior, record
+8. ./script/alpha.sh health
+9. After manually confirming Lock Screen visibility and unlock behavior, record
    success with ./script/alpha.sh success.
 
 Sensitive-data rule: do not paste Stripe keys, exact private MRR, raw Stripe
@@ -153,6 +154,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q './script/build_lock_overlay.sh --verify'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/install_lock_overlay_agent.sh'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/diagnose.sh'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh health'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh success'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Replace tester_XXX before recording evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Confirm Keychain key status and last-good MRR cache'
@@ -335,8 +337,9 @@ cat <<EOF
 
 Alpha start complete.
 Lock the Mac to verify the overlay on the Lock Screen.
-If anything looks wrong, run ./script/alpha.sh support-report and share only the
-sanitized summary or failing section name.
+If anything looks wrong, run ./script/alpha.sh health first.
+If a shareable support artifact is needed, run ./script/alpha.sh support-report
+and share only the sanitized summary or failing section name.
 EOF
 
 print_success_record_command
