@@ -36,7 +36,7 @@ Options:
   --uses-stripe-subscriptions VAL  yes|no|unknown
   --macos-version VALUE            Non-sensitive version summary, for example 15.5.
   --cpu VALUE                      apple_silicon|intel|unknown
-  --display-setup VALUE            built_in|external|multiple|unknown
+  --display-setup VALUE            built_in|external|multiple|clamshell|unknown
   --approved VALUE                 yes|no
   --current-stage VALUE            requested|approved|built|configured_key|previewed|installed|saw_mrr|retained_day_7|closed_lost
   --install-status VALUE           not_sent|not_started|in_progress|pass|warn|fail|unknown
@@ -125,7 +125,7 @@ append_user_row() {
 
   validate_choice "uses Stripe subscriptions" "$USES_STRIPE_SUBSCRIPTIONS" $'yes\nno\nunknown'
   validate_choice "cpu" "$CPU" $'apple_silicon\nintel\nunknown'
-  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nunknown'
+  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nclamshell\nunknown'
   validate_choice "approved" "$APPROVED" $'yes\nno'
   validate_choice "current stage" "$CURRENT_STAGE" $'requested\napproved\nbuilt\nconfigured_key\npreviewed\ninstalled\nsaw_mrr\nretained_day_7\nclosed_lost'
   validate_choice "install status" "$INSTALL_STATUS" $'not_sent\nnot_started\nin_progress\npass\nwarn\nfail\nunknown'
@@ -186,6 +186,24 @@ self_test() {
     --next-action 'send invite')"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon"'
+
+  output="$("$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id tester_006 \
+    --uses-stripe-subscriptions yes \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup clamshell \
+    --approved yes \
+    --current-stage approved \
+    --install-status not_started \
+    --key-setup-status not_started \
+    --first-mrr-seen unknown \
+    --retained-day-7 unknown \
+    --pro-interest none \
+    --next-action 'send invite')"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
+  /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_006","yes","15.5","apple_silicon","clamshell"'
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id 'founder@example.com' >/dev/null 2>&1; then
     printf 'record_alpha_user self-test failed: email-like tester id was accepted.\n' >&2

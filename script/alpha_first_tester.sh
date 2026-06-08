@@ -14,6 +14,8 @@ Prints the safe first-tester alpha flow without writing tracker rows.
 
 Use placeholder values for planning. Replace them with real approved tester
 evidence before removing --dry-run from invite commands or recording success.
+
+See docs/alpha/first-tester-operator-checklist.md for the operator checklist.
 EOF
 }
 
@@ -46,6 +48,9 @@ Boundary:
 RULE  Do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots.
 RULE  Keep tracker rows private under ignored build/alpha-tracker.
 
+Checklist:
+READ  docs/alpha/first-tester-operator-checklist.md
+
 1. Refresh private tracker workspace:
 RUN   ./script/alpha.sh tracker
 
@@ -58,18 +63,20 @@ RUN   ./script/alpha.sh invite --tester-id $tester_arg --macos-version $macos_ar
 4. Ask the tester to run guided setup:
 RUN   ./script/alpha.sh start --tester-id $tester_arg
 
-5. If install/key/cache works but Lock Screen is not proven yet, record partial evidence instead of success:
-RUN   ./script/alpha.sh install --tester-id $tester_arg --macos-version $macos_arg --cpu $cpu_arg --display-setup $display_arg --install-status pass --key-setup-status pass --first-mrr-seen yes --preview-works yes --blocker none --next-action lock_screen_check
-RUN   ./script/alpha.sh compatibility --tester-id $tester_arg --macos-version $macos_arg --cpu $cpu_arg --display-setup $display_arg --lock-screen-visible pass --hides-after-unlock pass --private-glass pass --result pass
+5. If setup works but Lock Screen is not proven yet, record partial install evidence instead of success:
+RUN   ./script/alpha.sh install --tester-id $tester_arg --stage saw_mrr --build-verify pass --configured-key yes --previewed yes --installed yes --saw-mrr yes --diagnose-summary 'PASS summary only' --next-action lock_screen_check
 
-6. If all success conditions are manually confirmed, record the safe success packet:
+6. If Lock Screen is checked separately and the outcome is not a full success packet, record compatibility directly:
+RUN   ./script/alpha.sh compatibility --tester-id $tester_arg --macos-version $macos_arg --cpu $cpu_arg --display-setup $display_arg --build-verify pass --preview-glass private --lock-screen-visible yes --unlock-hides-overlay yes --launchagent-stable yes --result pass --next-action day_7_follow_up
+
+7. If all success conditions are manually confirmed, record the safe success packet:
 RUN   ./script/alpha.sh success --tester-id $tester_arg --macos-version $macos_arg --cpu $cpu_arg --display-setup $display_arg
 
-7. If anything fails, ask for a sanitized report and record the support issue:
+8. If anything fails, ask for a sanitized report and record the support issue:
 RUN   ./script/alpha.sh support-report
 RUN   ./script/alpha.sh support --tester-id $tester_arg --issue-type lock_screen --result fail
 
-8. Schedule Day 7 follow-up after the tester has used it:
+9. Schedule Day 7 follow-up after the tester has used it:
 RUN   ./script/alpha.sh day7 --tester-id $tester_arg --retained-day-7 yes --overall-pro-signal medium
 EOF
 
@@ -87,8 +94,15 @@ self_test() {
   output="$("$0")"
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh invite'
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--dry-run'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'docs/alpha/first-tester-operator-checklist.md'
+  printf '%s\n' "$output" | /usr/bin/grep -q -- '--preview-glass private'
+  printf '%s\n' "$output" | /usr/bin/grep -q -- '--unlock-hides-overlay yes'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh success'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Replace tester_XXX'
+  if printf '%s\n' "$output" | /usr/bin/grep -Eq -- '--install-status|--key-setup-status|--first-mrr-seen|--preview-works|--hides-after-unlock|--private-glass'; then
+    printf 'first-tester self-test failed: output contained obsolete alpha command flags.\n' >&2
+    exit 1
+  fi
 
   output="$("$0" --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh start --tester-id 'tester_001'"
@@ -107,6 +121,9 @@ self_test() {
     printf 'first-tester self-test failed: secret-like tester id was accepted.\n' >&2
     exit 1
   fi
+
+  output="$("$0" --tester-id tester_003 --macos-version 15.5 --cpu apple_silicon --display-setup clamshell)"
+  printf '%s\n' "$output" | /usr/bin/grep -q -- "--display-setup 'clamshell'"
 
   if printf '%s\n' "$output" | /usr/bin/grep -Eq '(sk_live_|sk_test_|rk_live_|rk_test_|whsec_)'; then
     printf 'first-tester self-test failed: output contained a secret-like token.\n' >&2

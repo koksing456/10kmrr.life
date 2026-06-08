@@ -56,7 +56,7 @@ Options:
   --uses-stripe-subscriptions VALUE  yes|no|unknown.
   --macos-version VALUE              Non-sensitive version summary, for example 15.5.
   --cpu VALUE                        apple_silicon|intel|unknown.
-  --display-setup VALUE              built_in|external|multiple|unknown.
+  --display-setup VALUE              built_in|external|multiple|clamshell|unknown.
   --self-test                        Verify wrapper behavior in a temporary tracker.
   --help                             Show this help.
 EOF
@@ -212,6 +212,18 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh weekly'
   /usr/bin/tail -1 "$temp_dir/tracker/pro-interest.csv" | /usr/bin/grep -q '"tester_001","2026-06-15","yes"'
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","unknown","15.5","apple_silicon","built_in","yes","retained_day_7","pass","pass","yes","yes","medium"'
+
+  output="$("$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id tester_006 \
+    --follow-up-date 2026-06-15 \
+    --retained-day-7 yes \
+    --overall-pro-signal low \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup clamshell)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded Day 7 alpha follow-up packet'
+  /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_006","unknown","15.5","apple_silicon","clamshell","yes","retained_day_7","pass","pass","yes","yes","low"'
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id 'founder@example.com' --retained-day-7 yes >/dev/null 2>&1; then
     printf 'record_alpha_day7 self-test failed: email-like tester id was accepted.\n' >&2

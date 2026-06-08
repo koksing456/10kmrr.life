@@ -70,7 +70,7 @@ These make learning from testers less manual.
 - Turn the alpha user tracker into a small private spreadsheet or lightweight CRM workflow. Done: see [private-alpha-workflow.md](./private-alpha-workflow.md) and CSV templates under [templates](./templates).
 - Add a private tracker safety audit for manual row edits. Done: `./script/alpha.sh audit` reports only file, line, and issue type.
 - Add a single next-action recommender for daily alpha operations. Done: `./script/alpha.sh next` reads aggregate tracker state and prints one safe next command.
-- Add a first real tester operator flow. Done: `./script/alpha.sh first-tester` prints the safe no-write invite preview, real invite write, guided setup, partial evidence, success, support, and Day 7 commands without writing tracker rows.
+- Add a first real tester operator flow. Done: `./script/alpha.sh first-tester` prints the safe no-write invite preview, real invite write, guided setup, partial evidence, success, support, and Day 7 commands without writing tracker rows; the first-tester checklist defines the evidence gates before writing success.
 - Add a unified alpha operator entrypoint. Done: `./script/alpha.sh` dispatches common private alpha commands without changing the focused lower-level scripts.
 - Add signing and packaging shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh signing`, `./script/alpha.sh beta-ready`, and `./script/alpha.sh package` delegate to the existing guarded scripts.
 - Add check, smoke, and support-report shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh check`, `./script/alpha.sh smoke`, and `./script/alpha.sh support-report` delegate to the guarded lower-level scripts.

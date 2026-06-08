@@ -3,6 +3,7 @@
 Use this checklist before inviting each alpha tester.
 
 For the full private tracker workflow, use [private-alpha-workflow.md](./private-alpha-workflow.md).
+For the first real tester, use [first-tester-operator-checklist.md](./first-tester-operator-checklist.md) before writing any invite or evidence rows.
 
 ## Before Invite
 
@@ -26,6 +27,7 @@ For the full private tracker workflow, use [private-alpha-workflow.md](./private
 
 - Ask for macOS version.
 - Ask whether Apple Silicon or Intel.
+- Ask whether the display setup is `built_in`, `external`, `multiple`, `clamshell`, or `unknown`.
 - Ask them to run `./script/alpha.sh start --tester-id tester_XXX` when the tester id is already assigned privately.
 - Use `./script/alpha.sh start` without a tester id only when the tester will report evidence later through another private channel.
 - Use [install-smoke-checklist.md](./install-smoke-checklist.md) only when you need to isolate a specific failed stage.

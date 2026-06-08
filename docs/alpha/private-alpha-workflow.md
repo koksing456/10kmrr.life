@@ -16,7 +16,7 @@ This writes starter files under `build/alpha-tracker`, which is ignored by git. 
 If only the generated tracker README is stale, refresh it with `./script/alpha.sh tracker --readme-only` so existing CSV rows are preserved. `--force` refuses to overwrite tracker CSVs that already contain private rows.
 Audit manually edited tracker rows with `./script/alpha.sh audit` before widening alpha. The audit prints only file, line, and issue type, not private row contents.
 Use `./script/alpha.sh next` as the daily operator entrypoint. It reads aggregate tracker state and prints one safe recommended next command.
-Use `./script/alpha.sh first-tester` when preparing the first approved tester. It prints the no-write invite preview, real invite write, guided setup, partial evidence, success, support, and Day 7 commands in one safe sequence.
+Use `./script/alpha.sh first-tester` when preparing the first approved tester. It prints the no-write invite preview, real invite write, guided setup, partial evidence, success, support, and Day 7 commands in one safe sequence. Before writing the first real invite, read [first-tester-operator-checklist.md](./first-tester-operator-checklist.md).
 Use `./script/alpha.sh check` before repo changes or releases.
 Use `./script/alpha.sh report` when you need a local private status packet. It writes `build/alpha-readiness-report.md`, which is ignored by git.
 
@@ -68,7 +68,7 @@ Prepare the approved tester invite packet with:
   --dry-run
 ```
 
-This previews the packet without writing a tracker row or invite file. After a real tester is assigned to the stable id and the macOS/CPU/display values are real, remove `--dry-run` to approve the tester row and write the safe invite body under ignored `build/alpha-invites/`. Use `./script/approve_alpha_tester.sh` and `./script/generate_alpha_invite.sh` directly only when you intentionally need the lower-level split flow.
+This previews the packet without writing a tracker row or invite file. Valid display setup values are `built_in`, `external`, `multiple`, `clamshell`, and `unknown`. After a real tester is assigned to the stable id and the macOS/CPU/display values are real, remove `--dry-run` to approve the tester row and write the safe invite body under ignored `build/alpha-invites/`. Use `./script/approve_alpha_tester.sh` and `./script/generate_alpha_invite.sh` directly only when you intentionally need the lower-level split flow.
 
 Use `./script/alpha.sh user` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.
 

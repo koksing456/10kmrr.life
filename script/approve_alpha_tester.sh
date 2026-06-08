@@ -24,7 +24,7 @@ Options:
   --uses-stripe-subscriptions VAL  yes|no|unknown. Default: yes.
   --macos-version VALUE            Non-sensitive version summary, for example 15.5.
   --cpu VALUE                      apple_silicon|intel|unknown.
-  --display-setup VALUE            built_in|external|multiple|unknown.
+  --display-setup VALUE            built_in|external|multiple|clamshell|unknown.
   --self-test                      Verify wrapper behavior in a temporary tracker.
   --help                           Show this help.
 EOF
@@ -122,6 +122,15 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh start --tester-id 'tester_001'"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
+
+  output="$("$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --tester-id tester_006 \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup clamshell)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
+  /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_006","yes","15.5","apple_silicon","clamshell","yes","approved"'
 
   if "$0" --tracker-dir "$temp_dir/tracker" --tester-id 'founder@example.com' >/dev/null 2>&1; then
     printf 'approve_alpha_tester self-test failed: email-like tester id was accepted.\n' >&2

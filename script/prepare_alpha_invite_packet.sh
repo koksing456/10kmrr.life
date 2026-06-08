@@ -32,7 +32,7 @@ Options:
   --uses-stripe-subscriptions VAL  yes|no|unknown. Default: yes.
   --macos-version VALUE            Non-sensitive version summary, for example 15.5.
   --cpu VALUE                      apple_silicon|intel|unknown.
-  --display-setup VALUE            built_in|external|multiple|unknown.
+  --display-setup VALUE            built_in|external|multiple|clamshell|unknown.
   --force                          Allow rewriting an existing invite file and appending another row.
   --dry-run                        Print the safe packet without writing tracker rows or invite files.
   --self-test                      Verify wrapper behavior in a temporary tracker.
@@ -192,7 +192,7 @@ dry_run_packet() {
   validate_tester_id "$TESTER_ID"
   validate_choice "uses Stripe subscriptions" "$USES_STRIPE_SUBSCRIPTIONS" $'yes\nno\nunknown'
   validate_choice "cpu" "$CPU" $'apple_silicon\nintel\nunknown'
-  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nunknown'
+  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nclamshell\nunknown'
 
   render_invite_packet "$temp_file"
   assert_invite_safe "$temp_file"
@@ -213,7 +213,7 @@ prepare_packet() {
   validate_tester_id "$TESTER_ID"
   validate_choice "uses Stripe subscriptions" "$USES_STRIPE_SUBSCRIPTIONS" $'yes\nno\nunknown'
   validate_choice "cpu" "$CPU" $'apple_silicon\nintel\nunknown'
-  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nunknown'
+  validate_choice "display setup" "$DISPLAY_SETUP" $'built_in\nexternal\nmultiple\nclamshell\nunknown'
 
   if [[ "$DRY_RUN" == "true" ]]; then
     dry_run_packet
@@ -296,6 +296,16 @@ self_test() {
     printf 'prepare_alpha_invite_packet self-test failed: dry-run wrote a tracker row.\n' >&2
     exit 1
   fi
+
+  output="$("$0" \
+    --tracker-dir "$temp_dir/tracker" \
+    --output-dir "$temp_dir/clamshell-invites" \
+    --tester-id tester_003 \
+    --macos-version 15.5 \
+    --cpu apple_silicon \
+    --display-setup clamshell \
+    --dry-run)"
+  printf '%s\n' "$output" | /usr/bin/grep -q -- '- Display setup: `clamshell`'
 
   if "$0" --tracker-dir "$temp_dir/tracker" --output-dir "$temp_dir/invites" --tester-id tester_001 >/dev/null 2>&1; then
     printf 'prepare_alpha_invite_packet self-test failed: duplicate tester id was accepted without --force.\n' >&2
