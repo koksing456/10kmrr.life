@@ -384,8 +384,8 @@ recommend() {
 
   if [[ "$approved_users" -eq 0 && "$install_rows" -eq 0 ]]; then
     emit_action \
-      "print the first-tester alpha flow without writing evidence" \
-      "private beta evidence cannot move until a real tester is approved; print the full safe flow first to avoid fake tracker rows" \
+      "read the first-tester checklist, then print the no-write flow" \
+      "private beta evidence cannot move until a real tester is approved; use the checklist and dry-run flow first to avoid fake tracker rows" \
       "./script/alpha.sh first-tester"
     return
   fi
@@ -461,7 +461,7 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'print the first-tester alpha flow without writing evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'read the first-tester checklist'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh first-tester'
 
   /bin/rm -rf "$temp_dir/missing-tracker"

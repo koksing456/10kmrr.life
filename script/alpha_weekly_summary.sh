@@ -176,6 +176,7 @@ emit_summary() {
     printf '\n==> Weekly review not suggested yet\n'
     printf 'NEXT  collect first alpha evidence before writing a weekly review row.\n'
     printf 'NEXT  single recommended action: ./script/alpha.sh next\n'
+    printf 'NEXT  first tester checklist: docs/alpha/first-tester-operator-checklist.md\n'
     printf 'NEXT  preview invite without writing evidence: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run\n'
     printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
     return
@@ -212,6 +213,7 @@ self_test() {
   output="$("$0" --tracker-dir "$temp_dir/tracker" --week-start 2026-06-15)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Weekly review not suggested yet'
   printf '%s\n' "$output" | /usr/bin/grep -q 'collect first alpha evidence before writing a weekly review row'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'docs/alpha/first-tester-operator-checklist.md'
   if printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh review'; then
     printf 'alpha_weekly_summary self-test failed: empty tracker suggested a weekly review row.\n' >&2
     exit 1

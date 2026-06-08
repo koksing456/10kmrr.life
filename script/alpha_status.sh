@@ -250,6 +250,7 @@ print_next_actions() {
   status_line "NEXT" "before repo changes: ./script/alpha.sh check"
   status_line "NEXT" "single recommended action: ./script/alpha.sh next"
   status_line "NEXT" "write readiness report: ./script/alpha.sh report"
+  status_line "NEXT" "first real tester checklist: docs/alpha/first-tester-operator-checklist.md"
   status_line "NEXT" "first real tester flow without writing evidence: ./script/alpha.sh first-tester"
   status_line "NEXT" "preview tester invite packet without writing evidence: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run"
   status_line "NEXT" "write invite packet only for a real approved tester: replace tester_XXX and 15.x, then remove --dry-run"
@@ -277,6 +278,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private alpha evidence'
   printf '%s\n' "$output" | /usr/bin/grep -q "private tracker exists: $temp_dir/tracker"
   printf '%s\n' "$output" | /usr/bin/grep -q 'tracker audit found no unsafe manual entries'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'docs/alpha/first-tester-operator-checklist.md'
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh tracker --output '$temp_dir/tracker'"
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh audit --tracker-dir '$temp_dir/tracker'"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Signing and notarization'

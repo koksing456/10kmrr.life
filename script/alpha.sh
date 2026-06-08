@@ -92,7 +92,7 @@ self_test() {
   /bin/cp "$ROOT_DIR"/docs/alpha/templates/*.csv "$temp_dir/tracker/"
 
   output="$("$0" next --tracker-dir "$temp_dir/tracker" --no-signing)"
-  printf '%s\n' "$output" | /usr/bin/grep -q 'print the first-tester alpha flow without writing evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'read the first-tester checklist'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh first-tester'
 
   output="$("$0" first-tester --tester-id tester_001 --macos-version 15.5 --cpu apple_silicon --display-setup built_in)"
