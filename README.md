@@ -364,10 +364,12 @@ The alpha request template lives at [docs/alpha/alpha-request-template.md](./doc
 The alpha invite template lives at [docs/alpha/alpha-invite-template.md](./docs/alpha/alpha-invite-template.md).
 The Free vs Pro boundary lives at [docs/alpha/free-pro-boundary.md](./docs/alpha/free-pro-boundary.md).
 The alpha ops checklist lives at [docs/alpha/alpha-ops-checklist.md](./docs/alpha/alpha-ops-checklist.md).
+The first real tester checklist lives at [docs/alpha/first-tester-operator-checklist.md](./docs/alpha/first-tester-operator-checklist.md).
 The private alpha workflow lives at [docs/alpha/private-alpha-workflow.md](./docs/alpha/private-alpha-workflow.md).
 Create a private ignored tracker workspace with `./script/alpha.sh tracker` before inviting testers.
 Refresh only the local tracker instructions with `./script/alpha.sh tracker --readme-only`; `--force` can replace empty generated CSV templates but refuses to overwrite files that already contain private rows.
 Use `./script/alpha.sh next` as the daily operator entrypoint; it prints one safe recommended next action from aggregate tracker state.
+For the first real tester, read [docs/alpha/first-tester-operator-checklist.md](./docs/alpha/first-tester-operator-checklist.md), then run `./script/alpha.sh first-tester` before writing any invite or evidence rows.
 Use `./script/alpha.sh check` before repo changes or releases; it runs the full public-alpha repo gate and signing preflight.
 Write a local private readiness report with `./script/alpha.sh report`; it writes `build/alpha-readiness-report.md`, which is ignored by git.
 Audit manually edited private tracker rows with `./script/alpha.sh audit`; it reports only file, line, and issue type, not row contents.

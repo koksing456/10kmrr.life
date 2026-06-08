@@ -77,7 +77,7 @@ Send this setup path to the approved tester:
 
 Or generate the full safe invite message:
 
-./script/alpha.sh invite --tester-id $(shell_quote "$TESTER_ID") --macos-version "$MACOS_VERSION" --cpu "$CPU" --display-setup "$DISPLAY_SETUP" --dry-run
+./script/alpha.sh invite --tester-id $(shell_quote "$TESTER_ID") --macos-version $(shell_quote "$MACOS_VERSION") --cpu $(shell_quote "$CPU") --display-setup $(shell_quote "$DISPLAY_SETUP") --dry-run
 
 Before setup, remind them:
 - Read SECURITY.md.
@@ -121,6 +121,7 @@ self_test() {
     --display-setup built_in)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh start --tester-id 'tester_001'"
+  printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh invite --tester-id 'tester_001' --macos-version '15.5' --cpu 'apple_silicon' --display-setup 'built_in' --dry-run"
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 
   output="$("$0" \
