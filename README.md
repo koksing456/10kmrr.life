@@ -153,10 +153,12 @@ For the public repo sub-gate without signing preflight:
 ./script/verify_public_repo.sh
 ```
 
-Preview GitHub issue label setup before applying it:
+Verify GitHub issue labels match the checked-in manifest, or preview/apply the sync plan:
 
 ```sh
+./script/alpha.sh labels --verify
 ./script/alpha.sh labels --dry-run
+./script/alpha.sh labels --apply
 ```
 
 If an installed alpha build gets into a bad LaunchAgent or app-bundle state, repair it without removing the Stripe key, local cache, or display settings:

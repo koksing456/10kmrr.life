@@ -37,7 +37,7 @@ Commands:
   beta-ready
            Check private beta evidence and signing readiness.
   package   Build a gated private beta package.
-  labels    Preview or apply GitHub issue labels from .github/labels.yml.
+  labels    Preview, verify, or apply GitHub issue labels from .github/labels.yml.
 
 Examples:
   $0 next

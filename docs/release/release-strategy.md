@@ -56,7 +56,7 @@ Use strict mode before any private package dry run:
 - README and SECURITY docs clearly mention private macOS API risk.
 - Release notes state whether the build is Apple Silicon-only or universal.
 - GitHub issue templates warn against posting sensitive data.
-- GitHub issue labels are synced from `.github/labels.yml` or at least dry-run with `./script/alpha.sh labels --dry-run`.
+- GitHub issue labels are synced from `.github/labels.yml` or verified with `./script/alpha.sh labels --verify`.
 
 ## Public Repo Gate
 
@@ -77,9 +77,10 @@ For a quick non-build status summary during alpha operations:
 This summarizes source state, private tracker presence, signing readiness, latest GitHub Actions status when available, and safe next actions. It is not a replacement for `./script/alpha.sh check` before release or repo changes.
 If your private tracker lives outside the default ignored `build/alpha-tracker` path, pass it explicitly with `./script/alpha.sh status --tracker-dir /path/to/private-tracker`.
 
-It also validates the GitHub label manifest and label sync parser. To apply labels after reviewing the plan:
+It also validates the GitHub label manifest and label sync parser. To verify or apply labels after reviewing the plan:
 
 ```sh
+./script/alpha.sh labels --verify
 ./script/alpha.sh labels --dry-run
 ./script/alpha.sh labels --apply
 ```
