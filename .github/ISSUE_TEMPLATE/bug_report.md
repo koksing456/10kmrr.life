@@ -8,7 +8,7 @@ assignees: ""
 
 ## Before You Post
 
-Do not paste Stripe keys, exact MRR, email/contact data, raw Stripe responses, raw logs, customer data, payment data, or unsanitized revenue screenshots.
+Do not paste Stripe keys, Stripe object IDs, exact MRR, email/contact data, raw Stripe responses, raw logs, customer data, payment data, or unsanitized revenue screenshots.
 
 ## What Happened
 

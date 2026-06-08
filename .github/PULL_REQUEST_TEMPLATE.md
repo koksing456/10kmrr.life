@@ -10,7 +10,7 @@ What changed?
 
 ## Security Boundary
 
-- [ ] I did not commit Stripe keys, exact private MRR, raw Stripe responses, raw logs, customer/payment data, or unsanitized revenue screenshots.
+- [ ] I did not commit Stripe keys, Stripe object IDs, exact private MRR, raw Stripe responses, raw logs, customer/payment data, or unsanitized revenue screenshots.
 - [ ] Any screenshots or demo assets use mock, blurred, or explicitly sanitized MRR.
 - [ ] Any support or diagnostic output is sanitized.
 

@@ -331,6 +331,7 @@ require_phrase docs/alpha/private-alpha-workflow.md '--dry-run'
 require_phrase docs/alpha/install-smoke-checklist.md './script/alpha\.sh start'
 require_phrase docs/mvp/alpha-install-guide.md './script/alpha\.sh start'
 require_phrase .github/PULL_REQUEST_TEMPLATE.md './script/alpha\.sh check'
+require_phrase .github/PULL_REQUEST_TEMPLATE.md 'Stripe object IDs'
 require_phrase .github/ISSUE_TEMPLATE/alpha_feedback.md './script/alpha\.sh support-report'
 require_phrase .github/ISSUE_TEMPLATE/alpha_feedback.md './script/alpha\.sh check'
 require_phrase .github/ISSUE_TEMPLATE/bug_report.md './script/alpha\.sh support-report'
@@ -376,6 +377,7 @@ done
 section "GitHub issue safety wording"
 for issue_template in .github/ISSUE_TEMPLATE/alpha_feedback.md .github/ISSUE_TEMPLATE/alpha_request.yml .github/ISSUE_TEMPLATE/bug_report.md; do
   require_phrase "$issue_template" 'Stripe keys'
+  require_phrase "$issue_template" 'Stripe object IDs'
   require_phrase "$issue_template" 'exact MRR'
   require_phrase "$issue_template" 'email/contact data'
   require_phrase "$issue_template" 'customer data'

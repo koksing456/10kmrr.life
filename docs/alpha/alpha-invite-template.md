@@ -18,7 +18,7 @@ Before setup:
 
 - Read `SECURITY.md`.
 - Use a restricted read-only Stripe key, not a full-access secret key.
-- Do not send Stripe keys, exact MRR, raw Stripe responses, raw logs, customer/payment data, or unsanitized screenshots.
+- Do not send Stripe keys, Stripe object IDs, exact MRR, raw Stripe responses, raw logs, customer/payment data, or unsanitized screenshots.
 
 Setup path:
 
@@ -46,7 +46,7 @@ After setup works, send back only this safe reply format:
 - Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none
 - Pro interest after first use: low/medium/high/unknown
 
-Do not include exact MRR, Stripe keys, raw Stripe responses, raw logs, customer/payment data, contact data, or unsanitized screenshots.
+Do not include exact MRR, Stripe keys, Stripe object IDs, raw Stripe responses, raw logs, customer/payment data, contact data, or unsanitized screenshots.
 
 Day 7 question:
 

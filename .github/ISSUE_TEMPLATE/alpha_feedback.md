@@ -8,7 +8,7 @@ assignees: ""
 
 ## Before You Post
 
-Do not include Stripe keys, exact MRR, email/contact data, customer data, payment data, raw Stripe responses, raw logs, or unsanitized revenue screenshots.
+Do not include Stripe keys, Stripe object IDs, exact MRR, email/contact data, customer data, payment data, raw Stripe responses, raw logs, or unsanitized revenue screenshots.
 
 ## Environment
 

@@ -83,7 +83,7 @@ Before setup, remind them:
 - Read SECURITY.md.
 - Use a restricted read-only Stripe key, not a full-access secret key.
 - Enter the key only in the macOS setup window.
-- Do not send Stripe keys, exact MRR, raw Stripe responses, raw logs, customer/payment data, or unsanitized screenshots.
+- Do not send Stripe keys, Stripe object IDs, exact MRR, raw Stripe responses, raw logs, customer/payment data, or unsanitized screenshots.
 
 If setup fails, ask for:
 
