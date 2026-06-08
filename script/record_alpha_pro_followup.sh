@@ -106,7 +106,7 @@ require_arg() {
 
 ensure_tracker() {
   if [[ ! -s "$TRACKER_DIR/pro-interest.csv" ]]; then
-    printf 'Pro-interest tracker missing. Run ./script/prepare_alpha_tracker.sh first.\n' >&2
+    printf 'Pro-interest tracker missing. Run ./script/alpha.sh tracker first.\n' >&2
     exit 1
   fi
 }

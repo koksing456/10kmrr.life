@@ -19,8 +19,13 @@ Commands:
   tracker   Prepare or refresh the private tracker workspace.
   invite    Prepare an approved tester invite packet.
   start     Start guided alpha setup for a tester.
+  user      Record a safe alpha user-stage row.
+  install   Record a safe partial install-funnel row.
+  compatibility
+           Record a safe Lock Screen compatibility row.
   success   Record successful install and Lock Screen compatibility evidence.
   support   Record a common safe support issue packet.
+  pro       Record a safe Pro-interest follow-up row.
   day7      Record Day 7 retention and Pro signal.
   weekly    Print safe weekly aggregate summary.
   review    Record one safe aggregate weekly review row.
@@ -54,8 +59,12 @@ command_script() {
     tracker) printf '%s\n' "$ROOT_DIR/script/prepare_alpha_tracker.sh" ;;
     invite) printf '%s\n' "$ROOT_DIR/script/prepare_alpha_invite_packet.sh" ;;
     start) printf '%s\n' "$ROOT_DIR/script/start_alpha.sh" ;;
+    user) printf '%s\n' "$ROOT_DIR/script/record_alpha_user.sh" ;;
+    install) printf '%s\n' "$ROOT_DIR/script/record_alpha_install.sh" ;;
+    compatibility) printf '%s\n' "$ROOT_DIR/script/record_alpha_compatibility.sh" ;;
     success) printf '%s\n' "$ROOT_DIR/script/record_alpha_success.sh" ;;
     support) printf '%s\n' "$ROOT_DIR/script/record_alpha_support_issue.sh" ;;
+    pro) printf '%s\n' "$ROOT_DIR/script/record_alpha_pro_followup.sh" ;;
     day7) printf '%s\n' "$ROOT_DIR/script/record_alpha_day7.sh" ;;
     weekly) printf '%s\n' "$ROOT_DIR/script/alpha_weekly_summary.sh" ;;
     review) printf '%s\n' "$ROOT_DIR/script/record_alpha_weekly_review.sh" ;;
@@ -90,6 +99,18 @@ self_test() {
 
   output="$("$0" beta-ready --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Private beta readiness self-test passed'
+
+  output="$("$0" user --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha user recorder self-test passed'
+
+  output="$("$0" install --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha install evidence recorder self-test passed'
+
+  output="$("$0" compatibility --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha compatibility recorder self-test passed'
+
+  output="$("$0" pro --self-test)"
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha Pro follow-up recorder self-test passed'
 
   output="$("$0" review --self-test)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Alpha weekly review recorder self-test passed'

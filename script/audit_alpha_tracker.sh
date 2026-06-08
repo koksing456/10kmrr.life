@@ -87,7 +87,7 @@ audit_tracker() {
 
   if [[ ! -d "$TRACKER_DIR" ]]; then
     printf 'WARN  tracker directory missing: %s\n' "$TRACKER_DIR"
-    printf 'NEXT  run: ./script/prepare_alpha_tracker.sh\n'
+    printf 'NEXT  run: ./script/alpha.sh tracker\n'
     return 1
   fi
 
@@ -106,7 +106,7 @@ audit_tracker() {
   done
 
   if [[ "$missing" -gt 0 ]]; then
-    printf 'NEXT  repair missing tracker files without replacing existing rows: ./script/prepare_alpha_tracker.sh\n'
+    printf 'NEXT  repair missing tracker files without replacing existing rows: ./script/alpha.sh tracker\n'
     return 1
   fi
 

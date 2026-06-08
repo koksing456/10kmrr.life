@@ -29,7 +29,7 @@ evidence, and local smoke are ready. The signed path re-signs the staged app
 with the first available Developer ID Application identity, notarizes a zip,
 staples the app, validates the ticket, and writes a private beta zip.
 
-Both modes require ./script/private_beta_readiness.sh --require-ready to pass.
+Both modes require ./script/alpha.sh beta-ready --require-ready to pass.
 
 Use --exclude-intel only when Intel Lock Screen behavior is not part of this
 private beta support claim. The manifest will record that boundary.
@@ -65,7 +65,7 @@ Safety boundary:
 - Use ./script/uninstall_lock_overlay_agent.sh --all for a full local reset.
 
 Verification:
-- ./script/private_beta_readiness.sh --require-ready passed before packaging.
+- ./script/alpha.sh beta-ready --require-ready passed before packaging.
 - ./script/alpha.sh check passed before packaging.
 - codesign --verify --deep --strict passed.
 - lipo verified arm64 and x86_64 slices.
@@ -112,7 +112,7 @@ self_test_manifest() {
   /usr/bin/grep -q 'Do not publish this zip as a public installer' "$manifest_path"
   /usr/bin/grep -q 'Do not bundle Stripe keys' "$manifest_path"
   /usr/bin/grep -q 'unsanitized screenshots' "$manifest_path"
-  /usr/bin/grep -q 'private_beta_readiness.sh --require-ready passed before packaging' "$manifest_path"
+  /usr/bin/grep -q 'alpha.sh beta-ready --require-ready passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'alpha.sh check passed before packaging' "$manifest_path"
   /usr/bin/grep -q 'env -u TENKMRR_SIGNING_READY_OVERRIDE' "$0"
   /usr/bin/grep -q -- '--signed' "$0"

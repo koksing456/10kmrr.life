@@ -102,7 +102,7 @@ require_arg() {
 
 ensure_tracker() {
   if [[ ! -s "$TRACKER_DIR/local-smoke.csv" ]]; then
-    printf 'Local smoke tracker missing. Run ./script/prepare_alpha_tracker.sh first.\n' >&2
+    printf 'Local smoke tracker missing. Run ./script/alpha.sh tracker first.\n' >&2
     exit 1
   fi
 }

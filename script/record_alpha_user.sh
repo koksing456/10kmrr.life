@@ -110,7 +110,7 @@ require_arg() {
 
 ensure_tracker() {
   if [[ ! -s "$TRACKER_DIR/alpha-users.csv" ]]; then
-    printf 'Alpha users tracker missing. Run ./script/prepare_alpha_tracker.sh first.\n' >&2
+    printf 'Alpha users tracker missing. Run ./script/alpha.sh tracker first.\n' >&2
     exit 1
   fi
 }

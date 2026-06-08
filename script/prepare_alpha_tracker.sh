@@ -77,15 +77,15 @@ Suggested workflow:
 5. Ask them to run ./script/alpha.sh start --tester-id tester_001.
 6. Ask for ./script/alpha.sh support-report only if something fails.
 7. Record common support issues with ./script/alpha.sh support.
-8. Record install attempts with ./script/record_alpha_install.sh when you need custom partial evidence.
-9. Record Lock Screen compatibility with ./script/record_alpha_compatibility.sh.
+8. Record install attempts with ./script/alpha.sh install when you need custom partial evidence.
+9. Record Lock Screen compatibility with ./script/alpha.sh compatibility.
    For a successful tester, run the alpha.sh success command printed by start.
 10. Preview private beta local smoke with ./script/alpha.sh smoke.
 11. Record private beta local smoke on a clean smoke machine with ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record.
 12. Record Day 7 / Pro signal with ./script/alpha.sh day7.
 13. Review weekly safe aggregates with ./script/alpha.sh weekly.
 14. Audit private tracker safety with ./script/alpha.sh audit.
-15. Record weekly aggregate review with ./script/record_alpha_weekly_review.sh.
+15. Record weekly aggregate review with ./script/alpha.sh review.
 16. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example approved tester and install evidence rows:
@@ -111,7 +111,7 @@ Example approved tester and install evidence rows:
   --blocker "Lock Screen panel did not appear" \\
   --next-action "repair then retry diagnose"
 
-./script/record_alpha_install.sh \\
+./script/alpha.sh install \\
   --tester-id tester_001 \\
   --stage installed \\
   --build-verify pass \\
@@ -122,7 +122,7 @@ Example approved tester and install evidence rows:
   --diagnose-summary "PASS summary only" \\
   --next-action "day 7 follow-up"
 
-./script/record_alpha_compatibility.sh \\
+./script/alpha.sh compatibility \\
   --tester-id tester_001 \\
   --macos-version 15.5 \\
   --cpu apple_silicon \\
@@ -157,9 +157,9 @@ Successful tester shortcut:
 
 ./script/alpha.sh weekly
 
-./script/audit_alpha_tracker.sh
+./script/alpha.sh audit
 
-./script/record_alpha_weekly_review.sh \\
+./script/alpha.sh review \\
   --week-start 2026-06-08 \\
   --support-load low \\
   --setup-failure-rate low \\

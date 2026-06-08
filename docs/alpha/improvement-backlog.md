@@ -41,7 +41,7 @@ These reduce friction and make the source alpha easier to trust.
 - Add release versioning and a visible app version/build commit in setup and diagnostics. Done: setup and `./script/diagnose.sh` show version and commit.
 - Add a public privacy page that mirrors README and SECURITY in plain product language. Done: see [PRIVACY.md](../../PRIVACY.md).
 - Add a private beta evidence readiness gate before package dry runs. Done: `./script/alpha.sh beta-ready` checks install evidence, Lock Screen compatibility, Intel evidence, repeated private API failures, install failure rate, and Developer ID readiness without printing secrets.
-- Record private beta local smoke evidence separately from user alpha evidence. Done: `local-smoke.csv` and `./script/record_alpha_local_smoke.sh` track build/install/diagnose/repair/support-report/uninstall pass-warn-fail evidence before package dry runs.
+- Record private beta local smoke evidence separately from user alpha evidence. Done: `local-smoke.csv` and `./script/alpha.sh smoke` track build/install/diagnose/repair/support-report/uninstall pass-warn-fail evidence before package dry runs.
 - Add an executable local smoke runner so private beta evidence is not assembled by memory. Done: `./script/alpha.sh smoke` previews by default, requires `--apply` for local state changes, and requires `--full-reset --confirm-full-reset --record` for a full local smoke pass row.
 
 ## P1: Engineering Quality
@@ -77,12 +77,12 @@ These make learning from testers less manual.
 - Add a safe invite generator after approving a tester. Done: `./script/alpha.sh invite --dry-run` prints a no-secret setup message for one stable tester id without writing evidence.
 - Add a first-tester invite packet wrapper. Done: `./script/alpha.sh invite` approves the tester and writes a private invite packet under ignored `build/alpha-invites/`.
 - Add a no-write invite preview. Done: `./script/alpha.sh invite --dry-run` prints the safe packet without writing tracker rows or invite files.
-- Add a common support issue recorder for blocked testers. Done: `./script/record_alpha_support_issue.sh` writes safe install evidence and compatibility evidence where relevant.
+- Add a common support issue recorder for blocked testers. Done: `./script/alpha.sh support` writes safe install evidence and compatibility evidence where relevant.
 - Add a 7-day follow-up cadence with retained/not-retained tags. Done: private alpha workflow defines Day 0/1/3/7 cadence and retention tagging.
 - Track install funnel stages: requested, approved, built, configured key, previewed, installed, saw MRR, retained day 7. Done: workflow defines exact stage values and `install-funnel.csv`.
-- Track Lock Screen compatibility evidence separately from install friction. Done: `compatibility.csv` and `./script/record_alpha_compatibility.sh` record macOS, CPU, display setup, private glass, Lock Screen visibility, unlock behavior, LaunchAgent stability, and pass/warn/fail result.
+- Track Lock Screen compatibility evidence separately from install friction. Done: `compatibility.csv` and `./script/alpha.sh compatibility` record macOS, CPU, display setup, private glass, Lock Screen visibility, unlock behavior, LaunchAgent stability, and pass/warn/fail result.
 - Track Pro pull separately from general feedback. Done: `pro-interest.csv` and scorecard keep Pro signal separate.
-- Add a Day 7 convenience recorder so retention and Pro signal update together. Done: `./script/record_alpha_day7.sh` writes the Pro-interest row and alpha-users snapshot after preflight.
+- Add a Day 7 convenience recorder so retention and Pro signal update together. Done: `./script/alpha.sh day7` writes the Pro-interest row and alpha-users snapshot after preflight.
 - Add a weekly aggregate summary before writing review rows. Done: `./script/alpha.sh weekly` prints safe counts and a suggested weekly recorder command.
 - Add a rule that screenshots must use mock, blurred, or intentionally disclosed MRR. Done: screenshot rule is in private alpha workflow and demo checklist.
 - Add a weekly alpha review checklist: support load, retention, setup failure rate, Pro signal, compatibility failures. Done: `weekly-review.csv` and workflow define the weekly review.

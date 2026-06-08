@@ -23,7 +23,7 @@ For a successful tester, append install and compatibility evidence together with
 When a compatibility check is partial, warns, or fails, append a compatibility-only row with:
 
 ```sh
-./script/record_alpha_compatibility.sh \
+./script/alpha.sh compatibility \
   --tester-id tester_001 \
   --macos-version 15.5 \
   --cpu apple_silicon \

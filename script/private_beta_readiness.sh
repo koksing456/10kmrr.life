@@ -269,7 +269,7 @@ print_readiness() {
   section "Alpha evidence"
   if [[ ! -s "$install_file" || ! -s "$compatibility_file" || ! -s "$smoke_file" ]]; then
     status_line "WARN" "private tracker is missing install, compatibility, or local-smoke CSVs"
-    status_line "NEXT" "repair missing tracker files without replacing existing rows: ./script/prepare_alpha_tracker.sh"
+    status_line "NEXT" "repair missing tracker files without replacing existing rows: ./script/alpha.sh tracker"
     ready=1
   else
     install_rows="$(csv_count_rows "$install_file" "$install_template")"
