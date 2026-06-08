@@ -87,9 +87,10 @@ Before setup, remind them:
 
 If setup fails, ask for:
 
+./script/alpha.sh health
 ./script/alpha.sh support-report
 
-Share only the sanitized support report summary or the failing section name.
+Start with the health summary. Share only the sanitized support report summary or the failing section name.
 EOF
 }
 
@@ -122,6 +123,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Recorded safe alpha user row'
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh start --tester-id 'tester_001'"
   printf '%s\n' "$output" | /usr/bin/grep -q "./script/alpha.sh invite --tester-id 'tester_001' --macos-version '15.5' --cpu 'apple_silicon' --display-setup 'built_in' --dry-run"
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh health'
   /usr/bin/tail -1 "$temp_dir/tracker/alpha-users.csv" | /usr/bin/grep -q '"tester_001","yes","15.5","apple_silicon","built_in","yes","approved"'
 
   output="$("$0" \

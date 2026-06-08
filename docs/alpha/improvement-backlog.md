@@ -26,7 +26,7 @@ These make the app feel more like something founders will keep installed.
 - Add stale/error state copy that is useful on the lock screen without becoming noisy. Done: overlay shows setup/key/refresh/cached states without raw Stripe details.
 - Add a first-run path that previews with mock MRR before asking for a real Stripe key. Done: setup and `./script/build_lock_overlay.sh --preview-mock` can launch a mock overlay before any Stripe key is configured.
 - Make alpha onboarding feel like a guided first-run flow instead of a dense settings form. Done: setup now prioritizes preview, Keychain, and refresh, with advanced overlay settings behind disclosure.
-- Bring safe diagnostics and support actions into setup so alpha testers do not have to remember every Terminal command. Done: setup can run diagnose from a detected source checkout, generate/open a sanitized support report, copy install/support commands, and open the local logs folder.
+- Bring safe diagnostics and support actions into setup so alpha testers do not have to remember every Terminal command. Done: setup can run health triage and diagnose from a detected source checkout, generate/open a sanitized support report, copy install/support commands, and open the local logs folder.
 - Add a one-command interactive alpha start script that builds, opens setup, previews mock MRR, checks setup readiness without printing secrets or cached MRR, installs, and diagnoses. Done: see `./script/alpha.sh start`.
 
 ## P1: Distribution And Trust
@@ -50,7 +50,7 @@ These reduce maintenance risk.
 
 - Convert Stripe pagination from recursion to an iterative loop with an explicit page cap. Done: `StripeMRRClient` caps each subscription status at 100 pages.
 - Add timeout, retry, and backoff policy for Stripe requests. Done: Stripe requests have request/resource timeouts plus capped retries for transient network errors, 429, and 5xx responses.
-- Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, and past-due MRR cases. Done: sanitized fixture now covers 8 focused calculator cases.
+- Add tests for annual, weekly, daily, quantity, discount, free, metered, multi-currency, active, past-due, and expanded discount-shape MRR cases. Done: sanitized fixture now covers 9 focused calculator cases.
 - Add focused MRR cache tests for missing, saved, timestamp-missing, and corrupt-cache states. Done: `./script/test_mrr_cache.sh` uses an isolated UserDefaults suite.
 - Add a fixture format for sanitized Stripe subscription responses. Done: `tests/fixtures/mrr_calculator_cases.json` drives the focused calculator harness.
 - Add focused Stripe request-layer tests for retry, permission failure, and pagination caps. Done: `./script/test_stripe_client.sh` uses a local mock URL protocol and is included in `./script/alpha.sh check`.
@@ -73,7 +73,7 @@ These make learning from testers less manual.
 - Add a first real tester operator flow. Done: `./script/alpha.sh first-tester` prints the safe no-write invite preview, real invite write, guided setup, partial evidence, success, support, and Day 7 commands without writing tracker rows; the first-tester checklist defines the evidence gates before writing success.
 - Add a unified alpha operator entrypoint. Done: `./script/alpha.sh` dispatches common private alpha commands without changing the focused lower-level scripts.
 - Add signing and packaging shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh signing`, `./script/alpha.sh beta-ready`, and `./script/alpha.sh package` delegate to the existing guarded scripts.
-- Add check, smoke, and support-report shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh check`, `./script/alpha.sh smoke`, and `./script/alpha.sh support-report` delegate to the guarded lower-level scripts.
+- Add check, health, smoke, and support-report shortcuts to the alpha operator entrypoint. Done: `./script/alpha.sh check`, `./script/alpha.sh health`, `./script/alpha.sh smoke`, and `./script/alpha.sh support-report` delegate to the guarded lower-level scripts.
 - Add a safe private readiness report. Done: `./script/alpha_readiness_report.sh` writes `build/alpha-readiness-report.md` with aggregate status and blocker sections.
 - Add a safe invite generator after approving a tester. Done: `./script/alpha.sh invite --dry-run` prints a no-secret setup message for one stable tester id without writing evidence.
 - Add a first-tester invite packet wrapper. Done: `./script/alpha.sh invite` approves the tester and writes a private invite packet under ignored `build/alpha-invites/`.

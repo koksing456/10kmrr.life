@@ -112,7 +112,13 @@ compatibility directly:
 
 ## Failure Or Friction
 
-Ask for the sanitized support report only:
+Ask for health triage first:
+
+```sh
+./script/alpha.sh health
+```
+
+If a shareable support artifact is needed, ask for the sanitized support report:
 
 ```sh
 ./script/alpha.sh support-report

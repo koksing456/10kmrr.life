@@ -45,7 +45,7 @@ print_flow() {
 10kmrr.life first tester flow
 
 Boundary:
-RULE  Do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots.
+RULE  Do not collect Stripe keys, Stripe object IDs, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots.
 RULE  Keep tracker rows private under ignored build/alpha-tracker.
 
 Checklist:
@@ -72,7 +72,8 @@ RUN   ./script/alpha.sh compatibility --tester-id $tester_arg --macos-version $m
 7. If all success conditions are manually confirmed, record the safe success packet:
 RUN   ./script/alpha.sh success --tester-id $tester_arg --macos-version $macos_arg --cpu $cpu_arg --display-setup $display_arg
 
-8. If anything fails, ask for a sanitized report and record the support issue:
+8. If anything fails, ask for health triage first, then a sanitized report if needed, and record the support issue:
+RUN   ./script/alpha.sh health
 RUN   ./script/alpha.sh support-report
 RUN   ./script/alpha.sh support --tester-id $tester_arg --issue-type lock_screen --result fail
 
@@ -98,6 +99,8 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--preview-glass private'
   printf '%s\n' "$output" | /usr/bin/grep -q -- '--unlock-hides-overlay yes'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh success'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh health'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe object IDs'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Replace tester_XXX'
   if printf '%s\n' "$output" | /usr/bin/grep -Eq -- '--install-status|--key-setup-status|--first-mrr-seen|--preview-works|--hides-after-unlock|--private-glass'; then
     printf 'first-tester self-test failed: output contained obsolete alpha command flags.\n' >&2

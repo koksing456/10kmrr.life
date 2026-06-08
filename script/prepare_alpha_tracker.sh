@@ -75,18 +75,19 @@ Suggested workflow:
 3. Prepare the approved tester invite packet with ./script/alpha.sh invite.
 4. Send the generated invite body from build/alpha-invites/tester_001.md.
 5. Ask them to run ./script/alpha.sh start --tester-id tester_001.
-6. Ask for ./script/alpha.sh support-report only if something fails.
-7. Record common support issues with ./script/alpha.sh support.
-8. Record install attempts with ./script/alpha.sh install when you need custom partial evidence.
-9. Record Lock Screen compatibility with ./script/alpha.sh compatibility.
+6. Ask for ./script/alpha.sh health first if something fails.
+7. Ask for ./script/alpha.sh support-report only if a sanitized shareable report is needed.
+8. Record common support issues with ./script/alpha.sh support.
+9. Record install attempts with ./script/alpha.sh install when you need custom partial evidence.
+10. Record Lock Screen compatibility with ./script/alpha.sh compatibility.
    For a successful tester, run the alpha.sh success command printed by start.
-10. Preview private beta local smoke with ./script/alpha.sh smoke.
-11. Record private beta local smoke on a clean smoke machine with ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record.
-12. Record Day 7 / Pro signal with ./script/alpha.sh day7.
-13. Review weekly safe aggregates with ./script/alpha.sh weekly.
-14. Audit private tracker safety with ./script/alpha.sh audit.
-15. Record weekly aggregate review with ./script/alpha.sh review.
-16. Record only pass/warn/fail summaries and non-sensitive blockers.
+11. Preview private beta local smoke with ./script/alpha.sh smoke.
+12. Record private beta local smoke on a clean smoke machine with ./script/alpha.sh smoke --apply --full-reset --confirm-full-reset --record.
+13. Record Day 7 / Pro signal with ./script/alpha.sh day7.
+14. Review weekly safe aggregates with ./script/alpha.sh weekly.
+15. Audit private tracker safety with ./script/alpha.sh audit.
+16. Record weekly aggregate review with ./script/alpha.sh review.
+17. Record only pass/warn/fail summaries and non-sensitive blockers.
 
 Example approved tester and install evidence rows:
 

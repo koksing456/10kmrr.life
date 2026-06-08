@@ -72,6 +72,10 @@ This previews the packet without writing a tracker row or invite file. Valid dis
 
 Use `./script/alpha.sh user` directly only when you need to record a partial, rejected, retained, or closed-lost user-stage row.
 
+If setup is partial, warns, or fails, ask for `./script/alpha.sh health` first.
+Ask for `./script/alpha.sh support-report` only when a sanitized shareable
+support artifact is needed.
+
 Record install attempts with the safe append script when the setup is partial, warns, or fails:
 
 For common support blockers, use the shorter support issue packet:

@@ -34,7 +34,7 @@ For the first real tester, use [first-tester-operator-checklist.md](./first-test
 - If they install, see MRR, see the Lock Screen overlay, and confirm it hides after unlock, run the success packet command printed by `./script/alpha.sh start`.
 - If they are blocked or hit a warning, record the common support issue with `./script/alpha.sh support --tester-id tester_XXX --issue-type lock_screen --result fail` after replacing `tester_XXX`.
 - Use `./script/alpha.sh install` and `./script/alpha.sh compatibility` separately when a stage is partial, warns, or fails.
-- If anything fails, ask for `./script/alpha.sh support-report`, not raw logs.
+- If anything fails, ask for `./script/alpha.sh health` first, then `./script/alpha.sh support-report` only if a sanitized shareable report is needed. Do not ask for raw logs.
 
 ## Before Private Beta Packaging
 

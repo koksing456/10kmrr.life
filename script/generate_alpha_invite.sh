@@ -66,10 +66,11 @@ This opens the setup window and mock preview before installing. The setup flow s
 If something fails:
 
 \`\`\`sh
+./script/alpha.sh health
 ./script/alpha.sh support-report
 \`\`\`
 
-Share only the sanitized support report summary or the failing section name. Use --include-logs only after checking the redacted excerpts do not contain sensitive output.
+Start with the health summary. Share only the sanitized support report summary or the failing section name. Use --include-logs only after checking the redacted excerpts do not contain sensitive output.
 
 After setup works, send back only this safe reply format:
 
@@ -96,6 +97,7 @@ self_test() {
   output="$("$0" --tester-id tester_001)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'Thanks for trying 10kmrr.life'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh start --tester-id tester_001'
+  printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh health'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh support-report'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Do not send Stripe keys, Stripe object IDs, exact MRR'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Lock Screen panel appears: yes/no'
