@@ -336,7 +336,7 @@ emit_action() {
   line "WHY" "$reason"
   line "$command_label" "$command"
   section "Boundary"
-  line "RULE" "do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots"
+  line "RULE" "do not collect Stripe keys, Stripe object IDs, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots"
   if [[ "$has_placeholder" == "true" ]]; then
     line "RULE" "replace placeholder values before running this template command"
   fi
@@ -463,6 +463,7 @@ self_test() {
   output="$("$0" --tracker-dir "$temp_dir/tracker" --no-signing)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'read the first-tester checklist'
   printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh first-tester'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe object IDs'
 
   /bin/rm -rf "$temp_dir/missing-tracker"
   output="$("$0" --tracker-dir "$temp_dir/missing-tracker" --no-signing)"

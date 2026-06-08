@@ -21,6 +21,7 @@ Short description of what changed.
 ## Security And Privacy Notes
 
 - No Stripe keys are included.
+- No Stripe object IDs are included.
 - No real MRR screenshots are included unless explicitly sanitized and approved.
 - No customer, invoice, payment, subscription, or raw Stripe response data is included.
 - The app remains local-first unless explicitly stated otherwise.

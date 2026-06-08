@@ -12,8 +12,8 @@ usage() {
 Usage: $0 [options]
 
 Prints a safe aggregate weekly alpha summary from the private ignored tracker.
-It does not print tester notes, blockers, exact MRR, contact data, raw logs, or
-raw Stripe responses.
+It does not print tester notes, blockers, exact MRR, Stripe object IDs, contact
+data, raw logs, or raw Stripe responses.
 
 Options:
   --tracker-dir DIR        Tracker directory. Default: build/alpha-tracker.
@@ -178,7 +178,7 @@ emit_summary() {
     printf 'NEXT  single recommended action: ./script/alpha.sh next\n'
     printf 'NEXT  first tester checklist: docs/alpha/first-tester-operator-checklist.md\n'
     printf 'NEXT  preview invite without writing evidence: ./script/alpha.sh invite --tester-id tester_XXX --macos-version 15.x --cpu apple_silicon --display-setup built_in --dry-run\n'
-    printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
+    printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, Stripe object IDs, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
     return
   fi
 
@@ -198,7 +198,7 @@ emit_summary() {
   printf '  --decision %s \\\n' "$decision"
   printf '  --next-action %s\n' "$(shell_quote "$next_action")"
 
-  printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
+  printf '\nRULE  keep identity, contact mapping, exact MRR, Stripe keys, Stripe object IDs, raw logs, raw Stripe responses, customer/payment data, and unsanitized screenshots out of this summary.\n'
 }
 
 self_test() {
@@ -214,6 +214,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Weekly review not suggested yet'
   printf '%s\n' "$output" | /usr/bin/grep -q 'collect first alpha evidence before writing a weekly review row'
   printf '%s\n' "$output" | /usr/bin/grep -q 'docs/alpha/first-tester-operator-checklist.md'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe object IDs'
   if printf '%s\n' "$output" | /usr/bin/grep -q './script/alpha.sh review'; then
     printf 'alpha_weekly_summary self-test failed: empty tracker suggested a weekly review row.\n' >&2
     exit 1

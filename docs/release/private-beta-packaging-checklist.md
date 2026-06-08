@@ -143,7 +143,7 @@ The runner records `pass` only when the commands succeed and the diagnostic/supp
 - Private macOS API caveat.
 - Local-first Stripe key and MRR model.
 - No 10kmrr.life server stores Stripe keys or MRR in the current alpha path.
-- Do not send Stripe keys, exact private MRR, raw logs, raw Stripe responses, customer data, payment data, or unsanitized screenshots.
+- Do not send Stripe keys, Stripe object IDs, exact private MRR, raw logs, raw Stripe responses, customer data, payment data, or unsanitized screenshots.
 
 ## Hold Criteria
 

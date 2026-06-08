@@ -359,8 +359,10 @@ require_phrase CODE_OF_CONDUCT.md 'exact private MRR'
 require_phrase CODE_OF_CONDUCT.md 'unsanitized screenshots'
 require_phrase CODE_OF_CONDUCT.md 'hosted Stripe key storage or full analytics dashboard scope'
 require_phrase docs/release/release-notes-template.md 'No Stripe keys are included'
+require_phrase docs/release/release-notes-template.md 'No Stripe object IDs are included'
 require_phrase docs/release/release-notes-template.md 'No real MRR screenshots are included unless explicitly sanitized and approved'
 require_phrase docs/release/release-notes-template.md 'not a public notarized installer'
+require_phrase docs/release/private-beta-packaging-checklist.md 'Stripe object IDs'
 require_phrase docs/alpha/alpha-request-template.md 'Keep name, handle, email, and preferred contact mapping outside this repo and outside public GitHub issues'
 require_phrase docs/alpha/alpha-request-template.md 'Map public display setup answers into tracker values'
 require_phrase docs/alpha/alpha-request-template.md 'Stripe object IDs'
@@ -390,6 +392,9 @@ done
 require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'id: display_setup'
 require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'Clamshell'
 require_phrase .github/ISSUE_TEMPLATE/alpha_request.yml 'Stripe object IDs'
+require_phrase script/alpha_next_action.sh 'Stripe object IDs'
+require_phrase script/alpha_weekly_summary.sh 'Stripe object IDs'
+require_phrase script/alpha_readiness_report.sh 'Stripe object IDs'
 
 section "GitHub label manifest"
 for expected_label in alpha-request alpha-feedback bug compatibility install mrr-semantics security visual-design; do

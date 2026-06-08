@@ -127,7 +127,7 @@ write_report() {
     printf '%s\n' "- Branch: \`$branch\`"
     printf '%s\n' "- Commit: \`$commit\`"
     printf '%s\n\n' "- Scope: private alpha readiness; not a public installer decision."
-    printf 'Safety boundary: do not collect Stripe keys, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots.\n\n'
+    printf 'Safety boundary: do not collect Stripe keys, Stripe object IDs, exact MRR, raw logs, raw Stripe responses, customer/payment data, contact data, or unsanitized screenshots.\n\n'
   } >"$temp_file"
 
   append_command_section "$temp_file" "Single Recommended Action" "$ROOT_DIR/script/alpha.sh" next --tracker-dir "$TRACKER_DIR"
@@ -157,6 +157,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Wrote safe alpha readiness report'
   /usr/bin/grep -q '# 10kmrr.life Alpha Readiness Report' "$temp_dir/report.md"
   /usr/bin/grep -q 'Single Recommended Action' "$temp_dir/report.md"
+  /usr/bin/grep -q 'Stripe object IDs' "$temp_dir/report.md"
   /usr/bin/grep -q 'Private Tracker Audit' "$temp_dir/report.md"
   /usr/bin/grep -q 'Private Beta Readiness' "$temp_dir/report.md"
   /usr/bin/grep -q 'Command: `./script/alpha.sh next --tracker-dir build/alpha-tracker`' "$temp_dir/report.md"
