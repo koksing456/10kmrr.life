@@ -53,6 +53,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(menuItem("Preview Overlay", action: #selector(previewOverlayFromMenu)))
         menu.addItem(.separator())
         menu.addItem(menuItem("Copy Diagnose Command", action: #selector(copyDiagnoseCommand)))
+        menu.addItem(menuItem("Copy Support Report Command", action: #selector(copySupportReportCommand)))
+        menu.addItem(menuItem("Copy Repair Command", action: #selector(copyRepairCommand)))
         menu.addItem(menuItem("Copy Uninstall Command", action: #selector(copyUninstallCommand)))
         menu.addItem(menuItem("Open Logs Folder", action: #selector(openLogsFolder)))
         menu.addItem(.separator())
@@ -85,12 +87,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc @MainActor
     private func copyDiagnoseCommand() {
-        copyToPasteboard("./script/diagnose.sh")
+        copyToPasteboard(localSupportCommand(scriptName: "diagnose.sh"))
+    }
+
+    @objc @MainActor
+    private func copySupportReportCommand() {
+        copyToPasteboard(localSupportAlphaCommand(command: "support-report"))
+    }
+
+    @objc @MainActor
+    private func copyRepairCommand() {
+        copyToPasteboard(localSupportCommand(scriptName: "repair_lock_overlay_agent.sh"))
     }
 
     @objc @MainActor
     private func copyUninstallCommand() {
-        copyToPasteboard("./script/uninstall_lock_overlay_agent.sh --all")
+        copyToPasteboard(localSupportCommand(scriptName: "uninstall_lock_overlay_agent.sh", arguments: ["--all"]))
     }
 
     @objc @MainActor
@@ -123,5 +135,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func copyToPasteboard(_ command: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(command, forType: .string)
+    }
+
+    @MainActor
+    private func localSupportCommand(scriptName: String, arguments: [String] = []) -> String {
+        SetupLocalSupport(bundleURL: Bundle.main.bundleURL).command(scriptName: scriptName, arguments: arguments)
+    }
+
+    @MainActor
+    private func localSupportAlphaCommand(command: String, arguments: [String] = []) -> String {
+        SetupLocalSupport(bundleURL: Bundle.main.bundleURL).alphaCommand(command: command, arguments: arguments)
     }
 }

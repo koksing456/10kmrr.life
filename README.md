@@ -225,7 +225,7 @@ Visual styles include hero panel, full panel, compact panel, number-only, goal p
 
 The setup window shows the local app version and build commit so alpha reports can identify the build without sharing private data.
 
-When the overlay app is running, the 10kmrr.life menu bar item can open setup, refresh MRR now, launch a preview overlay, copy diagnose/uninstall commands for the source checkout, open the local logs folder, and restart the overlay process.
+When the overlay app is running, the 10kmrr.life menu bar item can open setup, refresh MRR now, launch a preview overlay, copy diagnose/support-report/repair/uninstall commands for the detected source checkout, open the local logs folder, and restart the overlay process.
 
 ## Install
 
