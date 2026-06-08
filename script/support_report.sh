@@ -86,7 +86,7 @@ print_next_steps() {
     printf -- '- A legacy Stripe key exists. Open setup or restart the overlay after repair so the app can migrate it to the current Keychain service.\n'
   fi
 
-  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'LaunchAgent is not loaded|LaunchAgent executable mismatch|missing --private-glass|log paths are unexpected|LaunchAgent plist missing|Installed app missing'; then
+  if printf '%s\n' "$diagnostic" | /usr/bin/grep -Eq 'LaunchAgent is not loaded|LaunchAgent executable mismatch|missing --private-glass|log paths are unexpected|LaunchAgent plist missing|Installed app missing|Source checkout marker'; then
     printf -- '- Repair app and LaunchAgent while preserving Keychain/cache/settings: `./script/repair_lock_overlay_agent.sh`.\n'
   fi
 
@@ -182,6 +182,7 @@ self_test() {
 
   next_steps="$(print_next_steps 'WARN  LaunchAgent is not loaded.
 WARN  Stripe key missing.
+WARN  Source checkout marker missing.
 WARN  No last-good MRR cache yet.' | sanitize_stream)"
   if ! printf '%s\n' "$next_steps" | /usr/bin/grep -q './script/repair_lock_overlay_agent.sh'; then
     printf 'Support report self-test failed: repair next step missing.\n' >&2

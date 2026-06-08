@@ -7,6 +7,7 @@ BUILD_APP="$ROOT_DIR/build/LockScreenOverlay/MRRLockScreenOverlay.app"
 BUILD_EXECUTABLE="$BUILD_APP/Contents/MacOS/MRRLockScreenOverlay"
 INSTALLED_APP="$APP_SUPPORT/MRRLockScreenOverlay.app"
 INSTALLED_EXECUTABLE="$INSTALLED_APP/Contents/MacOS/MRRLockScreenOverlay"
+SOURCE_MARKER="$APP_SUPPORT/source-checkout.path"
 TARGET_PLIST="$HOME/Library/LaunchAgents/life.10kmrr.mrr-lock-overlay.plist"
 LABEL="life.10kmrr.mrr-lock-overlay"
 KEYCHAIN_SERVICE="life.10kmrr.MRRLockScreenOverlay"
@@ -27,6 +28,10 @@ self_test() {
   temp_out_log="$temp_app_support/logs/mrr-lock-overlay.out.log"
   temp_err_log="$temp_app_support/logs/mrr-lock-overlay.err.log"
   /bin/mkdir -p "$temp_home/Library/LaunchAgents"
+  /bin/mkdir -p "$(dirname "$temp_executable")" "$temp_app_support"
+  /usr/bin/touch "$temp_executable"
+  /bin/chmod +x "$temp_executable"
+  printf '%s\n' "$ROOT_DIR" >"$temp_app_support/source-checkout.path"
   /usr/bin/plutil -create xml1 "$temp_plist"
   /usr/bin/plutil -insert Label -string "$LABEL" "$temp_plist"
   /usr/bin/plutil -insert ProgramArguments -array "$temp_plist"
@@ -42,6 +47,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'LaunchAgent runs the installed overlay executable.'
   printf '%s\n' "$output" | /usr/bin/grep -q 'LaunchAgent enables private glass mode.'
   printf '%s\n' "$output" | /usr/bin/grep -q 'LaunchAgent writes logs under Application Support.'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Source checkout marker points to a valid checkout.'
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Overlay visual style setting: (default )?hero'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Stripe key'
   printf '%s\n' "$output" | /usr/bin/grep -Eq 'Cached value was not printed|No last-good MRR cache yet'
@@ -125,6 +131,11 @@ bundle_value() {
   /usr/libexec/PlistBuddy -c "Print :$key" "$app/Contents/Info.plist" 2>/dev/null || true
 }
 
+is_valid_source_root() {
+  local source_root="$1"
+  [[ -x "$source_root/script/diagnose.sh" && -f "$source_root/MRRLockScreenOverlay/SetupWindowView.swift" ]]
+}
+
 print_bundle_version() {
   local label="$1"
   local app="$2"
@@ -161,6 +172,19 @@ if exists_executable "$INSTALLED_EXECUTABLE"; then
 else
   warn "Installed app missing. Run ./script/install_lock_overlay_agent.sh"
   add_suggested_action "Run guided alpha setup: ./script/alpha.sh start"
+fi
+
+if [[ -f "$SOURCE_MARKER" ]]; then
+  source_marker_root="$(/usr/bin/head -n 1 "$SOURCE_MARKER" | /usr/bin/sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+  if [[ -n "$source_marker_root" ]] && is_valid_source_root "$source_marker_root"; then
+    pass "Source checkout marker points to a valid checkout."
+  else
+    warn "Source checkout marker is stale or invalid."
+    add_suggested_action "Repair installed source checkout marker: ./script/install_lock_overlay_agent.sh"
+  fi
+elif exists_executable "$INSTALLED_EXECUTABLE"; then
+  warn "Source checkout marker missing. Installed menu support commands may need manual checkout path."
+  add_suggested_action "Repair installed source checkout marker: ./script/install_lock_overlay_agent.sh"
 fi
 
 if [[ -f "$TARGET_PLIST" ]]; then

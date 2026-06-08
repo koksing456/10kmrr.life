@@ -291,7 +291,7 @@ If the overlay does not appear or the MRR does not refresh, run:
 ./script/diagnose.sh
 ```
 
-The diagnostic checks build status, install status, LaunchAgent state, Keychain presence, and local cache presence without printing the Stripe key or cached MRR value.
+The diagnostic checks build status, install status, LaunchAgent state, installed source-checkout marker health, Keychain presence, and local cache presence without printing the Stripe key or cached MRR value.
 
 If diagnose reports LaunchAgent executable, private glass, or log-path drift, run:
 
