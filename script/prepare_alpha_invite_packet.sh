@@ -85,9 +85,13 @@ validate_write_values() {
   fi
 }
 
+has_placeholder_values() {
+  printf '%s\n%s\n' "$TESTER_ID" "$MACOS_VERSION" | /usr/bin/grep -Eiq '(^|[^[:alnum:]_])(tester_XXX|tester_xxx|15\.x|x\.x)([^[:alnum:]_]|$)'
+}
+
 ensure_tracker() {
   if [[ ! -s "$TRACKER_DIR/alpha-users.csv" ]]; then
-    printf 'Alpha users tracker missing. Run ./script/prepare_alpha_tracker.sh first.\n' >&2
+    printf 'Alpha users tracker missing. Run ./script/alpha.sh tracker first.\n' >&2
     exit 1
   fi
 }
@@ -193,7 +197,12 @@ dry_run_packet() {
   render_invite_packet "$temp_file"
   assert_invite_safe "$temp_file"
 
-  printf 'DRY RUN: no tracker row or invite file was written.\n\n'
+  printf 'DRY RUN: no tracker row or invite file was written.\n'
+  if has_placeholder_values; then
+    printf 'TEMPLATE ONLY: replace tester_XXX and 15.x before sending this packet or recording evidence.\n'
+    printf 'Do not send this placeholder packet to a tester.\n'
+  fi
+  printf '\n'
   /bin/cat "$temp_file"
   /bin/rm -f "$temp_file"
 }
@@ -278,6 +287,10 @@ self_test() {
     --dry-run)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'DRY RUN: no tracker row or invite file was written'
   printf '%s\n' "$output" | /usr/bin/grep -q '# 10kmrr.life Alpha Invite Packet'
+  if printf '%s\n' "$output" | /usr/bin/grep -q 'TEMPLATE ONLY'; then
+    printf 'prepare_alpha_invite_packet self-test failed: real-value dry-run printed placeholder warning.\n' >&2
+    exit 1
+  fi
   test ! -e "$temp_dir/dry-run-invites/tester_002.md"
   if /usr/bin/grep -q '"tester_002"' "$temp_dir/tracker/alpha-users.csv"; then
     printf 'prepare_alpha_invite_packet self-test failed: dry-run wrote a tracker row.\n' >&2
@@ -303,6 +316,8 @@ self_test() {
     --display-setup built_in \
     --dry-run)"
   printf '%s\n' "$output" | /usr/bin/grep -q 'DRY RUN: no tracker row or invite file was written'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'TEMPLATE ONLY: replace tester_XXX and 15.x before sending this packet or recording evidence'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Do not send this placeholder packet to a tester'
 
   if "$0" \
     --tracker-dir "$temp_dir/tracker" \
