@@ -14,6 +14,7 @@ Do not include Stripe keys, Stripe object IDs, exact MRR, email/contact data, cu
 
 - macOS version:
 - Apple Silicon or Intel:
+- Display setup: built_in / external / multiple / clamshell / unknown
 - Install status: not started / built / installed / uninstalled
 - Key setup status: not configured / configured / unsure
 - Repair tried if install drifted: yes / no / not needed

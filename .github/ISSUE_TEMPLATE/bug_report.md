@@ -57,6 +57,8 @@ The repair script preserves the Stripe key, local cache, and display settings.
 ## Environment
 
 - macOS version:
+- Apple Silicon or Intel:
+- Display setup: built_in / external / multiple / clamshell / unknown
 - App commit or build date:
 - Installed with `./script/install_lock_overlay_agent.sh`: yes / no
 - Repaired with `./script/repair_lock_overlay_agent.sh`: yes / no / not needed

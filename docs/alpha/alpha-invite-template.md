@@ -41,7 +41,7 @@ After setup works, send back only this safe reply format:
 - MRR visible in the setup window: yes/no
 - Lock Screen panel appears: yes/no
 - Overlay hides after unlock: yes/no
-- Display setup: built_in/external/multiple/clamshell
+- Display setup: built_in/external/multiple/clamshell/unknown
 - macOS version: 15.x or unknown
 - Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none
 - Pro interest after first use: low/medium/high/unknown

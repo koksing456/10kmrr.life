@@ -76,7 +76,7 @@ After setup works, send back only this safe reply format:
 - MRR visible in the setup window: yes/no
 - Lock Screen panel appears: yes/no
 - Overlay hides after unlock: yes/no
-- Display setup: built_in/external/multiple/clamshell
+- Display setup: built_in/external/multiple/clamshell/unknown
 - macOS version: 15.x or unknown
 - Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none
 - Pro interest after first use: low/medium/high/unknown
@@ -100,6 +100,7 @@ self_test() {
   printf '%s\n' "$output" | /usr/bin/grep -q 'Do not send Stripe keys, Stripe object IDs, exact MRR'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Lock Screen panel appears: yes/no'
   printf '%s\n' "$output" | /usr/bin/grep -q 'safe reply format'
+  printf '%s\n' "$output" | /usr/bin/grep -q 'Display setup: built_in/external/multiple/clamshell/unknown'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Blocker, if any: key/setup/refresh/lock_screen/unlock/launchagent/other/none'
   printf '%s\n' "$output" | /usr/bin/grep -q 'Pro interest after first use: low/medium/high/unknown'
 
