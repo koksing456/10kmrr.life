@@ -60,6 +60,17 @@ private final class RequestLog {
         }
         return components.queryItems?.first(where: { $0.name == name })?.value
     }
+
+    static func queryValues(_ name: String, in request: URLRequest) -> [String] {
+        guard let url = request.url,
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else {
+            return []
+        }
+        return components.queryItems?
+            .filter { $0.name == name }
+            .compactMap(\.value) ?? []
+    }
 }
 
 private enum TestFailure: Error, CustomStringConvertible {
@@ -116,6 +127,11 @@ private enum StripeMRRClientTests {
             log.request(at: 0).value(forHTTPHeaderField: "Authorization"),
             "Bearer restricted_mock_key",
             "client should send bearer auth"
+        )
+        try assertEqual(
+            RequestLog.queryValues("expand[]", in: log.request(at: 0)),
+            ["data.items.data.price", "data.discount.coupon", "data.discounts", "data.items.data.discounts"],
+            "client should expand prices and both subscription/item discounts"
         )
     }
 

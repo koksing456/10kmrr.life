@@ -78,7 +78,9 @@ final class StripeMRRClient {
             URLQueryItem(name: "status", value: status),
             URLQueryItem(name: "limit", value: "100"),
             URLQueryItem(name: "expand[]", value: "data.items.data.price"),
-            URLQueryItem(name: "expand[]", value: "data.discount.coupon")
+            URLQueryItem(name: "expand[]", value: "data.discount.coupon"),
+            URLQueryItem(name: "expand[]", value: "data.discounts"),
+            URLQueryItem(name: "expand[]", value: "data.items.data.discounts")
         ]
         if let startingAfter {
             queryItems.append(URLQueryItem(name: "starting_after", value: startingAfter))

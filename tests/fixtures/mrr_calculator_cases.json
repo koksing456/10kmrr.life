@@ -572,6 +572,70 @@
       },
       "expectedExcludedMeteredItems": 0,
       "expectedExcludedFreeItems": 0
+    },
+    {
+      "name": "expanded source coupon discounts",
+      "subscriptions": [
+        {
+          "id": "sub_mock_source_coupon_discount",
+          "status": "active",
+          "discounts": [
+            {
+              "source": {
+                "type": "coupon",
+                "coupon": {
+                  "percent_off": 25,
+                  "duration": "forever"
+                }
+              }
+            }
+          ],
+          "items": {
+            "data": [
+              {
+                "quantity": 1,
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 12000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              },
+              {
+                "quantity": 1,
+                "discounts": [
+                  {
+                    "source": {
+                      "type": "coupon",
+                      "coupon": {
+                        "amount_off": 500,
+                        "duration": "forever"
+                      }
+                    }
+                  }
+                ],
+                "price": {
+                  "currency": "usd",
+                  "unit_amount": 3000,
+                  "recurring": {
+                    "interval": "month",
+                    "interval_count": 1,
+                    "usage_type": "licensed"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "expectedMinorUnitsByCurrency": {
+        "usd": 10750
+      },
+      "expectedExcludedMeteredItems": 0,
+      "expectedExcludedFreeItems": 0
     }
   ]
 }
